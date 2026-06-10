@@ -281,14 +281,21 @@
     <div id="blackCoverRight" style="right: 0"></div>
     <button class="startingButton" style="top: calc(50% - 40px)" onclick="hideBlackCover(); initializeGameMusic(); playSound('menuMusic')">PLAY WITH SOUND</button>
     <button class="startingButton" style="top: calc(50% + 40px)" onclick="soundEnabled=false; hideBlackCover()">PLAY WITHOUT SOUND</button>
+    
     <script src="howler.js"></script>
-    <script src="constants.js?v122=1"></script>
-    <script src="background.js?v122=1"></script>
-    <script src="menuBackground.js?v122=1"></script>
-    <script src="script.js?v1221=1"></script>
-    <script src="sound.js?v122=1"></script>
-    <script src="settings.js?v122=1"></script>
-    <script src="menu.js?v122=1"></script>
-    <script defer>document.getElementsByClassName("startingButton")[0].style.display = "block"; document.getElementsByClassName("startingButton")[1].style.display = "block";</script>
+    <script src="bmtext.js?v=130"></script>
+    <script src="fonts/text5.js?v=130"></script>
+    <script src="constants.js?v=130"></script>
+    <script src="background.js?v=130"></script>
+    <script src="menuBackground.js?v=1301"></script>
+    <script src="script.js?v=130"></script>
+    <script src="sound.js?v=130"></script>
+    <script src="settings.js?v=130"></script>
+    <script src="menu.js?v=130"></script>
+
+    <script defer>
+        document.getElementsByClassName("startingButton")[0].style.display = "block"; 
+        document.getElementsByClassName("startingButton")[1].style.display = "block";
+    </script>
 </body>
 </html>

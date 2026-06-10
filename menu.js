@@ -158,7 +158,7 @@ window.addEventListener("resize", function() {
     if (!gamePlaying) selectMenuMode(currentMenuMode);
 });
 
-function displayModeInfo(x) {
+function displayModeInfo(mode) {
     //Overall grade info
     overallGradeCtx.clearRect(0, 0, 140, 40);
     overallGradeCtx.drawImage(overallGradeInfoImage, 8, 8);
@@ -192,10 +192,13 @@ function displayModeInfo(x) {
 
     //Mode info
     let bestPowerString, bestScoreString, bestLevelString, bestLevelColor;
-    switch(x) {
-        case 1:
-            document.getElementById("modeInfoImage").src = "img/style1.png";
-            document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Reminiscent of classic tetris games.<br>-Scored like NES tetris (No combo! Best scores come from getting tetrises.)<br>-DAS gets faster as you go<br>-Hard drop is enabled! You can use it to get fast times.<br>-Classic style power is based on level reached, average section time, and points."
+
+    document.getElementById("modeInfoImage").src = `img/style${mode}.png`;
+    document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Reminiscent of classic tetris games.<br>-Scored like NES tetris (No combo! Best scores come from getting tetrises.)<br>-DAS gets faster as you go<br>-Hard drop is enabled! You can use it to get fast times.<br>-Classic style power is based on level reached, average section time, and points."
+            
+
+    switch(mode) {
+        case 1: case 2: case 3:
             //document.getElementById("modeInfo").innerHTML += "<br><br><img src='img/medal1.png' style='height: 30px; vertical-align: middle'> <b>Bronze medal requirements:</b><br>-Best score: 150,000<br>-Best level: 700"
             //document.getElementById("modeInfo").innerHTML += "<br><br><img src='img/medal2.png' style='height: 30px; vertical-align: middle'> <b>Silver medal requirements:</b><br>-Best score: 300,000<br>-Best level: 999<br>-All section times under 1:15:00"
             modeStatsCtx.clearRect(0, 0, 130, 160);
@@ -204,71 +207,70 @@ function displayModeInfo(x) {
             modeStatsCtx.fillStyle = "#000008";
             modeStatsCtx.fillRect(1, 2, 129, 1);
             //Best power
-            modeStatsCtx.drawImage(modeStatsImage, 0, 0, 130, 8, 0, 8, 130, 8);
-            bestPowerString = Math.floor(game.bestPowers[0]).toString().padStart(5, "0");
-            for (let i = 0; i < bestPowerString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestPowerString[i] * 4, 0, 4, 6, 47 + i*4, 8, 4, 6);
-            }
-            modeStatsCtx.drawImage(modeStatsImage, 0, 8, 130, 8, 0, 16, 130, 8);
+            let x = 0;
+            let y = 8;
+            x += drawBMText(modeStatsCtx, x, y, "BEST POWER: ", "text5-gold")
+            x += drawBMText(modeStatsCtx, x, y, Math.floor(game.bestPowers[mode - 1]).toString().padStart(5, "0"), "text5-white")
+            x = 0, y += 8;
+            x += drawBMText(modeStatsCtx, x, y, "(MAX 30000 TO OVERALL POWER)", "text5-gray")
             //Best score
-            modeStatsCtx.drawImage(modeStatsImage, 0, 24, 130, 16, 0, 24, 130, 16);
-            bestScoreString = Math.floor(game.bestScores[0]).toString();
-            for (let i = 0; i < bestScoreString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestScoreString[i] * 4, 0, 4, 6, 45 + i*4, 24, 4, 6);
-            }
+            x = 0, y += 8;
+            x += drawBMText(modeStatsCtx, x, y, "BEST SCORE: ", "text5-white")
+            x += drawBMText(modeStatsCtx, x, y, Math.floor(game.bestScores[mode - 1]).toString(), "text5-white")
             //Best level
-            bestLevelString = Math.floor(game.bestLevels[0]).toString();
-            bestLevelColor = game.bestLevels[0] >= 999 ? 3 : 0;
-            for (let i = 0; i < bestLevelString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestLevelString[i] * 4, bestLevelColor * 6, 4, 6, 44 + i*4, 32, 4, 6);
-            }
+            x = 0, y += 8;
+            x += drawBMText(modeStatsCtx, x, y, "BEST LEVEL: ", "text5-white")
+            x += drawBMText(modeStatsCtx, x, y, Math.floor(game.bestLevels[mode - 1]).toString(), game.bestLevels[0] >= 999 ? "text5-gold" : "text5-white")
             //Best highest section time
+            x = 0, y += 8;
             if (game.bestLevels[0] >= 999) {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 48, 130, 8, 0, 40, 130, 8);
-                let bestHighestSectionTime = game.bestHighestSectionTimes[0];
-                let timeString = convertToTime(bestHighestSectionTime);
-                let timeColor = getTimeColor(bestHighestSectionTime);
+                x += drawBMText(modeStatsCtx, x, y, "ALL SECTION TIMES UNDER", "text5-white")
 
-                for (let i=0;i<timeString.length;i++) {
-                    if (timeString[i] == ":") {modeStatsCtx.drawImage(digitsSmall, 40, timeColor*6, 4, 6, 89 + i*4, 40, 4, 6);}
-                    else {modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[i])*4, timeColor*6, 4, 6, 89 + i*4, 40, 4, 6);}
-                }
+                let time = game.bestHighestSectionTimes[mode - 1];
+                let timeString = convertToTime(time);
+                let timeColor = getTimeColor(time);
+                x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
             }
             else {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 40, 130, 8, 0, 40, 130, 8);
+                x += drawBMText(modeStatsCtx, x, y, "UNLOCKS AT ", "text5-white")
+                x += drawBMText(modeStatsCtx, x, y, "LEVEL 999!", "text5-green")
             }
             //Best average section time
+            x = 0, y += 8;
             if (game.bestLevels[0] >= 999) {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 56, 130, 8, 0, 48, 130, 8);
-                let bestAverageSectionTime = game.bestAverageSectionTimes[0];
-                let timeString = convertToTime(bestAverageSectionTime);
-                let timeColor = getTimeColor(bestAverageSectionTime);
+                x += drawBMText(modeStatsCtx, x, y, "AVG SECTION TIME AT 999: ", "text5-white")
 
-                for (let i=0;i<timeString.length;i++) {
-                    if (timeString[i] == ":") {modeStatsCtx.drawImage(digitsSmall, 40, timeColor*6, 4, 6, 88 + i*4, 48, 4, 6);}
-                    else {modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[i])*4, timeColor*6, 4, 6, 88 + i*4, 48, 4, 6);}
-                }
+                let time = game.bestHighestSectionTimes[mode - 1];
+                let timeString = convertToTime(time);
+                let timeColor = getTimeColor(time);
+                x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
             }
             else {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 40, 130, 8, 0, 48, 130, 8);
+                x += drawBMText(modeStatsCtx, x, y, "UNLOCKS AT ", "text5-white")
+                x += drawBMText(modeStatsCtx, x, y, "LEVEL 999!", "text5-green")
             }
             //Best individual section times
-            modeStatsCtx.drawImage(modeStatsImage, 0, 64, 130, 8, 0, 64, 130, 8);
+            x = 0, y += 16;
+            drawBMText(modeStatsCtx, x, y, "BEST INDIVIDUAL SECTION TIMES: ", "text5-gold");
+            let bestSectionTimes = {
+                1: game.classicStyleBestSectionTimes,
+                2: game.masterStyleBestSectionTimes,
+                3: game.dragonStyleBestSectionTimes
+            }[mode]
             for (let i = 0; i < 10; i++) {
-                if (game.classicStyleBestSectionTimes[i]) {
-                    let sectionTime = game.classicStyleBestSectionTimes[i];
+                if (bestSectionTimes[i]) {
+                    let sectionTime = bestSectionTimes[i];
+                    let levelString = Math.min((i + 1) * 100, 999).toString();
                     let timeString = convertToTime(sectionTime);
-                    let sectionTimeColor = getTimeColor(sectionTime);
+                    let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
 
-                    for (let j=0;j<timeString.length;j++) {
-                        if (timeString[j] == ":") {modeStatsCtx.drawImage(digitsSmall, 40, sectionTimeColor*6, 4, 6, j*4, 72+i*8, 4, 6);}
-                        else {modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[j])*4, sectionTimeColor*6, 4, 6, j*4, 72+i*8, 4, 6);}
-                    }
+                    x = 0, y += 8;
+                    x += drawBMText(modeStatsCtx, x, y, `${levelString} @ `, "text5-white");
+                    x += drawBMText(modeStatsCtx, x, y, timeString, sectionTimeColor);
                 }
                 else {
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 0, 72+i*8, 4, 6);
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 4, 72+i*8, 4, 6);
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 8, 72+i*8, 4, 6);
+                    x = 0, y += 8;
+                    drawBMText(modeStatsCtx, x, y, "---", "text5-gray");
                 }
             }
             break;
