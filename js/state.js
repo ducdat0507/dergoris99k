@@ -1,12 +1,12 @@
 let keyConfig = {
-    ArrowLeft: "left",
-    ArrowRight: "right",
-    ArrowUp: "hardDrop",
-    ArrowDown: "softDrop",
-    s: "rotClockwise",
-    x: "rotClockwiseAlt",
-    a: "rotAnticlockwise",
-    z: "rotAnticlockwiseAlt",
+    a: "left",
+    d: "right",
+    w: "hardDrop",
+    s: "softDrop",
+    j: "rotClockwise",
+    n: "rotClockwiseAlt",
+    k: "rotAnticlockwise",
+    l: "rotAnticlockwiseAlt",
     Escape: "exit",
 };
 const keybindNames = [
@@ -71,6 +71,7 @@ function reset() {
     //Save game variables
     game = {
         //Campaign progress
+        playerInitials: "Dergoris",
         bestPowers: [0, 0, 0],
         bestScores: [0, 0, 0],
         bestLevels: [0, 0, 0],
@@ -81,6 +82,7 @@ function reset() {
         masterStyleBestSectionTimes: [],
         dragonStyleBestSectionTimes: [],
         medals: [0, 0, 0],
+        decorPoints: 0,
         //User settings
         volume: 0.5,
         musicVolume: 1,

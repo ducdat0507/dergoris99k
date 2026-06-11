@@ -496,7 +496,7 @@ function endGame() {
             }
             averageSectionTime /= getSectionTimesLength();
 
-            let timeString = convertToTime(averageSectionTime);
+            let timeString = formatTime(averageSectionTime);
             let sectionTimeColor = getTimeColor(averageSectionTime);
 
             for (let i=0;i<timeString.length;i++) {
@@ -531,7 +531,8 @@ function endGame() {
                 }
             }
         }
-        //Power
+         
+        // Power
         ctx.drawImage(images.sideInfo3, 0, 24, 79, 7, 121, 185, 79, 7);
         let power = 0;
         if (settings.gameMechanics == "classicStyle") {
@@ -570,6 +571,9 @@ function endGame() {
         else if (settings.gameMechanics == "dragonStyle" && power >= 30000) {powerColor = 3;}
         else {powerColor = 0;}
         for (let i=0;i<powerString.length;i++) {ctx.drawImage(images.sideInfo2, parseInt(powerString[i])*4, powerColor*6, 4, 6, 170 - (4*powerString.length) + i*4, 193, 4, 6);}
+
+        // Decoration
+        let decorEarned = 0;
     }
 }
 

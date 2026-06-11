@@ -237,7 +237,7 @@ function displayModeInfo(mode) {
                 x += drawBMText(modeStatsCtx, x, y, "ALL SECTION TIMES UNDER", "text5-white")
 
                 let time = game.bestHighestSectionTimes[mode - 1];
-                let timeString = convertToTime(time);
+                let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
                 x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
             }
@@ -252,7 +252,7 @@ function displayModeInfo(mode) {
                 x += drawBMText(modeStatsCtx, x, y, "AVG SECTION TIME AT 999: ", "text5-white")
 
                 let time = game.bestHighestSectionTimes[mode - 1];
-                let timeString = convertToTime(time);
+                let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
                 x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
             }
@@ -273,7 +273,7 @@ function displayModeInfo(mode) {
                 if (bestSectionTimes[i]) {
                     let sectionTime = bestSectionTimes[i];
                     let levelString = Math.min((i + 1) * 100, 999).toString();
-                    let timeString = convertToTime(sectionTime);
+                    let timeString = formatTime(sectionTime);
                     let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
 
                     x = 0, y += 8;
@@ -318,7 +318,7 @@ function displayModeInfo(mode) {
             if (game.bestLevels[1] >= 999) {
                 modeStatsCtx.drawImage(modeStatsImage, 0, 48, 130, 8, 0, 40, 130, 8);
                 let bestHighestSectionTime = game.bestHighestSectionTimes[1];
-                let timeString = convertToTime(bestHighestSectionTime);
+                let timeString = formatTime(bestHighestSectionTime);
                 let timeColor = getTimeColor(bestHighestSectionTime);
 
                 for (let i = 0; i < timeString.length; i++) {
@@ -333,7 +333,7 @@ function displayModeInfo(mode) {
             if (game.bestLevels[1] >= 999) {
                 modeStatsCtx.drawImage(modeStatsImage, 0, 56, 130, 8, 0, 48, 130, 8);
                 let bestAverageSectionTime = game.bestAverageSectionTimes[1];
-                let timeString = convertToTime(bestAverageSectionTime);
+                let timeString = formatTime(bestAverageSectionTime);
                 let timeColor = getTimeColor(bestAverageSectionTime);
 
                 for (let i = 0; i < timeString.length; i++) {
@@ -349,7 +349,7 @@ function displayModeInfo(mode) {
             for (let i = 0; i < 10; i++) {
                 if (game.masterStyleBestSectionTimes[i]) {
                     let sectionTime = game.masterStyleBestSectionTimes[i];
-                    let timeString = convertToTime(sectionTime);
+                    let timeString = formatTime(sectionTime);
                     let sectionTimeColor = getTimeColor(sectionTime);
 
                     for (let j = 0; j < timeString.length; j++) {
@@ -395,7 +395,7 @@ function displayModeInfo(mode) {
             if (game.bestLevels[2] >= 999) {
                 modeStatsCtx.drawImage(modeStatsImage, 0, 48, 130, 8, 0, 40, 130, 8);
                 let bestHighestSectionTime = game.bestHighestSectionTimes[2];
-                let timeString = convertToTime(bestHighestSectionTime);
+                let timeString = formatTime(bestHighestSectionTime);
                 let timeColor = getTimeColor(bestHighestSectionTime);
 
                 for (let i = 0; i < timeString.length; i++) {
@@ -410,7 +410,7 @@ function displayModeInfo(mode) {
             if (game.bestLevels[2] >= 999) {
                 modeStatsCtx.drawImage(modeStatsImage, 0, 56, 130, 8, 0, 48, 130, 8);
                 let bestAverageSectionTime = game.bestAverageSectionTimes[2];
-                let timeString = convertToTime(bestAverageSectionTime);
+                let timeString = formatTime(bestAverageSectionTime);
                 let timeColor = getTimeColor(bestAverageSectionTime);
 
                 for (let i = 0; i < timeString.length; i++) {
@@ -426,7 +426,7 @@ function displayModeInfo(mode) {
             for (let i = 0; i < 10; i++) {
                 if (game.dragonStyleBestSectionTimes[i]) {
                     let sectionTime = game.dragonStyleBestSectionTimes[i];
-                    let timeString = convertToTime(sectionTime);
+                    let timeString = formatTime(sectionTime);
                     let sectionTimeColor = getTimeColor(sectionTime);
 
                     for (let j = 0; j < timeString.length; j++) {

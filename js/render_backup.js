@@ -792,7 +792,7 @@ function updateVisuals() {
     //Main modes time display
     if ((settings.visuals == "classicStyle" || settings.visuals == "masterStyle" || settings.visuals == "dragonStyle") && settings.timeDisplay) {
         let leftSide = 160-settings.boardWidth*4;
-        let timeString = convertToTime(time);
+        let timeString = formatTime(time);
         let timeLength = 8;
         ctx.clearRect(leftSide-74, 82, 64, 9);
         for (let i=0;i<timeLength;i++) {
@@ -809,7 +809,7 @@ function updateVisuals() {
             if (levelString == "1000") {levelString = "999";}
             for (let i=0;i<3;i++) ctx.drawImage(images.sideInfo2, levelString[i]*4, 0, 4, 6, 61+4*i, 117+7*currentSection, 4, 6);
 
-            let sectionTimeString = convertToTime(currentSectionTime);
+            let sectionTimeString = formatTime(currentSectionTime);
             for (let i=0;i<8;i++) {
                 if (sectionTimeString [i] == ":") {ctx.drawImage(images.sideInfo2, 40, 0, 4, 6, 77+4*i, 117+7*currentSection, 4, 6);}
                 else {ctx.drawImage(images.sideInfo2, sectionTimeString[i]*4, 0, 4, 6, 77+4*i, 117+7*currentSection, 4, 6);}
@@ -821,7 +821,7 @@ function updateVisuals() {
         let leftSide = 160-settings.boardWidth*4;
         let currentBackground = Math.floor(level/100);
         ctx.drawImage(images.background, currentBackground*320+leftSide, 206, 80, 24, leftSide, 206, 80, 24);
-        let timeString = convertToTime(time);
+        let timeString = formatTime(time);
         let timeLength = 8;
         for (let i=0;i<timeLength;i++) {
             if (level >= 500) {
@@ -856,7 +856,7 @@ function displaySectionTime(index) {
     if (levelString == "1000") {levelString = "999";}
     for (let i=0;i<3;i++) ctx.drawImage(images.sideInfo2, levelString[i]*4, 0, 4, 6, 61+4*i, 117+7*index, 4, 6);
 
-    let timeString = convertToTime(sectionTime);
+    let timeString = formatTime(sectionTime);
     let sectionTimeColor = getTimeColor(sectionTime);
     for (let i=0;i<8;i++) {
         if (timeString[i] == ":") {ctx.drawImage(images.sideInfo2, 40, sectionTimeColor*6, 4, 6, 77+4*i, 117+7*index, 4, 6);}

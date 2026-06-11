@@ -221,7 +221,7 @@ function displaySectionTime(index) {
     if (levelString == "1000") {levelString = "999";}
     for (let i=0;i<3;i++) ctx.drawImage(images.sideInfo2, levelString[i]*4, 0, 4, 6, 61+4*i, 117+7*index, 4, 6);
 
-    let timeString = convertToTime(sectionTime);
+    let timeString = formatTime(sectionTime);
     let sectionTimeColor = getTimeColor(sectionTime);
     for (let i=0;i<8;i++) {
         if (timeString[i] == ":") {ctx.drawImage(images.sideInfo2, 40, sectionTimeColor*6, 4, 6, 77+4*i, 117+7*index, 4, 6);}

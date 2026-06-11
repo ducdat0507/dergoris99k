@@ -6,6 +6,37 @@ const modeStatsCtx = modeStatsCanvas && modeStatsCanvas.getContext("2d");
 const overallGradeCanvas = document.getElementById("overallGradeCanvas");
 const overallGradeCtx = overallGradeCanvas && overallGradeCanvas.getContext("2d");
 
+const modeDescriptions = {
+    1: `
+        <b>Info:</b>
+        <br>Reminiscent of classic tetris games.
+        <br>- Scored like NES tetris (No combo! Best scores come from getting tetrises.)
+        <br>- DAS gets faster as you go
+        <br>- Hard drop is enabled! You can use it to get fast times.
+        <br>- Classic style power is based on level reached, average section time, and points.
+    `,
+    2: `
+        <b>Info:</b>
+        <br>Reminiscent of Tetris: The Grand Master.
+        <br>- Scored like TGM (Best scores come from combos!)
+        <br>- Master style power is based on level reached and average section time.
+    `,
+    3: `
+        <b>Info:</b>
+        <br>Reminiscent of T.A. Death. Quite difficult!
+        <br>- Scored like TGM (Best scores come from combos!)
+        <br>- DAS, ARE and lock delay get faster as you go
+        <br>- Dragon style power is based on level reached and average section time.
+    `,
+    4: `
+        <b>Info:</b>
+        <br>Reminiscent of classic tetris games.
+        <br>- Scored like NES tetris (No combo! Best scores come from getting tetrises.)
+        <br>- DAS gets faster as you go<br>-Hard drop is enabled! You can use it to get fast times.
+        <br>- Classic style power is based on level reached, average section time, and points.
+    `,
+}
+
 let modeStatsImage = new Image();
 modeStatsImage.src = "img/modeInfo.png";
 let digitsSmall = new Image();
@@ -166,17 +197,17 @@ function displayModeInfo(mode) {
     let overallGrade = Math.floor(overallPower / 3000);
 
     //Initials
-    let initialString = "ducdat0507"
-    drawBMText(overallGradeCtx, 135 - measureBMText(initialString, "text10-white"), 0, initialString, "text10-white");
+    let initialString = game.playerInitials
+    drawBMText(overallGradeCtx, 135 - measureBMText(initialString, "text7-white"), 0, initialString, "text7-white");
     
 
     //Overall grade info
-    drawBMText(overallGradeCtx, 144, 0, "TOTAL GRADE:", "text5-gold")
-    overallGradeCtx.drawImage(overallGradeImage, 0, overallGrade * 16, 24, 16, 142, 6, 48, 32);
+    drawBMText(overallGradeCtx, 144, 3, "TOTAL GRADE:", "text5-gold")
+    overallGradeCtx.drawImage(overallGradeImage, 0, overallGrade * 16, 24, 16, 142, 10, 48, 32);
 
     //Overall power string
     let overallPowerString = Math.floor(overallPower).toString();
-    drawBMText(overallGradeCtx, 0, 14, "TOTAL POWER:", "text5-gold")
+    drawBMText(overallGradeCtx, 0, 14, "OVERALL POWER:", "text5-gold")
     drawBMText(overallGradeCtx, 135 - measureBMText(overallPowerString, "text10-white"), 17, overallPowerString, "text10-white");
 
     let powX = 0;
@@ -197,17 +228,20 @@ function displayModeInfo(mode) {
     powX += drawBMText(overallGradeCtx, powX, 22, " + ", "text5-white")
     powX += drawBMText(overallGradeCtx, powX, 22, "".padStart(5 - dragonPowerString.length, "0"), "text5-gray")
     powX += drawBMText(overallGradeCtx, powX, 22, dragonPowerString, dragonPowerColor)
+    powX += drawBMText(overallGradeCtx, powX, 22, " =", "text5-white")
 
     //Decor points
-    drawBMText(overallGradeCtx, 0, 34, "DECORATION:", "text5-gold")
-    drawBMText(overallGradeCtx, 135 - measureBMText("123'456'789", "text5-white"), 34, "123'456'789", "text5-white");
+    let decorationString = formatScore(game.decorPoints)
+    drawBMText(overallGradeCtx, 0, 33, "DECORATION:", "text5-gold")
+    drawBMText(overallGradeCtx, 131 - measureBMText(decorationString, "text5-white"), 33, decorationString, "text5-white");
+    drawBMText(overallGradeCtx, 131, 33, "G", "text5-gold");
 
 
     //Mode info
     let bestPowerString, bestScoreString, bestLevelString, bestLevelColor;
 
     document.getElementById("modeInfoImage").src = `img/style${mode}.png`;
-    document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Reminiscent of classic tetris games.<br>-Scored like NES tetris (No combo! Best scores come from getting tetrises.)<br>-DAS gets faster as you go<br>-Hard drop is enabled! You can use it to get fast times.<br>-Classic style power is based on level reached, average section time, and points."
+    document.getElementById("modeInfo").innerHTML = modeDescriptions[mode];
 
 
     switch (mode) {
@@ -242,7 +276,7 @@ function displayModeInfo(mode) {
                 x += drawBMText(modeStatsCtx, x, y, "ALL SECTION TIMES UNDER", "text5-white")
 
                 let time = game.bestHighestSectionTimes[mode - 1];
-                let timeString = convertToTime(time);
+                let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
                 x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
             }
@@ -257,7 +291,7 @@ function displayModeInfo(mode) {
                 x += drawBMText(modeStatsCtx, x, y, "AVG SECTION TIME AT 999: ", "text5-white")
 
                 let time = game.bestHighestSectionTimes[mode - 1];
-                let timeString = convertToTime(time);
+                let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
                 x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
             }
@@ -278,7 +312,7 @@ function displayModeInfo(mode) {
                 if (bestSectionTimes[i]) {
                     let sectionTime = bestSectionTimes[i];
                     let levelString = Math.min((i + 1) * 100, 999).toString();
-                    let timeString = convertToTime(sectionTime);
+                    let timeString = formatTime(sectionTime);
                     let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
 
                     x = 0, y += 8;
@@ -292,160 +326,6 @@ function displayModeInfo(mode) {
             }
 
             break;
-        case 2:
-            document.getElementById("modeInfoImage").src = "img/style2.png";
-            document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Reminiscent of Tetris: The Grand Master.<br>-Scored like TGM (Best scores come from combos!)<br>-Master style power is based on level reached and average section time.";
-            modeStatsCtx.clearRect(0, 0, 130, 160);
-            modeStatsCtx.fillStyle = "#eaeaff";
-            modeStatsCtx.fillRect(0, 1, 129, 1);
-            modeStatsCtx.fillStyle = "#000008";
-            modeStatsCtx.fillRect(1, 2, 129, 1);
-            //Best power
-            modeStatsCtx.drawImage(modeStatsImage, 0, 0, 130, 8, 0, 8, 130, 8);
-            bestPowerString = Math.floor(game.bestPowers[1]).toString().padStart(5, "0");
-            for (let i = 0; i < bestPowerString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestPowerString[i] * 4, 0, 4, 6, 47 + i * 4, 8, 4, 6);
-            }
-            modeStatsCtx.drawImage(modeStatsImage, 0, 8, 130, 8, 0, 16, 130, 8);
-            //Best score
-            modeStatsCtx.drawImage(modeStatsImage, 0, 24, 130, 16, 0, 24, 130, 16);
-            bestScoreString = Math.floor(game.bestScores[1]).toString();
-            for (let i = 0; i < bestScoreString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestScoreString[i] * 4, 0, 4, 6, 45 + i * 4, 24, 4, 6);
-            }
-            //Best level
-            bestLevelString = Math.floor(game.bestLevels[1]).toString();
-            bestLevelColor = game.bestLevels[1] >= 999 ? 3 : 0;
-            for (let i = 0; i < bestLevelString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestLevelString[i] * 4, bestLevelColor * 6, 4, 6, 44 + i * 4, 32, 4, 6);
-            }
-            //Best highest section time
-            if (game.bestLevels[1] >= 999) {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 48, 130, 8, 0, 40, 130, 8);
-                let bestHighestSectionTime = game.bestHighestSectionTimes[1];
-                let timeString = convertToTime(bestHighestSectionTime);
-                let timeColor = getTimeColor(bestHighestSectionTime);
-
-                for (let i = 0; i < timeString.length; i++) {
-                    if (timeString[i] == ":") { modeStatsCtx.drawImage(digitsSmall, 40, timeColor * 6, 4, 6, 89 + i * 4, 40, 4, 6); }
-                    else { modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[i]) * 4, timeColor * 6, 4, 6, 89 + i * 4, 40, 4, 6); }
-                }
-            }
-            else {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 40, 130, 8, 0, 40, 130, 8);
-            }
-            //Best average section time
-            if (game.bestLevels[1] >= 999) {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 56, 130, 8, 0, 48, 130, 8);
-                let bestAverageSectionTime = game.bestAverageSectionTimes[1];
-                let timeString = convertToTime(bestAverageSectionTime);
-                let timeColor = getTimeColor(bestAverageSectionTime);
-
-                for (let i = 0; i < timeString.length; i++) {
-                    if (timeString[i] == ":") { modeStatsCtx.drawImage(digitsSmall, 40, timeColor * 6, 4, 6, 88 + i * 4, 48, 4, 6); }
-                    else { modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[i]) * 4, timeColor * 6, 4, 6, 88 + i * 4, 48, 4, 6); }
-                }
-            }
-            else {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 40, 130, 8, 0, 48, 130, 8);
-            }
-            //Best individual section times
-            modeStatsCtx.drawImage(modeStatsImage, 0, 64, 130, 8, 0, 64, 130, 8);
-            for (let i = 0; i < 10; i++) {
-                if (game.masterStyleBestSectionTimes[i]) {
-                    let sectionTime = game.masterStyleBestSectionTimes[i];
-                    let timeString = convertToTime(sectionTime);
-                    let sectionTimeColor = getTimeColor(sectionTime);
-
-                    for (let j = 0; j < timeString.length; j++) {
-                        if (timeString[j] == ":") { modeStatsCtx.drawImage(digitsSmall, 40, sectionTimeColor * 6, 4, 6, j * 4, 72 + i * 8, 4, 6); }
-                        else { modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[j]) * 4, sectionTimeColor * 6, 4, 6, j * 4, 72 + i * 8, 4, 6); }
-                    }
-                }
-                else {
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 0, 72 + i * 8, 4, 6);
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 4, 72 + i * 8, 4, 6);
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 8, 72 + i * 8, 4, 6);
-                }
-            }
-            break;
-        case 3:
-            document.getElementById("modeInfoImage").src = "img/style3.png";
-            document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Reminiscent of T.A. Death. Quite difficult!<br>-Scored like TGM (Best scores come from combos!)<br>-DAS, ARE and lock delay get faster as you go<br>-Dragon style power is based on level reached and average section time.";
-            modeStatsCtx.clearRect(0, 0, 130, 160);
-            modeStatsCtx.fillStyle = "#eaeaff";
-            modeStatsCtx.fillRect(0, 1, 129, 1);
-            modeStatsCtx.fillStyle = "#000008";
-            modeStatsCtx.fillRect(1, 2, 129, 1);
-            //Best power
-            modeStatsCtx.drawImage(modeStatsImage, 0, 0, 130, 8, 0, 8, 130, 8);
-            bestPowerString = Math.floor(game.bestPowers[2]).toString().padStart(5, "0");
-            for (let i = 0; i < bestPowerString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestPowerString[i] * 4, 0, 4, 6, 47 + i * 4, 8, 4, 6);
-            }
-            modeStatsCtx.drawImage(modeStatsImage, 0, 16, 130, 8, 0, 16, 130, 8);
-            //Best score
-            modeStatsCtx.drawImage(modeStatsImage, 0, 24, 130, 16, 0, 24, 130, 16);
-            bestScoreString = Math.floor(game.bestScores[2]).toString();
-            for (let i = 0; i < bestScoreString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestScoreString[i] * 4, 0, 4, 6, 45 + i * 4, 24, 4, 6);
-            }
-            //Best level
-            bestLevelString = Math.floor(game.bestLevels[2]).toString();
-            bestLevelColor = game.bestLevels[2] >= 999 ? 3 : 0;
-            for (let i = 0; i < bestLevelString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestLevelString[i] * 4, bestLevelColor * 6, 4, 6, 44 + i * 4, 32, 4, 6);
-            }
-            //Best highest section time
-            if (game.bestLevels[2] >= 999) {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 48, 130, 8, 0, 40, 130, 8);
-                let bestHighestSectionTime = game.bestHighestSectionTimes[2];
-                let timeString = convertToTime(bestHighestSectionTime);
-                let timeColor = getTimeColor(bestHighestSectionTime);
-
-                for (let i = 0; i < timeString.length; i++) {
-                    if (timeString[i] == ":") { modeStatsCtx.drawImage(digitsSmall, 40, timeColor * 6, 4, 6, 89 + i * 4, 40, 4, 6); }
-                    else { modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[i]) * 4, timeColor * 6, 4, 6, 89 + i * 4, 40, 4, 6); }
-                }
-            }
-            else {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 40, 130, 8, 0, 40, 130, 8);
-            }
-            //Best average section time
-            if (game.bestLevels[2] >= 999) {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 56, 130, 8, 0, 48, 130, 8);
-                let bestAverageSectionTime = game.bestAverageSectionTimes[2];
-                let timeString = convertToTime(bestAverageSectionTime);
-                let timeColor = getTimeColor(bestAverageSectionTime);
-
-                for (let i = 0; i < timeString.length; i++) {
-                    if (timeString[i] == ":") { modeStatsCtx.drawImage(digitsSmall, 40, timeColor * 6, 4, 6, 88 + i * 4, 48, 4, 6); }
-                    else { modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[i]) * 4, timeColor * 6, 4, 6, 88 + i * 4, 48, 4, 6); }
-                }
-            }
-            else {
-                modeStatsCtx.drawImage(modeStatsImage, 0, 40, 130, 8, 0, 48, 130, 8);
-            }
-            //Best individual section times
-            modeStatsCtx.drawImage(modeStatsImage, 0, 64, 130, 8, 0, 64, 130, 8);
-            for (let i = 0; i < 10; i++) {
-                if (game.dragonStyleBestSectionTimes[i]) {
-                    let sectionTime = game.dragonStyleBestSectionTimes[i];
-                    let timeString = convertToTime(sectionTime);
-                    let sectionTimeColor = getTimeColor(sectionTime);
-
-                    for (let j = 0; j < timeString.length; j++) {
-                        if (timeString[j] == ":") { modeStatsCtx.drawImage(digitsSmall, 40, sectionTimeColor * 6, 4, 6, j * 4, 72 + i * 8, 4, 6); }
-                        else { modeStatsCtx.drawImage(digitsSmall, parseInt(timeString[j]) * 4, sectionTimeColor * 6, 4, 6, j * 4, 72 + i * 8, 4, 6); }
-                    }
-                }
-                else {
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 0, 72 + i * 8, 4, 6);
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 4, 72 + i * 8, 4, 6);
-                    modeStatsCtx.drawImage(digitsSmall, 44, 0, 4, 6, 8, 72 + i * 8, 4, 6);
-                }
-            }
-            break;
         case 4:
             modeStatsCtx.clearRect(0, 0, 130, 160);
             modeStatsCtx.fillStyle = "#eaeaff";
@@ -453,7 +333,7 @@ function displayModeInfo(mode) {
             modeStatsCtx.fillStyle = "#000008";
             modeStatsCtx.fillRect(1, 2, 129, 1);
             document.getElementById("modeInfoImage").src = "img/style5.png";
-            document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Bonus mode - Can you stack in time with the beat?<br>Extremely challenging - Only for top players!<br>-Variable DAS and ARE based on beat speed<br>-Grade based on distance through the song";
+            document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Bonus mode - Can you stack in time with the beat?<br>Extremely challenging - Only for top players!<br>- Variable DAS and ARE based on beat speed<br>- Grade based on distance through the song";
             modeStatsCtx.clearRect(0, 0, 130, 160);
             modeStatsCtx.fillStyle = "#eaeaff";
             modeStatsCtx.fillRect(0, 1, 129, 1);

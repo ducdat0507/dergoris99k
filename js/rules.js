@@ -1,6 +1,12 @@
 // Rules and shared utility functions moved from script.js
 
-function convertToTime(seconds) {
+function formatScore(score) {
+	return score.toLocaleString("en-US", {
+		minFranctionDigits: 0,
+		maxFranctionDigits: 0,
+	}).replaceAll(",", "'");
+}
+function formatTime(seconds) {
 	let timeString = "";
 	timeString += Math.floor(seconds/60).toString().padStart(2, "0") + ":"; //minutes
 	timeString += Math.floor(seconds%60).toString().padStart(2, "0") + ":"; //seconds
