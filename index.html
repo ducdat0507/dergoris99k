@@ -34,43 +34,12 @@
     <img src="img/main/beatBar.png" style="display: none">
     <img src="img/main/explosionEffect.png" style="display: none">
     <img src="img/main/finish.png" style="display: none">
-    <img src="img/gb/boardSmall.png" style="display: none">
-    <img src="img/gb/tiles.png" style="display: none">
-    <img src="img/gb/hardDropTile.png" style="display: none">
-    <img src="img/gb/sideInfo.png" style="display: none">
-    <img src="img/nes/boardSmall.png" style="display: none">
-    <img src="img/nes/tiles.png" style="display: none">
-    <img src="img/nes/hardDropTile.png" style="display: none">
-    <img src="img/nes/sideInfo.png" style="display: none">
-    <img src="img/nes/linesBoxSmall.png" style="display: none">
-    <img src="img/nes/statistics.png" style="display: none">
-    <img src="img/nes/statPieces.png" style="display: none">
-    <img src="img/dx/boardSmall.png" style="display: none">
-    <img src="img/dx/tiles.png" style="display: none">
-    <img src="img/dx/hardDropTile.png" style="display: none">
-    <img src="img/dx/sideInfo.png" style="display: none">
-    <img src="img/sega/backgrounds.png" style="display: none">
-    <img src="img/sega/board.png" style="display: none">
-    <img src="img/sega/tiles.png" style="display: none">
-    <img src="img/sega/hardDropTile.png" style="display: none">
-    <img src="img/sega/sideInfo.png" style="display: none">
-    <img src="img/sega/tileVanish.png" style="display: none">
-    <img src="img/sega/digits.png" style="display: none">
-    <img src="img/tgm/backgrounds.png" style="display: none">
-    <img src="img/tgm/backgroundsDark.png" style="display: none">
-    <img src="img/tgm/board.png" style="display: none">
-    <img src="img/tgm/tiles.png" style="display: none">
-    <img src="img/tgm/ghostTiles.png" style="display: none">
-    <img src="img/tgm/sideInfo.png" style="display: none">
-    <img src="img/tgm/levelBars.png" style="display: none">
-    <img src="img/tgm/digits.png" style="display: none">
-    <img src="img/tgm/readyGo.png" style="display: none">
-    <img src="img/tgm/timeDigits.png" style="display: none">
-    <img src="img/tgm/grades.png" style="display: none">
 </head>
 <body>
+    <!--Background visuals-->
     <canvas id="backgroundCanvas"></canvas>
     <canvas id="gameCanvas" style="display: none"></canvas>
+    <!--Main menu-->
     <div class="container" style="padding: 40px;">
         <img src="img/title.png" style="height: 66px;"><br><p style="margin-top: 4px; color: #ddd; font-size: 16px; margin-bottom: 40px">V1.2.2</p>
         <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(2); displayModeInfo(currentMenuMode)">CAMPAIGN</button><br>
@@ -79,9 +48,10 @@
         <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); showSettings()">SETTINGS</button><br>
         <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(4)">CREDITS</button><br>
     </div>
+    <!--Campaign menu-->
     <div class="container" style="left: 100vw; padding: 40px;">
         <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button>
-        <canvas id="overallGradeCanvas" width="140px" height="40px"></canvas>
+        <canvas id="overallGradeCanvas" width="190px" height="40px"></canvas>
         <div id="modeSelectContainer">
             <img class="menuMode" src="img/style1.png" onclick="playSound('buttonClick'); selectMenuMode(1)">
             <img class="menuMode" src="img/style2.png" onclick="playSound('buttonClick'); selectMenuMode(2)">
@@ -92,7 +62,7 @@
             <img class="menuArrow" src="img/menuArrowDown.png" onclick="playSound('buttonClick'); selectMenuMode(Math.min(4,currentMenuMode+1))">
         </div>
         <div id="modeStatsContainer">
-            <canvas id="modeStatsCanvas" width="130px" height="160px"></canvas><br>
+            <canvas id="modeStatsCanvas" width="180px" height="160px"></canvas><br>
         </div>
         <div id="modeInfoContainer">
             <img id="modeInfoImage" src="img/style1.png" style="width: 400px; max-width: 100%; margin-left: auto; margin-right: auto; display: block;">
@@ -101,6 +71,7 @@
             <img src="img/play.png" id="playButton" onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)">
         </div>
     </div>
+    <!--Custom game-->
     <div class="container" style="left: 100vw">
         <div id="settings" style="overflow: auto; max-height: 98vh;">
             <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button><br><br>
@@ -110,11 +81,6 @@
                 <option value="classicStyle" selected>Classic Style</option>
                 <option value="masterStyle">Master Style</option>
                 <option value="dragonStyle">Dragon Style</option>
-                <option value="gb">Game Boy</option>
-                <option value="nes">NES</option>
-                <option value="dx">Tetris DX</option>
-                <option value="sega">Sega (arcade)</option>
-                <option value="tgm">The Grand Master</option>
             </select><br><br>
             <label for="startingLevelSetting">STARTING LEVEL - </label>
             <input type="number" id="startingLevelSetting" value="0" min="0" max="999" onchange="setStartingLevel()"><br><br>
@@ -128,37 +94,17 @@
                 <option value="classicStyle" selected>Classic Style</option>
                 <option value="masterStyle">Master Style</option>
                 <option value="dragonStyle">Dragon Style</option>
-                <option value="gb">Game Boy</option>
-                <option value="nes">NES</option>
-                <option value="dx">Tetris DX</option>
-                <option value="sega">Sega (arcade)</option>
-                <option value="tgm">The Grand Master</option>
             </select><br>
             <label for="gameMechanicsSetting">GAME MECHANICS - </label>
             <select id="gameMechanicsSetting" onchange="setGameMechanics()">
                 <option value="classicStyle" selected>Classic Style</option>
                 <option value="masterStyle">Master Style</option>
                 <option value="dragonStyle">Dragon Style</option>
-                <option value="gb">Game Boy</option>
-                <option value="nes">NES</option>
-                <option value="dx">Tetris DX</option>
-                <option value="sega">Sega (arcade)</option>
-                <option value="tgm">The Grand Master</option>
             </select><br>
             <p>MAIN GAME MECHANICS. INCLDUES DROP SPEED, ARE AND SCORING SYSTEM.</p><br>
-            <label for="segaDifficultySetting">SEGA DIFFICULTY - </label>
-            <select id="segaDifficultySetting" onchange="setSegaDifficulty()" disabled>
-                <option value="easy">Easy</option>
-                <option value="normal" selected>Normal</option>
-                <option value="hard">Hard</option>
-                <option value="hardest">Hardest</option>
-            </select><br>
             <label for="randomizerSetting">RANDOMIZER - </label>
             <select id="randomizerSetting" onchange="setRandomizer()">
                 <option value="random">Random</option>
-                <option value="gb">Game Boy</option>
-                <option value="nes">NES</option>
-                <option value="dx">Tetris DX</option>
                 <option value="tgm" selected>The Grand Master</option>
             </select><br>
             <p>HOW PIECES ARE CHOSEN.</p><br>
@@ -185,11 +131,6 @@
 
             <label for="rotationSystemSetting">ROTATION SYSTEM - </label>
             <select id="rotationSystemSetting" onchange="setRotationSystem()">
-                <option value="nintendo-l">Nintendo Rotation (Left-handed)</option>
-                <option value="nintendo-r">Nintendo Rotation (Right-handed)</option>
-                <option value="dx">DX Rotation</option>
-                <option value="sega">Sega Rotation</option>
-                <option value="ars" selected>Arika Rotation</option>
                 <option value="dergoris" selected>Dergoris Custom Rotation</option>
             </select><br>
             <label for="IRSSetting">IRS</label>
@@ -224,6 +165,7 @@
             <p>MOVE = RESET LOCK DELAY WHEN PIECE MOVES.<br>STEP = RESET LOCK DELAY WHEN PIECE MOVES DOWN.</p>
         </div>
     </div>
+    <!--Credits-->
     <div class="container" style="top: 100vh; padding: 40px; box-sizing: border-box; overflow-y: auto;">
         <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button><br><br>
         <img src="img/azzy.png" style="position: absolute; bottom: 25px; right: 25px; height: 500px; image-rendering: auto;">
@@ -237,6 +179,7 @@
             <br>---------<br>Some main sprites taken/modified from the <i>Tetris: The Grand Master</i> series by Arika<br>Retro game sprites belong to Nintendo, Sega, and Arika<br>Background shaders created by Xor and greenbird10 on Shadertoy
             <br>---------<br>Thank you to all the patrons, testers, and those in the TAP discord server who helped make this game what it is!</p>
     </div>
+    <!--Keybinds-->
     <div id="keybindsContainer">
         <p class="keybindsText"><b>Keybinds</b></p><br><br>
         <p class="keybindsText">Move left - <span class="keybind">ArrowLeft</span></p>
@@ -257,6 +200,7 @@
         <button class="keybindButton" onclick="changeKeybind(8)">CHANGE</button><br>
         <button onclick="hideKeybinds()">CLOSE</button>
     </div>
+    <!--Settings-->
     <div id="settingsContainer">
         <label for="volumeSetting">OVERALL VOLUME</label>
         <input type="range" id="volumeSetting" min="0" max="100" value="50" onchange="setVolume()"><br><br>
@@ -281,21 +225,27 @@
     <div id="blackCoverRight" style="right: 0"></div>
     <button class="startingButton" style="top: calc(50% - 40px)" onclick="hideBlackCover(); initializeGameMusic(); playSound('menuMusic')">PLAY WITH SOUND</button>
     <button class="startingButton" style="top: calc(50% + 40px)" onclick="soundEnabled=false; hideBlackCover()">PLAY WITHOUT SOUND</button>
-    
-    <script src="howler.js"></script>
-    <script src="bmtext.js?v=130"></script>
-    <script src="fonts/text5.js?v=130"></script>
-    <script src="constants.js?v=130"></script>
-    <script src="background.js?v=130"></script>
-    <script src="menuBackground.js?v=1301"></script>
-    <script src="script.js?v=130"></script>
-    <script src="sound.js?v=130"></script>
-    <script src="settings.js?v=130"></script>
-    <script src="menu.js?v=130"></script>
-
-    <script defer>
-        document.getElementsByClassName("startingButton")[0].style.display = "block"; 
-        document.getElementsByClassName("startingButton")[1].style.display = "block";
-    </script>
+    <script src="js/howler.js"></script>
+    <script src="js/bmtext.js"></script>
+    <script src="fonts/text5.js"></script>
+    <script src="fonts/text10.js"></script>
+    <script src="js/bmtext.js"></script>
+    <script src="js/constants.js"></script>
+    <script src="js/pieceDefinitions.js"></script>
+    <script src="js/background.js"></script>
+    <script src="js/menuBackground.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/rules.js"></script>
+    <script src="js/pieceSystem.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/piece.js"></script>
+    <script src="js/lineclear.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/menu.js"></script>
+    <script defer>document.getElementsByClassName("startingButton")[0].style.display = "block"; document.getElementsByClassName("startingButton")[1].style.display = "block";</script>
 </body>
 </html>

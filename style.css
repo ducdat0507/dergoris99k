@@ -144,7 +144,7 @@ button {
     position: absolute;
     top: 30px;
     right: 110px;
-    transform: scale(4);
+    transform: scale(3);
     transform-origin: top right;
 }
 
@@ -152,7 +152,7 @@ button {
     position: absolute;
     top: 200px;
     right: 110px;
-    width: 560px;
+    width: 580px;
     padding: 20px;
     height: calc(100% - 310px);
     -webkit-box-sizing: border-box;
@@ -168,7 +168,7 @@ button {
     top: 50%;
     left: 560px;
     padding: 20px;
-    width: calc(100% - 1250px);
+    width: calc(100% - 1270px);
     transform: translateY(-50%);
     min-width: 250px;
     max-height: 75%;
@@ -186,7 +186,7 @@ button {
 }
 
 #modeStatsCanvas {
-    transform: scale(4);
+    transform: scale(3);
     transform-origin: top left;
 }
 

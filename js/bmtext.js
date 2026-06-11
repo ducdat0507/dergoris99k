@@ -32,3 +32,19 @@ function drawBMText(ctx, x, y, text, font="text5-white")
 
     return offset;
 }
+
+function measureBMText(text, font="text5-white") 
+{
+    const fontData = fonts[font];
+
+    let offset = 0;
+
+    for (let char of text) 
+    {
+        if (!fontData.chars[char]) continue;
+        const charData = fontData.chars[char];
+        offset += charData.w;
+    }
+
+    return offset;
+}
