@@ -4,7 +4,7 @@ function formatScore(score) {
 	return score.toLocaleString("en-US", {
 		minFranctionDigits: 0,
 		maxFranctionDigits: 0,
-	}).replaceAll(",", "'");
+	}).replaceAll(",", "");
 }
 function formatTime(seconds) {
 	let timeString = "";

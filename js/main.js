@@ -469,6 +469,50 @@ function endGame() {
         else { playSound("finish"); }
         let leftSide = 160 - settings.boardWidth * 4;
 
+        // Record update
+        let recordIndex = {
+            classicStyle: 0,
+            masterStyle: 1,
+            dragonStyle: 2,
+        }[settings.gameMechanics] ?? -1;
+
+        if (settings.gameMechanics == "classicStyle") {
+            runPower = (level + 1) * 15; //Level component
+            if (sectionTimes.length > 0) runPower += Math.max((1875000 / averageSectionTime - 20000), 0); //Section time component
+            runPower += score ** 0.5 * 8; //Score component
+        } else if (settings.gameMechanics == "masterStyle") {
+            runPower = (level + 1) * 15; //Level component
+            if (sectionTimes.length > 0) runPower += Math.max((2800000 / averageSectionTime - 30000), 0); //Section time component
+        } else if (settings.gameMechanics == "dragonStyle") {
+            runPower = (level + 1) * 20; //Level component
+            if (sectionTimes.length > 0) runPower += Math.max((1200000 / averageSectionTime - 20000), 0); //Section time component
+        } else if (settings.gameMechanics == "onTheBeat") {
+            if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;
+            if (inCampaign && level > game.onTheBeatBests[1]) game.onTheBeatBests[1] = level;
+        }
+
+        let oldPower = game.bestPowers[recordIndex] ?? NaN
+        let oldScore = game.bestScores[recordIndex] ?? NaN
+        let oldLevel = game.bestLevels[recordIndex] ?? NaN
+        let oldAchTime = game.bestAchievementTimes[recordIndex] ?? NaN;
+        if (inCampaign && recordIndex >= 0) {
+            if (runPower > game.bestPowers[recordIndex]) game.bestPowers[recordIndex] = runPower;
+            if (score > game.bestScores[recordIndex]) game.bestScores[recordIndex] = score;
+            if (level > game.bestLevels[recordIndex])  {
+                game.bestLevels[recordIndex] = level;
+                game.bestAchievementTimes[recordIndex] = time;
+            } else if (level == game.bestLevels[recordIndex] && game.bestAchievementTimes[recordIndex] <= time) {
+                game.bestAchievementTimes[recordIndex] = time;
+            }
+        }
+
+        // Clear HUD
+        ctx.clearRect(0, 0, leftSide - 8, 240);
+        ctx.clearRect(168 + settings.boardWidth * 4, 0, leftSide - 16, 240);
+        ctx.clearRect(0, 0, 320, 112 - settings.boardHeight * 4);
+        ctx.clearRect(0, 128 + settings.boardHeight * 4, 320, 240);
+        
+        // Draw board
         ctx.clearRect(leftSide, 40, (8 * settings.boardWidth), (8 * settings.boardHeight));
         ctx.drawImage(images.sideInfo4, leftSide, 40);
         for (let i = 0; i < settings.boardHeight; i++) {
@@ -480,16 +524,12 @@ function endGame() {
             }
         }
 
-        //Finish text
-        ctx.clearRect(0, 0, leftSide - 8, 240);
-        ctx.clearRect(168 + settings.boardWidth * 4, 0, leftSide - 16, 240);
-        ctx.clearRect(0, 0, 320, 112 - settings.boardHeight * 4);
-        ctx.clearRect(0, 128 + settings.boardHeight * 4, 320, 240);
+        // Achievement
 
-        //Average section time
+        // Average section time
         let averageSectionTime;
+
         if (sectionTimes.length > 0) {
-            ctx.drawImage(images.sideInfo3, 0, 16, 79, 7, 121, 169, 79, 7);
             averageSectionTime = sectionTimes[0] ? sectionTimes[0] : 0;
             for (let i = 1; i < sectionTimes.length; i++) {
                 if (sectionTimes[i] && sectionTimes[i - 1]) { averageSectionTime += (sectionTimes[i] - sectionTimes[i - 1]); }
@@ -500,27 +540,20 @@ function endGame() {
             let timeString = formatTime(averageSectionTime);
             let sectionTimeColor = getTimeColor(averageSectionTime);
 
-            for (let i = 0; i < timeString.length; i++) {
-                if (timeString[i] == ":") { ctx.drawImage(images.sideInfo2, 40, sectionTimeColor * 6, 4, 6, 145 + i * 4, 177, 4, 6); }
-                else { ctx.drawImage(images.sideInfo2, parseInt(timeString[i]) * 4, sectionTimeColor * 6, 4, 6, 145 + i * 4, 177, 4, 6); }
-            }
-
-            if (level >= 999 && inCampaign && settings.gameMechanics != "onTheBeat") {
-                //Best average section time
-                if (settings.gameMechanics == "classicStyle" && averageSectionTime < game.bestAverageSectionTimes[0]) game.bestAverageSectionTimes[0] = averageSectionTime;
-                else if (settings.gameMechanics == "masterStyle" && averageSectionTime < game.bestAverageSectionTimes[1]) game.bestAverageSectionTimes[1] = averageSectionTime;
-                else if (settings.gameMechanics == "dragonStyle" && averageSectionTime < game.bestAverageSectionTimes[2]) game.bestAverageSectionTimes[2] = averageSectionTime;
-                //Best highest section time
-                let highestSectionTime = sectionTimes[0];
-                for (let i = 1; i < sectionTimes.length; i++) {
-                    if (sectionTimes[i] && sectionTimes[i] - sectionTimes[i - 1] > highestSectionTime) highestSectionTime = (sectionTimes[i] - sectionTimes[i - 1]);
-                }
-                if (settings.gameMechanics == "classicStyle" && highestSectionTime < game.bestHighestSectionTimes[0]) game.bestHighestSectionTimes[0] = highestSectionTime;
-                else if (settings.gameMechanics == "masterStyle" && highestSectionTime < game.bestHighestSectionTimes[1]) game.bestHighestSectionTimes[1] = highestSectionTime;
-                else if (settings.gameMechanics == "dragonStyle" && highestSectionTime < game.bestHighestSectionTimes[2]) game.bestHighestSectionTimes[2] = highestSectionTime;
-            }
-
             if (inCampaign) {
+
+                if (level >= 999 && settings.gameMechanics != "onTheBeat") {
+                    //Best average section time
+                    if (recordIndex >= 0 && averageSectionTime < game.bestAverageSectionTimes[recordIndex]) game.bestAverageSectionTimes[recordIndex] = averageSectionTime;
+
+                    //Best highest section time
+                    let highestSectionTime = sectionTimes[0];
+                    for (let i = 1; i < sectionTimes.length; i++) {
+                        if (sectionTimes[i] && sectionTimes[i] - sectionTimes[i - 1] > highestSectionTime) highestSectionTime = (sectionTimes[i] - sectionTimes[i - 1]);
+                    }
+                    if (recordIndex >= 0 && highestSectionTime < game.bestHighestSectionTimes[recordIndex]) game.bestHighestSectionTimes[recordIndex] = highestSectionTime;
+                }
+
                 //Individual best section times
                 if (settings.gameMechanics == "classicStyle" && (sectionTimes[0] < game.classicStyleBestSectionTimes[0] || !game.classicStyleBestSectionTimes[0])) game.classicStyleBestSectionTimes[0] = sectionTimes[0];
                 else if (settings.gameMechanics == "masterStyle" && (sectionTimes[0] < game.masterStyleBestSectionTimes[0] || !game.masterStyleBestSectionTimes[0])) game.masterStyleBestSectionTimes[0] = sectionTimes[0];
@@ -532,41 +565,18 @@ function endGame() {
                 }
             }
         }
-
+        
         // Power
-        let power = 0;
-        if (settings.gameMechanics == "classicStyle") {
-            power = (level + 1) * 15; //Level component
-            if (sectionTimes.length > 0) power += Math.max((1875000 / averageSectionTime - 20000), 0); //Section time component
-            power += score ** 0.5 * 8; //Score component
-            if (inCampaign && power > game.bestPowers[0]) game.bestPowers[0] = power;
-            if (inCampaign && score > game.bestScores[0]) game.bestScores[0] = score;
-            if (inCampaign && level > game.bestLevels[0]) game.bestLevels[0] = level;
-        }
-        else if (settings.gameMechanics == "masterStyle") {
-            power = (level + 1) * 15; //Level component
-            if (sectionTimes.length > 0) power += Math.max((2800000 / averageSectionTime - 30000), 0); //Section time component
-            if (inCampaign && power > game.bestPowers[1]) game.bestPowers[1] = power;
-            if (inCampaign && score > game.bestScores[1]) game.bestScores[1] = score;
-            if (inCampaign && level > game.bestLevels[1]) game.bestLevels[1] = level;
-        }
-        else if (settings.gameMechanics == "dragonStyle") {
-            power = (level + 1) * 20; //Level component
-            if (sectionTimes.length > 0) power += Math.max((1200000 / averageSectionTime - 20000), 0); //Section time component
-            if (inCampaign && power > game.bestPowers[2]) game.bestPowers[2] = power;
-            if (inCampaign && score > game.bestScores[2]) game.bestScores[2] = score;
-            if (inCampaign && level > game.bestLevels[2]) game.bestLevels[2] = level;
-        }
-        else if (settings.gameMechanics == "onTheBeat") {
-            if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;
-            if (inCampaign && level > game.onTheBeatBests[1]) game.onTheBeatBests[1] = level;
-        }
-
-        let powerString = Math.floor(power).toString();
-        drawBMText(ctx, 98, 177, "POWER THIS RUN:", "text5-white");
+        let powerString = Math.floor(runPower).toString();
         let maxPower = settings.gameMechanics == "dragonStyle" ? 39000 : 30000
-        let powerColor = (power >= maxPower) ? "-gold" : "-white";
-        drawBMText(ctx, 221 - measureBMText(powerString, "text10-white"), 172, powerString, "text10" + powerColor);
+        let powerColor = (runPower >= maxPower) ? "-gold" : "-white";
+        drawBMText(ctx, 98, 179, "POWER THIS RUN:", "text5-white");
+        drawBMText(ctx, 221 - measureBMText(powerString, "text10-white"), 174, powerString, "text10" + powerColor);
+
+        let oldPowerString = Math.floor(oldPower).toString()
+        let newPowerRecord = runPower > oldPower;
+        drawBMText(ctx, 108, 189, newPowerRecord ? "NEW BEST!" : "BEST:", newPowerRecord ? "text5-gold" : "text5-gray");
+        drawBMText(ctx, 221 - measureBMText(oldPowerString, "text5-white"), 189, oldPowerString, "text5-white");
 
         // Decoration
         if (inCampaign) {
@@ -583,9 +593,9 @@ function endGame() {
             game.decorPoints += decorPointsEarned
 
             let decorString = formatScore(decorPointsEarned);
-            drawBMText(ctx, 98, 187, "EARNED DECORATION:", "text5-white");
-            drawBMText(ctx, 215 - measureBMText("+" + decorString, "text5-white"), 187, "+" + decorString, "text5-white");
-            drawBMText(ctx, 217, 187, "G", "text5-gold");
+            drawBMText(ctx, 98, 199, "EARNED DECORATION:", "text5-white");
+            drawBMText(ctx, 215 - measureBMText("+" + decorString, "text5-white"), 199, "+" + decorString, "text5-white");
+            drawBMText(ctx, 217, 199, "G", "text5-gold");
         }
     }
 }

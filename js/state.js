@@ -78,6 +78,7 @@ function reset() {
         bestScores: [0, 0, 0],
         bestLevels: [0, 0, 0],
         onTheBeatBests: [0, 0],
+        bestAchievementTimes: [5940, 5940, 5940],
         bestHighestSectionTimes: [5940, 5940, 5940],
         bestAverageSectionTimes: [5940, 5940, 5940],
         classicStyleBestSectionTimes: [],
