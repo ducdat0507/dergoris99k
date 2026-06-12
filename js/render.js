@@ -30,7 +30,7 @@ if (window.innerHeight < 750) {
 	document.getElementById("game").style.transform = "translate(-50%, -50%) scale(2)";
 	document.getElementById("effectOverlay").style.transform = "translate(-50%, -50%) scale(2)";
 	document.getElementById("textOverlay").style.transform = "translate(-50%, -50%) scale(2)";
-} else if (window.innerHeight < 950) {
+} else {
 	document.getElementById("game").style.transform = "translate(-50%, -50%) scale(3)";
 	document.getElementById("effectOverlay").style.transform = "translate(-50%, -50%) scale(3)";
 	document.getElementById("textOverlay").style.transform = "translate(-50%, -50%) scale(3)";
@@ -40,7 +40,7 @@ function initialiseCanvasBoard() {
     // Only support main modes: classicStyle, masterStyle, dragonStyle, onTheBeat
     if (settings.visuals == "classicStyle" || settings.visuals == "masterStyle" || settings.visuals == "dragonStyle" || settings.visuals == "onTheBeat") {
         canvas.height = Math.max(settings.boardHeight*8, 240);
-        document.getElementById("textOverlay").style.height = Math.max(settings.boardHeight*8, 240) + "px";
+        document.getElementById("textOverlay").style.height = canvas.height + "px";
         document.body.style.backgroundImage = "none";
         let leftSide = 160-settings.boardWidth*4;
         images.tiles.src = "img/main/tiles.png";
@@ -103,11 +103,10 @@ function updateVisuals() {
     // Only support main modes: classicStyle, masterStyle, dragonStyle, onTheBeat
     if (settings.visuals == "classicStyle" || settings.visuals == "masterStyle" || settings.visuals == "dragonStyle" || settings.visuals == "onTheBeat") {
         let leftSide = 160-settings.boardWidth*4;
-        //Clear the canvas
-        //ctx.fillStyle = "black";
-        //ctx.fillRect(leftSide, 40, (8*settings.boardWidth), (8*settings.boardHeight));
+
         ctx.clearRect(leftSide, 40, (8*settings.boardWidth), (8*settings.boardHeight));
         ctx.drawImage(images.sideInfo4, leftSide, 40);
+
         if (!waitingForNextPiece) {
             //Draw the ghost piece if lower than level 200
             if (level < 200) {
@@ -139,9 +138,11 @@ function updateVisuals() {
                 }
             }
         }
-        //Board pieces
+
+        // Board pieces
         let currentBeatTime;
         if (gameMusic7) currentBeatTime = gameMusic7.seek() * (155/60);
+
         if (!settings.invisible && (settings.gameMechanics != "onTheBeat" || (currentBeatTime < 392 && (currentBeatTime < 376 || currentBeatTime >= 377)))) {
             for (let i=0;i<settings.boardHeight;i++) {
                 for (let j=0;j<settings.boardWidth;j++) {
@@ -163,11 +164,11 @@ function updateVisuals() {
             }
         }
 
-        //Grade
+        // Grade
         ctx.clearRect(211, 34, 48, 32);
         ctx.drawImage(images.grades, 0, 32*grade, 48, 32, 211, 34, 48, 32);
 
-        //Text
+        // Text
         let nextGradeString;
         let nextGradeLength;
         if (settings.visuals == "classicStyle") {

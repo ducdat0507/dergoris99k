@@ -233,7 +233,7 @@ function displayModeInfo(mode) {
     //Decor points
     let decorationString = formatScore(game.decorPoints)
     drawBMText(overallGradeCtx, 0, 33, "DECORATION:", "text5-gold")
-    drawBMText(overallGradeCtx, 131 - measureBMText(decorationString, "text5-white"), 33, decorationString, "text5-white");
+    drawBMText(overallGradeCtx, 129 - measureBMText(decorationString, "text5-white"), 33, decorationString, "text5-white");
     drawBMText(overallGradeCtx, 131, 33, "G", "text5-gold");
 
 

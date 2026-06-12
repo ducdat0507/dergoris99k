@@ -46,6 +46,8 @@ let currentDropTime = 0;
 let currentDASTime = 0;
 let currentLockTime = 0;
 let locking = false;
+let runPower = 0;
+let runDecorPoints = 0;
 
 //TGM-specific variables
 let TGMFirstMove = true;

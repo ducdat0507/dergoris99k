@@ -47,6 +47,7 @@ fonts["text5-white"] = {
         "@": { x: 178, y: 0, w: 5, h: 6 },
         "'": { x: 183, y: 0, w: 4, h: 6 },
         "=": { x: 187, y: 0, w: 4, h: 6 },
+        "/": { x: 191, y: 0, w: 6, h: 6 },
     }
 }
 fonts["text5-white"].image.src = "fonts/text5.png";

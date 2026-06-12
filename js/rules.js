@@ -16,10 +16,10 @@ function formatTime(seconds) {
 
 function getTimeColor(seconds) {
 	let timeColor;
-	if (seconds < 55) {timeColor = 3;}
+	if      (seconds < 55) {timeColor = 3;}
 	else if (seconds < 60) {timeColor = 2;}
 	else if (seconds < 65) {timeColor = 1;}
-	else {timeColor = 0;}
+	else                   {timeColor = 0;}
 	return timeColor;
 }
 
