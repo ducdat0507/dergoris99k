@@ -7,6 +7,10 @@ let gamepadState = {
 };
 
 function doActionDown(action) {
+    if (activeForm && handleFormInput(action)) {
+        return;
+    }
+
     switch (action) {
         case "left":
             if (!waitingForNextPiece) setInitialDAS(0);
@@ -19,9 +23,11 @@ function doActionDown(action) {
             break;
 
         case "hardDrop":
-            if (!gamePlaying && onCampaignScreen && document.getElementsByClassName("container")[1].style.display != "none") {
+            if (activeForm) {
+                navigateForm(-1);
+            } else if (!gamePlaying && onCampaignScreen && document.getElementsByClassName("container")[1].style.display != "none") {
                 selectMenuMode(Math.max(1,currentMenuMode-1));
-                playSound('buttonClick'); 
+                playSound('buttonHover'); 
             }
             else {
                 hardDrop();
@@ -30,9 +36,11 @@ function doActionDown(action) {
             break;
 
         case "softDrop":
-            if (!gamePlaying && onCampaignScreen && document.getElementsByClassName("container")[1].style.display != "none") {
+            if (activeForm) {
+                navigateForm(1);
+            } else if (!gamePlaying && onCampaignScreen && document.getElementsByClassName("container")[1].style.display != "none") {
                 selectMenuMode(Math.min(4,currentMenuMode+1));
-                playSound('buttonClick'); 
+                playSound('buttonHover'); 
             }
             else {
                 softDrop();
@@ -59,8 +67,10 @@ function doActionDown(action) {
 
         case "rotAnticlockwise":
             if (!gamePlaying && document.getElementsByClassName("container")[1].style.display != "none") {
-                playSound('buttonClick'); 
-                switchToTab(1);
+                if (currentTab != 1) {
+                    playSound('buttonClick'); 
+                    switchToTab(1);
+                }
             } else {
                 if (keysHeld[5] == 0) keysHeld[5] = 1;
             }
@@ -118,19 +128,30 @@ function doActionUp(action) {
     }
 }
 
+function setActiveInputMethod(method) {
+    if (method == primaryInputMethod) return;
+
+    primaryInputMethod = method;
+    redrawCurrentInputPrompts();
+}
+
 function updateInputMethod() {
     let gamepad = navigator.getGamepads?.()[0];
     gamepadState.gamepad = gamepad;
     
     if (gamepad) {
         console.log(gamepad.id);
-        primaryInputMethod = "gamepad"
-        gamepadState.type = (gamepad.id.includes("Sony")) ? "dualshock" : "xbox"
+        gamepadState.type = testGamepadProvider(gamepad)
+        setActiveInputMethod("gamepad");
     } else {
-        primaryInputMethod = "keyboard"
+        setActiveInputMethod("keyboard");
     }
 
-    redrawCurrentInputPrompts();
+}
+
+function testGamepadProvider(gamepad) {
+    if (gamepad.id.includes("054c")) return "dualshock";
+    return "xbox";
 }
 
 
@@ -138,6 +159,10 @@ function updateInputMethod() {
 // Keyboard
 
 document.addEventListener("keydown", function(event) {
+    if (event.repeat) return;
+
+    setActiveInputMethod("keyboard");
+
     if (keybindToReplace != "") {
         if (event.key == "Escape") {
             keybindToReplace = "";
@@ -206,31 +231,40 @@ window.addEventListener("load", function(event) {
 })
 
 function gamepadLoop() {
-    if (gamepadState.gamepad) {
-        for (let button in gamepadState.gamepad.buttons) {
-            let state = gamepadState.gamepad.buttons[button].value;
-            if (gamepadState.oldButtons[button] != state) {
-                let action = gamepadButtonConfig[button];
-                if (action) (state ? doActionDown : doActionUp)(action);
-                gamepadState.oldButtons[button] = state;
-            }
-        }
-        for (let axis in gamepadState.gamepad.axes) {
-            let state = gamepadState.gamepad.axes[axis];
-            state = Math.abs(state) < 0.33 ? "" : ["-", "", "+"][Math.sign(state) + 1] + axis
-            if (gamepadState.oldAxes[axis] != state) {
-                if (gamepadState.oldAxes[axis]) {
-                    action = gamepadAxisConfig[gamepadState.oldAxes[axis]];
-                    if (action) doActionUp(action);
-                }
-                gamepadState.oldAxes[axis] = state;
-                if (gamepadState.oldAxes[axis]) {
-                    action = gamepadAxisConfig[gamepadState.oldAxes[axis]];
-                    if (action) doActionDown(action);
+    try {
+        if (navigator.getGamepads?.()[0]) {
+            gamepadState.gamepad = navigator.getGamepads?.()[0];
+            
+            for (let button in gamepadState.gamepad.buttons) {
+                let state = gamepadState.gamepad.buttons[button].value;
+                if (gamepadState.oldButtons[button] != state) {
+                    setActiveInputMethod("gamepad");
+                    let action = gamepadButtonConfig[button];
+                    if (action) (state ? doActionDown : doActionUp)(action);
+                    gamepadState.oldButtons[button] = state;
                 }
             }
+            for (let axis in gamepadState.gamepad.axes) {
+                let state = gamepadState.gamepad.axes[axis];
+                state = Math.abs(state) < 0.33 ? "" : ["-", "", "+"][Math.sign(state) + 1] + axis
+                if (gamepadState.oldAxes[axis] != state) {
+                    setActiveInputMethod("gamepad");
+                    if (gamepadState.oldAxes[axis]) {
+                        action = gamepadAxisConfig[gamepadState.oldAxes[axis]];
+                        if (action) doActionUp(action);
+                    }
+                    gamepadState.oldAxes[axis] = state;
+                    if (gamepadState.oldAxes[axis]) {
+                        action = gamepadAxisConfig[gamepadState.oldAxes[axis]];
+                        if (action) doActionDown(action);
+                    }
+                }
+            }
         }
+    } catch (e) {
+        console.error(e);
     }
+
     requestAnimationFrame(gamepadLoop);
 }
 

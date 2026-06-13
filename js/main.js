@@ -523,7 +523,7 @@ function endGame() {
             // Level component
             runPower = Math.max((level - 49) * 15, 0); 
             // Section time component 
-            if (sectionTimes.length > 0) runPower += Math.sqrt(Math.max((1850000 / averageSectionTime - 200) * (level + 500), 0)); 
+            if (sectionTimes.length > 0) runPower += Math.max((1850000 / averageSectionTime - 200), 0) * (level + 500) / 1000; 
             // Score component
             runPower += score ** 0.5 * 8;
 
@@ -531,13 +531,13 @@ function endGame() {
             // Level component
             runPower = Math.max((level - 49) * 15, 0); 
             // Section time component
-            if (sectionTimes.length > 0) runPower += Math.sqrt(Math.max((2800000 / averageSectionTime - 300) * (level + 500), 0)); 
+            if (sectionTimes.length > 0) runPower += Math.max((2800000 / averageSectionTime - 300), 0) * (level + 500) / 1000;
 
         } else if (settings.gameMechanics == "dragonStyle") {
             // Level component
             runPower = Math.max((level - 49) * 20, 0); 
             // Section time component
-            if (sectionTimes.length > 0) runPower += Math.sqrt(Math.max((1200000 / averageSectionTime - 200) * (level + 500), 0)); 
+            if (sectionTimes.length > 0) runPower += Math.max((1200000 / averageSectionTime - 200), 0) * (level + 500) / 1000; 
 
         } else if (settings.gameMechanics == "onTheBeat") {
             if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;

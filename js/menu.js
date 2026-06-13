@@ -14,23 +14,41 @@ const inputPromptCtx = inputPromptCanvas && inputPromptCanvas.getContext("2d");
 
 const modeDescriptions = {
     1: `
-        - Gravity increases gradually
-        <br>- No combo-based scoring (get as many lines as you can!)
-        <br>- Faster DAS as you go
+        <b>
+            Just your classic block-stacking game as you remember it.
+            <br>Can you stack to level 999?
+        </b><br>
+        <br>- Gravity increases gradually
+        <br>- No combo-based scoring (clear as many lines as you can in one go!)
+        <br>- Auto-repeat gets faster as you go
         <br>- Hard drop is enabled! You can use it to get fast times.
         <br>- Power is based on level reached, average section time, and points.
     `,
     2: `
-        - Gravity increases very quickly
-        <br>- Combo-based scoring (get the best combo you can!)
+        <b>
+            Faster-paced mode for those who want a bit more of a challenge.
+        </b><br>
+        <br>- Gravity increases very quickly
+        <br>- Combo-based scoring (make the best combo as you can!)
         <br>- Power is based on level reached and average section time.
     `,
     3: `
-        - Instant gravity
-        <br>- DAS, ARE and lock delay get faster as you go
-        <br>- Combo-based scoring (get the best combo you can!)
+        <b>
+            Think you're good? Try stacking at overdrive speeds.
+            <br>Not for the faint of heart.
+        </b><br>
+        <br>- Maximum gravity, all delays get shorter as you go
+        <br>- Combo-based scoring (make the best combo as you can!)
         <br>- Power is based on level reached and average section time.
     `,
+    5: `
+        <b>
+            Bonus mode - Can you stack in time with the beat?
+            <br>That's actually harder than it sounds!
+        </b><br>
+        <br>- Pieces drop and lock on the beat
+        <br>- Grade based on distance through the song
+    `
 }
 
 let modeStatsImage = new Image();
@@ -63,6 +81,7 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "100vw";
             document.getElementsByClassName("container")[3].style.top = "100vh";
             document.getElementsByClassName("container")[3].style.left = "0";
+            setActiveForm(document.getElementById("mainMenuForm"));
             break;
         case 2:
             onCampaignScreen = true;
@@ -76,6 +95,7 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "100vw";
             document.getElementsByClassName("container")[3].style.top = "100vh";
             document.getElementsByClassName("container")[3].style.left = "-100vw";
+            setActiveForm(document.getElementById(null));
             hideKeybinds();
             hideSettings();
             break;
@@ -91,6 +111,7 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "0";
             document.getElementsByClassName("container")[3].style.top = "100vh";
             document.getElementsByClassName("container")[3].style.left = "-100vw";
+            setActiveForm(document.getElementById(null));
             hideKeybinds();
             hideSettings();
             break;
@@ -105,6 +126,7 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "100vw";
             document.getElementsByClassName("container")[3].style.top = "0";
             document.getElementsByClassName("container")[3].style.left = "0";
+            setActiveForm(document.getElementById(null));
             hideKeybinds();
             hideSettings();
             break;
@@ -263,7 +285,7 @@ function displayModeInfo(mode) {
     // Mode info
     let bestPowerString, bestScoreString, bestLevelString, bestLevelColor;
 
-    document.getElementById("modeInfoImage").src = `img/style${mode}.png`;
+    // document.getElementById("modeInfoImage").src = `img/style${mode}.png`;
     document.getElementById("modeInfo").innerHTML = modeDescriptions[mode];
 
 
@@ -355,24 +377,21 @@ function displayModeInfo(mode) {
             modeStatsCtx.fillRect(0, 1, 129, 1);
             modeStatsCtx.fillStyle = "#000008";
             modeStatsCtx.fillRect(1, 2, 129, 1);
-            document.getElementById("modeInfoImage").src = "img/style5.png";
-            document.getElementById("modeInfo").innerHTML = "<b>Info:</b><br>Bonus mode - Can you stack in time with the beat?<br>Extremely challenging - Only for top players!<br>- Variable DAS and ARE based on beat speed<br>- Grade based on distance through the song";
+            // document.getElementById("modeInfoImage").src = "img/style5.png";
+            document.getElementById("modeInfo").innerHTML = modeDescriptions[5];
             modeStatsCtx.clearRect(0, 0, 130, 160);
-            modeStatsCtx.fillStyle = "#eaeaff";
-            modeStatsCtx.fillRect(0, 1, 129, 1);
-            modeStatsCtx.fillStyle = "#000008";
-            modeStatsCtx.fillRect(1, 2, 129, 1);
+
             //Best score
-            modeStatsCtx.drawImage(modeStatsImage, 0, 24, 130, 16, 0, 8, 130, 16);
+            modeStatsCtx.drawImage(modeStatsImage, 0, 24, 130, 16, 0, 0, 130, 16);
             bestScoreString = Math.floor(game.onTheBeatBests[0]).toString();
             for (let i = 0; i < bestScoreString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestScoreString[i] * 4, 0, 4, 6, 45 + i * 4, 8, 4, 6);
+                modeStatsCtx.drawImage(digitsSmall, bestScoreString[i] * 4, 0, 4, 6, 45 + i * 4, 0, 4, 6);
             }
             //Best level
             bestLevelString = Math.floor(game.onTheBeatBests[1]).toString();
             bestLevelColor = game.bestLevels[2] >= 999 ? 3 : 0;
             for (let i = 0; i < bestLevelString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestLevelString[i] * 4, bestLevelColor * 6, 4, 6, 44 + i * 4, 16, 4, 6);
+                modeStatsCtx.drawImage(digitsSmall, bestLevelString[i] * 4, bestLevelColor * 6, 4, 6, 44 + i * 4, 8, 4, 6);
             }
             break;
     }

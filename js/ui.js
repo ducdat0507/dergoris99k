@@ -17,8 +17,6 @@ function hideBlackCover() {
 	blackCoverShown = false;
 	document.getElementById("blackCoverLeft").style.width = "0";
 	document.getElementById("blackCoverRight").style.width = "0";
-	if (document.getElementsByClassName("startingButton")[0]) document.getElementsByClassName("startingButton")[0].style.display = "none";
-	if (document.getElementsByClassName("startingButton")[1]) document.getElementsByClassName("startingButton")[1].style.display = "none";
 }
 
 

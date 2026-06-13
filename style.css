@@ -12,13 +12,20 @@
     src:url(GameBoy.woff) format("woff");
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     background-color: #333;
     image-rendering: pixelated;
     background-position: center;
     background-size: 64px 64px;
     overflow: hidden;
-    
+}
+
+body.prefer-key-nav {
+    cursor: none;
 }
 
 #backgroundCanvas {
@@ -82,24 +89,6 @@ button {
     display: none;
 }
 
-.menuButton {
-    border: none;
-    width: 600px;
-    height: 45px;
-    background-image: url("img/menuBar.png");
-    background-color: transparent;
-    color: #222;
-    padding-left: 20px;
-    padding-top: 6px;
-    margin-top: 16px;
-    font-size: 24px;
-    text-align: left;
-}
-
-.menuButton:hover {
-    background-image: url("img/menuBar2.png");
-}
-
 .container {
     position: fixed;
     top: 0;
@@ -112,13 +101,12 @@ button {
 
 #modeSelectContainer {
     position: absolute;
-    top: 130px;
+    top: 0;
+    left: 60px;
     width: 500px;
-    height: calc(100% - 240px);
+    height: 100%;
     background-color: rgba(0,0,0,0.3);
     overflow: hidden;
-    border-top: 4px solid #eaeaff;
-    border-bottom: 4px solid #eaeaff;
 }
 
 .menuMode {
@@ -151,7 +139,7 @@ button {
 #modeStatsContainer {
     position: absolute;
     top: 200px;
-    right: 110px;
+    right: 40px;
     width: 580px;
     padding: 20px;
     height: calc(100% - 310px);
@@ -166,17 +154,23 @@ button {
 #modeInfoContainer {
     position: absolute;
     top: 50%;
-    left: 560px;
-    padding: 20px;
-    width: calc(100% - 1270px);
+    left: 570px;
+    padding-left: 30px;
+    width: calc(100% - 900px);
     transform: translateY(-50%);
-    min-width: 250px;
+    min-width: 400px;
     max-height: 75%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    background-color: rgba(0,0,0,0.3);
-    overflow-Y: auto;
+    overflow-y: auto;
+}
+
+#modeInfoContainer hr {
+    height: 3px; 
+    margin-block: 21px; 
+    background-color: #eaeaff; 
+    border: none;
 }
 
 #modeInfo {
@@ -189,7 +183,7 @@ button {
 }
 
 #modeStatsCanvas {
-    transform: scale(3);
+    height: 480px;
     transform-origin: top left;
 }
 
@@ -289,4 +283,79 @@ button {
     color: #081810;
     position: absolute;
     font-family: "GameBoy";
+}
+
+/* Form stuff */
+.form-holder {
+    display: flex;
+    flex-flow: column;
+    align-items: stretch;
+    gap: 6px;
+}
+
+.form-element {
+    background: #222a;
+    color: #aaa;
+    display: flex;
+    min-height: 45px;
+}
+body.prefer-key-nav .form-element:focus-within {
+    z-index: 1;
+    animation: 
+        form-element-focus 1s cubic-bezier(0.455, 0.03, 0.515, 0.955) alternate infinite, 
+        form-element-focus-in 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.form-element-button button {
+    margin: 0;
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: inherit;
+    padding: 0 15px;
+    text-align: left;
+}
+.form-element-button button:focus-visible {
+    outline: none;
+}
+
+.form-element-button.menuButton {
+    border: none;
+    width: 600px;
+    height: 63px;
+    padding: 0;
+    margin-top: 6px;
+}
+.form-element-button.menuButton button {
+    padding-left: 21px;
+    font-size: 24px;
+}
+
+
+@keyframes form-element-focus-in {
+    from {
+        box-shadow: 0 0 0 12px #0000;
+    } to {
+        box-shadow: 0 0 0 3px #fffd;
+    }
+}
+@keyframes form-element-focus {
+    from {
+        box-shadow: 0 0 0 3px #fffd;
+    } to {
+        box-shadow: 0 0 0 3px #fff7;
+    }
+}
+
+#introSoundForm {
+    position: absolute; 
+    left: 50%; 
+    top: 50%; 
+    min-width: 450px;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+#mainMenuForm {
+    width: 600px;
 }

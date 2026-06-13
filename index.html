@@ -41,18 +41,14 @@
     <canvas id="backgroundCanvas"></canvas>
     <canvas id="gameCanvas" style="display: none"></canvas>
     <!--Main menu-->
-    <div class="container" style="padding: 40px;">
+    <div class="container" style="padding: 60px;">
         <img src="img/title.png" style="height: 66px;"><br><p style="margin-top: 4px; color: #ddd; font-size: 16px; margin-bottom: 40px">V1.2.2</p>
-        <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(2); displayModeInfo(currentMenuMode)">CAMPAIGN</button><br>
-        <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(3)">CUSTOM GAME</button><br>
-        <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); showKeybinds()">KEYBINDS</button><br>
-        <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); showSettings()">SETTINGS</button><br>
-        <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(4)">CREDITS</button><br>
+        <div ID="mainMenuForm"></div>
+        <canvas id="overallGradeCanvas" width="190px" height="48px"></canvas>
     </div>
     <!--Campaign menu-->
     <div class="container" style="left: 100vw; padding: 40px;">
-        <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button>
-        <canvas id="overallGradeCanvas" width="190px" height="48px"></canvas>
+        <!-- <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button> -->
         <div id="modeSelectContainer">
             <img class="menuMode" src="img/style1.png" onclick="playSound('buttonClick'); selectMenuMode(1)">
             <img class="menuMode" src="img/style2.png" onclick="playSound('buttonClick'); selectMenuMode(2)">
@@ -62,18 +58,16 @@
             <img class="menuArrow" src="img/menuArrowUp.png" onclick="playSound('buttonClick'); selectMenuMode(Math.max(1,currentMenuMode-1))">
             <img class="menuArrow" src="img/menuArrowDown.png" onclick="playSound('buttonClick'); selectMenuMode(Math.min(4,currentMenuMode+1))">
         </div>
-        <div id="modeStatsContainer">
-            <canvas id="modeStatsCanvas" width="180px" height="160px"></canvas><br>
-        </div>
         <div id="modeInfoContainer">
-            <img id="modeInfoImage" src="img/style1.png" style="width: 400px; max-width: 100%; margin-left: auto; margin-right: auto; display: block;">
-            <hr style="height: 4px; background-color: #eaeaff">
+            <!-- <img id="modeInfoImage" src="img/style1.png" style="width: 400px; max-width: 100%; margin-left: auto; margin-right: auto; display: block;"> -->
             <div id="modeInfo"></div>
-            <img src="img/play.png" id="playButton" onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)">
+            <br><br>
+            <canvas id="modeStatsCanvas" width="180px" height="160px"></canvas><br>
+            <!-- <img src="img/play.png" id="playButton" onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)"> -->
         </div>
     </div>
     <!--Custom game-->
-    <div class="container" style="left: 100vw">
+    <div class="container" style="left: 100vw; padding: 60px;">
         <div id="settings" style="overflow: auto; max-height: 98vh;">
             <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button><br><br>
             <button onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)">START GAME</button><br><br>
@@ -225,8 +219,7 @@
     <div id="blackCoverLeft" style="left: 0"></div>
     <div id="blackCoverRight" style="right: 0"></div>
     <canvas id="inputPromptCanvas" width="320" height="12"></canvas>
-    <button class="startingButton" style="top: calc(50% - 40px)" onclick="drawTabInputPrompts(1); hideBlackCover(); initializeGameMusic(); playSound('menuMusic')">PLAY WITH SOUND</button>
-    <button class="startingButton" style="top: calc(50% + 40px)" onclick="drawTabInputPrompts(1); soundEnabled=false; hideBlackCover()">PLAY WITHOUT SOUND</button>
+    <div id="introSoundForm"></div>
 
     <script src="js/howler.js"></script>
     <script src="js/bmtext.js"></script>
@@ -239,6 +232,8 @@
     <script src="js/menuBackground.js"></script>
     <script src="js/input.js"></script>
     <script src="js/state.js"></script>
+    <script src="js/formElements.js"></script>
+    <script src="js/form.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/rules.js"></script>
     <script src="js/pieceSystem.js"></script>
@@ -250,8 +245,8 @@
     <script src="js/settings.js"></script>
     <script src="js/menu.js"></script>
     <script defer>
-        document.getElementsByClassName("startingButton")[0].style.display = "block"; 
-        document.getElementsByClassName("startingButton")[1].style.display = "block";
+        initForms();
+        setActiveForm(document.getElementById("introSoundForm"));
     </script>
 </body>
 </html>
