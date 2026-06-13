@@ -157,7 +157,7 @@ function drawNextPieces() {
     }
 }
 
-function updateVisuals() {
+function drawGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(images.board, 0, 0);
     

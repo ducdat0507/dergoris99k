@@ -1,39 +1,35 @@
 //Fetch the mode info canvas element and its 2D drawing context
 const modeStatsCanvas = document.getElementById("modeStatsCanvas");
 const modeStatsCtx = modeStatsCanvas && modeStatsCanvas.getContext("2d");
+/** @type {CanvasRenderingContext2D} */
 
 //Fetch the overall grade canvas element and its 2D drawing context
 const overallGradeCanvas = document.getElementById("overallGradeCanvas");
 const overallGradeCtx = overallGradeCanvas && overallGradeCanvas.getContext("2d");
+/** @type {CanvasRenderingContext2D} */
+
+const inputPromptCanvas = document.getElementById("inputPromptCanvas");
+/** @type {CanvasRenderingContext2D} */
+const inputPromptCtx = inputPromptCanvas && inputPromptCanvas.getContext("2d");
 
 const modeDescriptions = {
     1: `
-        <b>Info:</b>
-        <br>Reminiscent of classic tetris games.
-        <br>- Scored like NES tetris (No combo! Best scores come from getting tetrises.)
-        <br>- DAS gets faster as you go
+        - Gravity increases gradually
+        <br>- No combo-based scoring (get as many lines as you can!)
+        <br>- Faster DAS as you go
         <br>- Hard drop is enabled! You can use it to get fast times.
-        <br>- Classic style power is based on level reached, average section time, and points.
+        <br>- Power is based on level reached, average section time, and points.
     `,
     2: `
-        <b>Info:</b>
-        <br>Reminiscent of Tetris: The Grand Master.
-        <br>- Scored like TGM (Best scores come from combos!)
-        <br>- Master style power is based on level reached and average section time.
+        - Gravity increases very quickly
+        <br>- Combo-based scoring (get the best combo you can!)
+        <br>- Power is based on level reached and average section time.
     `,
     3: `
-        <b>Info:</b>
-        <br>Reminiscent of T.A. Death. Quite difficult!
-        <br>- Scored like TGM (Best scores come from combos!)
+        - Instant gravity
         <br>- DAS, ARE and lock delay get faster as you go
-        <br>- Dragon style power is based on level reached and average section time.
-    `,
-    4: `
-        <b>Info:</b>
-        <br>Reminiscent of classic tetris games.
-        <br>- Scored like NES tetris (No combo! Best scores come from getting tetrises.)
-        <br>- DAS gets faster as you go<br>-Hard drop is enabled! You can use it to get fast times.
-        <br>- Classic style power is based on level reached, average section time, and points.
+        <br>- Combo-based scoring (get the best combo you can!)
+        <br>- Power is based on level reached and average section time.
     `,
 }
 
@@ -45,8 +41,15 @@ let overallGradeImage = new Image();
 overallGradeImage.src = "img/overallGrades.png";
 let overallGradeInfoImage = new Image();
 overallGradeInfoImage.src = "img/overallGradeInfo.png";
+let decorBlocksImage = new Image();
+decorBlocksImage.src = "img/decorBlocks.png";
+let inputIconImage = new Image();
+inputIconImage.src = "img/controllerButtons.png";
+
+let currentTab = 1;
 
 function switchToTab(x) {
+    currentTab = x;
     inCampaign = (x == 2); //Set inCampaign to true if entering the campaign screen
     switch(x) {
         case 1:
@@ -106,6 +109,8 @@ function switchToTab(x) {
             hideSettings();
             break;
     }
+
+    drawTabInputPrompts(x);
 }
 
 let currentMenuMode = 1;
@@ -190,39 +195,57 @@ window.addEventListener("resize", function() {
 });
 
 function displayModeInfo(mode) {
-    overallGradeCtx.clearRect(0, 0, 140, 40);
+    overallGradeCtx.clearRect(0, 0, 190, 48);
     overallGradeCtx.imageSmoothingEnabled = false;
 
     let overallPower = Math.min(game.bestPowers[0], 30000) + Math.min(game.bestPowers[1], 30000) + Math.min(game.bestPowers[2], 39000);
     let overallGrade = Math.floor(overallPower / 3000);
 
-    //Initials
+    // Decor blocks
+    overallGradeCtx.filter = "brightness(0.6)";
+    let decorLeft = game.decorPoints;
+    let decorBlockCount = 0;
+    for (let block of decorBlockPos) {
+        while (decorLeft >= block[0]) {
+            console.log(block[0])
+            overallGradeCtx.drawImage(decorBlocksImage, 
+                block[1], block[2], 8, 8, 
+                4 + (decorBlockCount % 20) * 8, 36 - Math.floor(decorBlockCount / 20) * 8, 8, 8
+            );
+            decorLeft -= block[0];
+            decorBlockCount++;
+            if (decorBlockCount >= 100) break;
+        }
+    }
+    overallGradeCtx.filter = "none";
+
+    // Initials
     let initialString = game.playerInitials
     drawBMText(overallGradeCtx, 135 - measureBMText(initialString, "text7-white"), 0, initialString, "text7-white");
     
 
-    //Overall grade info
+    // Overall grade info
     drawBMText(overallGradeCtx, 144, 3, "TOTAL GRADE:", "text5-gold")
     overallGradeCtx.drawImage(overallGradeImage, 0, overallGrade * 16, 24, 16, 142, 10, 48, 32);
 
-    //Overall power string
+    // Overall power string
     let overallPowerString = Math.floor(overallPower).toString();
     drawBMText(overallGradeCtx, 0, 14, "OVERALL POWER:", "text5-gold")
     drawBMText(overallGradeCtx, 135 - measureBMText(overallPowerString, "text10-white"), 17, overallPowerString, "text10-white");
 
     let powX = 0;
-    //Classic power string
+    // Classic power string
     let classicPowerString = Math.floor(Math.min(game.bestPowers[0], 30000)).toString();
     let classicPowerColor = game.bestPowers[0] >= 30000 ? "text5-gold" : "text5-white";
     powX += drawBMText(overallGradeCtx, powX, 22, "".padStart(5 - classicPowerString.length, "0"), "text5-gray")
     powX += drawBMText(overallGradeCtx, powX, 22, classicPowerString, classicPowerColor)
-    //Master power string
+    // Master power string
     let masterPowerString = Math.floor(Math.min(game.bestPowers[1], 30000)).toString();
     let masterPowerColor = game.bestPowers[1] >= 30000 ? "text5-gold" : "text5-white";
     powX += drawBMText(overallGradeCtx, powX, 22, " + ", "text5-white")
     powX += drawBMText(overallGradeCtx, powX, 22, "".padStart(5 - masterPowerString.length, "0"), "text5-gray")
     powX += drawBMText(overallGradeCtx, powX, 22, masterPowerString, masterPowerColor)
-    //Dragon power string
+    // Dragon power string
     let dragonPowerString = Math.floor(Math.min(game.bestPowers[2], 39000)).toString();
     let dragonPowerColor = game.bestPowers[2] >= 39000 ? "text5-gold" : "text5-white";
     powX += drawBMText(overallGradeCtx, powX, 22, " + ", "text5-white")
@@ -230,14 +253,14 @@ function displayModeInfo(mode) {
     powX += drawBMText(overallGradeCtx, powX, 22, dragonPowerString, dragonPowerColor)
     powX += drawBMText(overallGradeCtx, powX, 22, " =", "text5-white")
 
-    //Decor points
+    // Decor points
     let decorationString = formatScore(game.decorPoints)
     drawBMText(overallGradeCtx, 0, 33, "DECORATION:", "text5-gold")
     drawBMText(overallGradeCtx, 129 - measureBMText(decorationString, "text5-white"), 33, decorationString, "text5-white");
     drawBMText(overallGradeCtx, 131, 33, "G", "text5-gold");
 
 
-    //Mode info
+    // Mode info
     let bestPowerString, bestScoreString, bestLevelString, bestLevelColor;
 
     document.getElementById("modeInfoImage").src = `img/style${mode}.png`;
@@ -313,11 +336,11 @@ function displayModeInfo(mode) {
                     let sectionTime = bestSectionTimes[i];
                     let levelString = Math.min((i + 1) * 100, 999).toString();
                     let timeString = formatTime(sectionTime);
-                    let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
+                    let sectionTimeColor = getTimeColor(sectionTime);
 
                     x = 0, y += 8;
                     x += drawBMText(modeStatsCtx, x, y, `${levelString}  `, "text5-white");
-                    x += drawBMText(modeStatsCtx, x, y, timeString, sectionTimeColor);
+                    x += drawBMText(modeStatsCtx, x, y, timeString, "text5" + sectionTimeColor);
                 }
                 else {
                     x = 0, y += 8;
@@ -352,5 +375,67 @@ function displayModeInfo(mode) {
                 modeStatsCtx.drawImage(digitsSmall, bestLevelString[i] * 4, bestLevelColor * 6, 4, 6, 44 + i * 4, 16, 4, 6);
             }
             break;
+    }
+}
+
+
+let currentInputPrompts = []
+
+function drawInputPrompts(prompts) {
+    currentInputPrompts = prompts
+
+    inputPromptCtx.clearRect(0, 0, 320, 12);
+    let x = 320;
+
+    for (let prompt of prompts) {
+        let labelWidth = prompt
+
+        x -= measureBMText(prompt.label, "text5-white")
+        drawBMText(inputPromptCtx, x, 3, prompt.label, "text5-white")
+
+        x -= 6
+        if (primaryInputMethod == "keyboard") {
+            let keyString = getActionKey(prompt.action)?.toUpperCase() ?? "???"
+            let keyWidth = measureBMText(keyString, "text5-white")
+            let buttonWidth = Math.max(keyWidth + 5, 11);
+            draw9Patch(inputPromptCtx, inputIconImage, 0, 0, 11, 12, 3, 3, 4, 3, x - buttonWidth, 0, buttonWidth, 12)
+            drawBMText(inputPromptCtx, Math.round(x - (buttonWidth + keyWidth) / 2), 3, keyString, "text5-flat-black")
+            x -= keyWidth + 6
+        } else if (primaryInputMethod == "gamepad") {
+            let iconPos = controllerButtonIconPos[gamepadState.type][getActionGamepadButton(prompt.action)]
+            inputPromptCtx.drawImage(inputIconImage, iconPos[0], iconPos[1], iconPos[2], iconPos[3], x -= iconPos[2], 0, iconPos[2], iconPos[3]);
+        }
+
+        x -= 20
+    }
+}
+
+function redrawCurrentInputPrompts() {
+    drawInputPrompts(currentInputPrompts);
+}
+
+function drawTabInputPrompts(x) {
+    switch(x) {
+        case 1:
+            drawInputPrompts([
+                { action: "rotClockwise", label: "SELECT" },
+            ])
+            break;
+
+        case 2: 
+            drawInputPrompts([
+                { action: "rotClockwise", label: "PLAY!" },
+                { action: "rotAnticlockwise", label: "BACK" },
+            ])
+
+        case 3: 
+            drawInputPrompts([
+                { action: "rotAnticlockwise", label: "BACK" },
+            ])
+
+        case 4: 
+            drawInputPrompts([
+                { action: "rotAnticlockwise", label: "BACK" },
+            ])
     }
 }

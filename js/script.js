@@ -130,7 +130,7 @@ function updateVariables() {
     //Update the lock time
     if (checkPieceLanded(piecePositions) && locking) {
         currentLockTime -= (timeMultiplier*60);
-        updateVisuals();
+        drawGame();
     }
     //Update the drop time
     currentDropTime -= (timeMultiplier*60);
@@ -151,7 +151,7 @@ function updateVariables() {
                 if (settings.visuals == "tgm") playNextPieceAudio(nextPiece);
                 setNextPieceVisuals(nextPiece);
             }
-            updateVisuals();
+            drawGame();
             if (((inCampaignMode() && settings.gameMechanics != "onTheBeat") || settings.gameMechanics == "tgm") && keysHeld[3]) { //Starting soft drop if key is held
                 currentDropTime = Math.min(getDropInterval(), settings.softDropSpeed);
                 softDropping = true;
@@ -181,7 +181,7 @@ function updateVariables() {
             }
             else if (locking) {currentDropTime = 1;}
             else {currentDropTime += getDropInterval();}
-            updateVisuals();
+            drawGame();
             if (checkPieceLanded(piecePositions) && !locking && settings.lockDelay != 0) {
                 locking = true;
                 currentLockTime = settings.lockDelay;

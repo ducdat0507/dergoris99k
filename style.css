@@ -181,8 +181,11 @@ button {
 
 #modeInfo {
     font-family: 'Courier New', monospace;
-    font-size: 24px;
+    font-size: 20px;
+    line-height: 24px;
     margin-top: 20px;
+    color: white;
+    user-select: none;
 }
 
 #modeStatsCanvas {
@@ -250,6 +253,19 @@ button {
     padding: 0;
     transform: translate(-50%, -50%) scale(4);
     display: none;
+}
+
+#inputPromptCanvas {
+    position: absolute;
+    bottom: 60px;
+    right: 60px;
+    width: 320px;
+    height: 12px;
+    padding: 0;
+    transform: scale(3);
+    transform-origin: bottom right;
+    pointer-events: none;
+    z-index: 2;
 }
 
 

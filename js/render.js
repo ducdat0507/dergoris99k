@@ -98,7 +98,7 @@ function initialiseCanvasBoard() {
     }
 }
 
-function updateVisuals() {
+function drawGame() {
     if (!gamePlaying) return;
     // Only support main modes: classicStyle, masterStyle, dragonStyle, onTheBeat
     if (settings.visuals == "classicStyle" || settings.visuals == "masterStyle" || settings.visuals == "dragonStyle" || settings.visuals == "onTheBeat") {
@@ -164,95 +164,100 @@ function updateVisuals() {
             }
         }
 
-        // Grade
-        ctx.clearRect(211, 34, 48, 32);
-        ctx.drawImage(images.grades, 0, 32*grade, 48, 32, 211, 34, 48, 32);
+        drawHud();
+    }
+}
 
-        // Text
-        let nextGradeString;
-        let nextGradeLength;
-        if (settings.visuals == "classicStyle") {
-            if (grade >= 8) {
-                nextGradeString = "??????";
-                nextGradeLength = 6;
-                ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
-                for (let i=0;i<nextGradeLength;i++) {
-                    ctx.drawImage(images.digits, 80, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
-                }
-            }
-            else {
-                nextGradeString = classicStyleGradeConditions[grade+1].toString();
-                nextGradeLength = nextGradeString.length;
-                ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
-                for (let i=0;i<nextGradeLength;i++) {
-                    ctx.drawImage(images.digits, parseInt(nextGradeString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
-                }
-            }
-        }
-        else if (settings.visuals == "masterStyle") {
-            if (grade >= 12) {
-                nextGradeString = "??????";
-                nextGradeLength = 6;
-                ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
-                for (let i=0;i<nextGradeLength;i++) {
-                    ctx.drawImage(images.digits, 80, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
-                }
-            }
-            else {
-                nextGradeString = masterStyleGradeConditions[grade+1].toString();
-                nextGradeLength = nextGradeString.length;
-                ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
-                for (let i=0;i<nextGradeLength;i++) {
-                    ctx.drawImage(images.digits, parseInt(nextGradeString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
-                }
-            }
-        }
-        else if (settings.visuals == "dragonStyle") {
-            if (grade >= 20) {
-                nextGradeString = "??????";
-                nextGradeLength = 6;
-                ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
-                for (let i=0;i<nextGradeLength;i++) {
-                    ctx.drawImage(images.digits, 80, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
-                }
-            }
-            else {
-                nextGradeString = (Math.floor(level/50)*50+50).toString();
-                if (nextGradeString == "1000") {nextGradeString = "999";}
-                nextGradeLength = nextGradeString.length;
-                ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
-                for (let i=0;i<nextGradeLength;i++) {
-                    ctx.drawImage(images.digits, parseInt(nextGradeString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
-                }
-            }
-        }
+function drawHud() {
+    let leftSide = 160-settings.boardWidth*4;
+    
+    // Grade
+    ctx.clearRect(211, 34, 48, 32);
+    ctx.drawImage(images.grades, 0, 32*grade, 48, 32, 211, 34, 48, 32);
 
-        let scoreString = score.toString();
-        let scoreLength = scoreString.length;
-        ctx.clearRect(leftSide+settings.boardWidth*8+11, 142, scoreLength*8, 9);
-        for (let i=0;i<scoreLength;i++) {
-            ctx.drawImage(images.digits, parseInt(scoreString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 142, 8, 9);
+    // Text
+    let nextGradeString;
+    let nextGradeLength;
+    if (settings.visuals == "classicStyle") {
+        if (grade >= 8) {
+            nextGradeString = "??????";
+            nextGradeLength = 6;
+            ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
+            for (let i=0;i<nextGradeLength;i++) {
+                ctx.drawImage(images.digits, 80, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
+            }
         }
-
-        let levelString = level.toString();
-        let levelLength = levelString.length;
-        ctx.clearRect(leftSide+settings.boardWidth*8+11, 181, levelLength*8, 9);
-        for (let i=0;i<levelLength;i++) {
-            ctx.drawImage(images.digits, parseInt(levelString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 181, 8, 9);
+        else {
+            nextGradeString = classicStyleGradeConditions[grade+1].toString();
+            nextGradeLength = nextGradeString.length;
+            ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
+            for (let i=0;i<nextGradeLength;i++) {
+                ctx.drawImage(images.digits, parseInt(nextGradeString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
+            }
         }
-
-        if (settings.gameMechanics != "onTheBeat") {
-            let levelString2 = (level >= 900 ? "999" : ((Math.floor(level/100)+1)*100).toString());
-            let levelLength2 = levelString2.length;
-            ctx.clearRect(leftSide+settings.boardWidth*8+11, 197, levelLength2*8, 9);
-            for (let i=0;i<levelLength2;i++) {
-                ctx.drawImage(images.digits, parseInt(levelString2[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 197, 8, 9);
+    }
+    else if (settings.visuals == "masterStyle") {
+        if (grade >= 12) {
+            nextGradeString = "??????";
+            nextGradeLength = 6;
+            ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
+            for (let i=0;i<nextGradeLength;i++) {
+                ctx.drawImage(images.digits, 80, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
+            }
+        }
+        else {
+            nextGradeString = masterStyleGradeConditions[grade+1].toString();
+            nextGradeLength = nextGradeString.length;
+            ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
+            for (let i=0;i<nextGradeLength;i++) {
+                ctx.drawImage(images.digits, parseInt(nextGradeString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
+            }
+        }
+    }
+    else if (settings.visuals == "dragonStyle") {
+        if (grade >= 20) {
+            nextGradeString = "??????";
+            nextGradeLength = 6;
+            ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
+            for (let i=0;i<nextGradeLength;i++) {
+                ctx.drawImage(images.digits, 80, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
+            }
+        }
+        else {
+            nextGradeString = (Math.floor(level/50)*50+50).toString();
+            if (nextGradeString == "1000") {nextGradeString = "999";}
+            nextGradeLength = nextGradeString.length;
+            ctx.clearRect(leftSide+settings.boardWidth*8+8, 80, 64, 9);
+            for (let i=0;i<nextGradeLength;i++) {
+                ctx.drawImage(images.digits, parseInt(nextGradeString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 80, 8, 9)
             }
         }
     }
 
-    //Main modes time display
-    if ((settings.visuals == "classicStyle" || settings.visuals == "masterStyle" || settings.visuals == "dragonStyle") && settings.timeDisplay) {
+    let scoreString = score.toString();
+    let scoreLength = scoreString.length;
+    ctx.clearRect(leftSide+settings.boardWidth*8+11, 142, scoreLength*8, 9);
+    for (let i=0;i<scoreLength;i++) {
+        ctx.drawImage(images.digits, parseInt(scoreString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 142, 8, 9);
+    }
+
+    let levelString = level.toString();
+    let levelLength = levelString.length;
+    ctx.clearRect(leftSide+settings.boardWidth*8+11, 181, levelLength*8, 9);
+    for (let i=0;i<levelLength;i++) {
+        ctx.drawImage(images.digits, parseInt(levelString[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 181, 8, 9);
+    }
+
+    if (settings.gameMechanics != "onTheBeat") {
+        let levelString2 = (level >= 900 ? "999" : ((Math.floor(level/100)+1)*100).toString());
+        let levelLength2 = levelString2.length;
+        ctx.clearRect(leftSide+settings.boardWidth*8+11, 197, levelLength2*8, 9);
+        for (let i=0;i<levelLength2;i++) {
+            ctx.drawImage(images.digits, parseInt(levelString2[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 197, 8, 9);
+        }
+    }
+
+    if (settings.timeDisplay) {
         let leftSide = 160-settings.boardWidth*4;
         let timeString = formatTime(time);
         let timeLength = 8;
@@ -298,14 +303,11 @@ function displaySectionTime(index) {
 
     let levelString = (index*100+100).toString().padStart(2, "0");
     if (levelString == "1000") {levelString = "999";}
-    for (let i=0;i<3;i++) ctx.drawImage(images.sideInfo2, levelString[i]*4, 0, 4, 6, 61+4*i, 117+7*index, 4, 6);
+    drawBMText(ctx, 61, 117+7*index, levelString, "text5-white");
 
     let timeString = formatTime(sectionTime);
     let sectionTimeColor = getTimeColor(sectionTime);
-    for (let i=0;i<8;i++) {
-        if (timeString[i] == ":") {ctx.drawImage(images.sideInfo2, 40, sectionTimeColor*6, 4, 6, 77+4*i, 117+7*index, 4, 6);}
-        else {ctx.drawImage(images.sideInfo2, timeString[i]*4, sectionTimeColor*6, 4, 6, 77+4*i, 117+7*index, 4, 6);}
-    }
+    drawBMText(ctx, 77, 117+7*index, timeString, "text5" + sectionTimeColor);
 }
 
 function displayEndingLine(x) {

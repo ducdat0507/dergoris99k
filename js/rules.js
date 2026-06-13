@@ -14,13 +14,18 @@ function formatTime(seconds) {
 	return timeString;
 }
 
+function getTimeValue(seconds) {
+	if (seconds < 35) return 6;
+	if (seconds < 45) return 5;
+	if (seconds < 55) return 4;
+	if (seconds < 65) return 3;
+	if (seconds < 75) return 2;
+	if (seconds < 85) return 1;
+	return 0
+}
 function getTimeColor(seconds) {
-	let timeColor;
-	if      (seconds < 55) {timeColor = 3;}
-	else if (seconds < 60) {timeColor = 2;}
-	else if (seconds < 65) {timeColor = 1;}
-	else                   {timeColor = 0;}
-	return timeColor;
+	const colors = ["-white", "-bronze", "-silver", "-gold", "-ruby", "-amethyst", "-diamond"]
+	return colors[getTimeValue(seconds)]
 }
 
 function inCampaignMode() {

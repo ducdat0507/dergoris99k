@@ -39,7 +39,7 @@ function clearLines() {
         if ((level+linesCleared) >= 500) {ctx.drawImage(images.sideInfo1, 64, 0, 64, 150, 70, 26, 64, 150);}
         else {ctx.drawImage(images.sideInfo1, 0, 0, 64, 150, 70, 26, 64, 150);}
         setNextPieceVisuals(nextPiece);
-        updateVisuals();
+        drawGame();
         //Update GM qualifier
         if ((level+linesCleared) >= 300 && (score < 12000 || time > 255)) {GMQualifying = false;}
         if ((level+linesCleared) >= 500 && (score < 40000 || time > 450)) {GMQualifying = false;}
@@ -71,7 +71,7 @@ function clearLines() {
             images.sideInfo1.src = "img/sega/sideInfo.png";
             ctx.drawImage(images.sideInfo1, leftSide-56, 16);
             setNextPieceVisuals(nextPiece);
-            updateVisuals();
+            drawGame();
         }
     }
 
@@ -87,7 +87,7 @@ function clearLines() {
         if (!settings.levelLock && settings.gameMechanics != "onTheBeat") level += linesCleared;
         if (level > 999 && settings.gameMechanics != "onTheBeat") level = 999;
         if (settings.visuals != "tgm") playSound("lineClear");
-        updateVisuals();
+        drawGame();
     }
     else if (linesCleared && settings.gameMechanics == "classicStyle") { //Similar to NES/GB/DX
         switch (linesCleared) {
@@ -107,7 +107,7 @@ function clearLines() {
         if (!settings.levelLock) level += linesCleared;
         if (level > 999) level = 999;
         playSound("lineClear");
-        updateVisuals();
+        drawGame();
     }
     else if (linesCleared && settings.gameMechanics == "sega") {
         let finalScore = segaLineScores[linesCleared-1][Math.min(level,8)];
@@ -135,29 +135,29 @@ function clearLines() {
     //Update classic style grade
     if (settings.gameMechanics == "classicStyle" && score > classicStyleGradeConditions[grade+1]) {
         while (score > classicStyleGradeConditions[grade+1]) grade++;
-        updateVisuals();
+        drawGame();
     }
     //Update master style grade
     else if (settings.gameMechanics == "masterStyle" && score > masterStyleGradeConditions[grade+1]) {
         while (score > masterStyleGradeConditions[grade+1]) grade++;
-        updateVisuals();
+        drawGame();
     }
     //Update dragon style grade
     else if (settings.gameMechanics == "dragonStyle" && Math.floor(level/50) > grade && grade < 19) {
         grade = Math.floor(level/50);
-        updateVisuals();
+        drawGame();
     }
     else if (settings.gameMechanics == "dragonStyle" && level >= 999 && grade == 19) {
         grade = 20;
-        updateVisuals();
+        drawGame();
     }
 
     //Update TGM grade
     if (settings.gameMechanics == "tgm" && score > tgmGradeConditions[grade+1]) {
         while (score > tgmGradeConditions[grade+1]) grade++;
-        updateVisuals();
+        drawGame();
     }
-    if (level == 999 && GMQualifying && score >= 126000 && time < 810) {grade = 18; updateVisuals();} //GM grade
+    if (level == 999 && GMQualifying && score >= 126000 && time < 810) {grade = 18; drawGame();} //GM grade
 
     //Line clear visuals
     if (settings.ARELineClear == 0 && linesCleared > 0) { //No ARE
@@ -173,7 +173,7 @@ function clearLines() {
                 }
             }
         }
-        updateVisuals();
+        drawGame();
     }
 
     else if ((inCampaignMode()) && linesCleared > 0) { //Main line clear visuals
@@ -191,7 +191,7 @@ function clearLines() {
                 board[line][j] = 0;
             }
         }
-        updateVisuals();
+        drawGame();
         let startTime = Date.now()
         visualInterval = mainVisualClearLines(startTime, [...fullLines], piecesInFullLines);
         let lineClearLength = Math.max(Math.min(12, currentDropTime-2),0);
@@ -242,7 +242,7 @@ function mainClearLines(fullLinesTemp) {
             board[0][j] = 0;
         }
     }
-    updateVisuals();
+    drawGame();
 }
 
 function GBVisualClearLines(stage) {
@@ -270,7 +270,7 @@ function GBVisualClearLines(stage) {
         for (const line of fullLines) {
             ctx.fillRect(leftSide + 16, line * 8, settings.boardWidth * 8, 8);
             moveLineDown(line);
-            setTimeout(updateVisuals, 1000/3);
+            setTimeout(drawGame, 1000/3);
         }
     }
 }
@@ -304,7 +304,7 @@ function NESVisualClearLines(width) {
         for (const line of fullLines) {
             ctx.fillRect(leftSide+(roundedWidth*4)-(width*8)+8, line*8+32, width*16, 8);
             moveLineDown(line);
-            setTimeout(updateVisuals, 1000/15);
+            setTimeout(drawGame, 1000/15);
         }
     }
 }
@@ -333,7 +333,7 @@ function DXVisualClearLines(stage) {
     }
     else {
         fullLines.forEach(moveLineDown);
-        updateVisuals();
+        drawGame();
     }
 }
 
@@ -383,7 +383,7 @@ function segaVisualClearLines(stage, scoreGained) {
     }
     else {
         fullLines.forEach(moveLineDown);
-        updateVisuals();
+        drawGame();
     }
 }
 
@@ -395,7 +395,7 @@ function TGMVisualClearLines(stage, fullLinesTemp) {
                 board[line][j] = 0;
             }
         }
-        updateVisuals();
+        drawGame();
         visualInterval = setTimeout(function() {TGMVisualClearLines(2, fullLinesTemp)}, (1000 / 60) * 41);
     }
     else {
@@ -413,6 +413,6 @@ function TGMVisualClearLines(stage, fullLinesTemp) {
                 board[0][j] = 0;
             }
         }
-        updateVisuals();
+        drawGame();
     }
 }

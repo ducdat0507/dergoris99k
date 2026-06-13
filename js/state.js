@@ -19,6 +19,23 @@ const keybindNames = [
     "rotAnticlockwise",
     "rotAnticlockwiseAlt"
 ];
+let gamepadButtonConfig = {
+    14: "left",
+    15: "right",
+    12: "hardDrop",
+    13: "softDrop",
+    0: "rotClockwise",
+    2: "rotClockwiseAlt",
+    1: "rotAnticlockwise",
+    3: "rotAnticlockwiseAlt",
+    9: "exit",
+};
+let gamepadAxisConfig = {
+    "-0": "left",
+    "+0": "right",
+    "-1": "hardDrop",
+    "+1": "softDrop",
+};
 
 let game = {};
 let settings = {};

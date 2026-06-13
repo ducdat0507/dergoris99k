@@ -131,7 +131,7 @@ function updateVariables() {
     //Update the lock time
     if (checkPieceLanded(piecePositions) && locking) {
         currentLockTime -= (timeMultiplier*60);
-        updateVisuals();
+        drawGame();
     }
     //Update the drop time
     currentDropTime -= (timeMultiplier*60);
@@ -152,7 +152,7 @@ function updateVariables() {
                 if (settings.visuals == "tgm") playNextPieceAudio(nextPiece);
                 setNextPieceVisuals(nextPiece);
             }
-            updateVisuals();
+            drawGame();
             if (((inCampaignMode() && settings.gameMechanics != "onTheBeat") || settings.gameMechanics == "tgm") && keysHeld[3]) { //Starting soft drop if key is held
                 currentDropTime = Math.min(getDropInterval(), settings.softDropSpeed);
                 softDropping = true;
@@ -185,7 +185,7 @@ function updateVariables() {
             }
             else if (locking) {currentDropTime = 1;}
             else {currentDropTime += getDropInterval();}
-            updateVisuals();
+            drawGame();
             if (checkPieceLanded(piecePositions) && !locking && settings.lockDelay != 0) {
                 locking = true;
                 currentLockTime = settings.lockDelay;
@@ -250,7 +250,7 @@ setInterval(updateVariables, 1000/60);
 
 
 
-function updateVisuals() {
+function drawGame() {
     if (!gamePlaying) return;
     if (settings.visuals == "classicStyle" || settings.visuals == "masterStyle" || settings.visuals == "dragonStyle" || settings.visuals == "onTheBeat") {
         let leftSide = 160-settings.boardWidth*4;
@@ -976,7 +976,7 @@ function landPiece() {
     else {currentDropTime = 60;} //Backup
     waitingForNextPiece = true;
     if (inCampaignMode() || settings.gameMechanics == "tgm") playSound("lock");
-    updateVisuals();
+    drawGame();
     clearLines();
     //Disable softdrop until key is pressed again
     softDropping = false;
@@ -1117,7 +1117,7 @@ function placePiece(pieceType) {
                 }
             }
         }
-        updateVisuals();
+        drawGame();
     }
 
     //Update dropped piece statistics
@@ -1590,7 +1590,7 @@ function moveLeft() {
             if (settings.lockReset == "step") locking = false;
             if (getDropInterval() <= 0.05) {maxDrop();} //20G
         }
-        updateVisuals();
+        drawGame();
     }
 }
 
@@ -1605,7 +1605,7 @@ function moveRight() {
             if (settings.lockReset == "step") locking = false;
             if (getDropInterval() <= 0.05) {maxDrop();} //20G
         }
-        updateVisuals();
+        drawGame();
     }
 }
 
@@ -1638,7 +1638,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]];
                     pieceOrientation = rotatedOrientation;
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "nintendo-r") {
@@ -1652,7 +1652,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]];
                     pieceOrientation = rotatedOrientation;
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "dx") {
@@ -1672,7 +1672,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]];
                     pieceOrientation = rotatedOrientation;
-                    updateVisuals();
+                    drawGame();
                 }
                 //Alternate rotation point
                 else {
@@ -1703,7 +1703,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                         //Adjust piece top corner
                         pieceTopCorner[0] = tempY;
                         pieceTopCorner[1] = tempX;
-                        updateVisuals();
+                        drawGame();
                     }
                 }
             }
@@ -1718,7 +1718,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]];
                     pieceOrientation = rotatedOrientation;
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "ars") { //Same as sega
@@ -1736,7 +1736,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                         if (settings.lockReset == "step") locking = false;
                         //if (getDropInterval() <= 0.05) maxDrop(); //20G (no longer needed with rotation changes)
                     }
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "dergoris") {
@@ -1834,7 +1834,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                     if (!checkPieceLanded(piecePositions)) {
                         if (settings.lockReset == "step") locking = false;
                     }
-                    updateVisuals();
+                    drawGame();
                 }
             }
             break;
@@ -1856,7 +1856,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]];
                     pieceOrientation = rotatedOrientation;
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "nintendo-r") {
@@ -1869,7 +1869,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]];
                     pieceOrientation = rotatedOrientation;
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "dx") { //Fixed DX rotation code by zaphod77
@@ -1883,7 +1883,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]]; // move the blocks
                     pieceOrientation = rotatedOrientation; // update orientation vvaraible
-                    updateVisuals(); // update screen
+                    drawGame(); // update screen
                 }
                 else { // try alternate position
                     let tempPiecePositions = []; // clear out the temp positions
@@ -1904,7 +1904,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                         pieceTopCorner[0] = tempY + pushY;
                         pieceTopCorner[1] = tempX + pushX;
                         pieceOrientation = rotatedOrientation; // update orientation
-                        updateVisuals(); // and visuals.
+                        drawGame(); // and visuals.
                     }
                 }
             }
@@ -1918,7 +1918,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                 if (canRotate) {
                     for (let i=0;i<4;i++) piecePositions[i] = [...tempPiecePositions[i]];
                     pieceOrientation = rotatedOrientation;
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "ars") {
@@ -1950,7 +1950,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                         if (settings.lockReset == "step") locking = false;
                         //if (getDropInterval() <= 0.05) maxDrop(); //20G (no longer needed with rotation changes)
                     }
-                    updateVisuals();
+                    drawGame();
                 }
                 else if (centerColumnOverlap) {return;} //Center column rule
                 else if (!checkPieceOverlap(rightKickedPiecePositions)) { //Right kick
@@ -1962,7 +1962,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                         if (settings.lockReset == "step") locking = false;
                         //if (getDropInterval() <= 0.05) maxDrop(); //20G (no longer needed with rotation changes)
                     }
-                    updateVisuals();
+                    drawGame();
                 }
                 else if (!checkPieceOverlap(leftKickedPiecePositions)) { //Left kick
                     for (let i=0;i<4;i++) tempPiecePositions[i][1]--;
@@ -1973,7 +1973,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                         if (settings.lockReset == "step") locking = false;
                         //if (getDropInterval() <= 0.05) maxDrop(); //20G (no longer needed with rotation changes)
                     }
-                    updateVisuals();
+                    drawGame();
                 }
             }
             else if (settings.rotationSystem == "dergoris") {
@@ -2070,7 +2070,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
                     if (!checkPieceLanded(piecePositions)) {
                         if (settings.lockReset == "step") locking = false;
                     }
-                    updateVisuals();
+                    drawGame();
                 }
             }
             break;
@@ -2142,7 +2142,7 @@ function hardDrop() {
             boardVisualPosition[1] = 1.5; //Vertical bump
             landPiece();
         }
-        else {updateVisuals();}
+        else {drawGame();}
     }
 }
 
@@ -2272,7 +2272,7 @@ function clearLines() {
         if ((level+linesCleared) >= 500) {ctx.drawImage(images.sideInfo1, 64, 0, 64, 150, 70, 26, 64, 150);}
         else {ctx.drawImage(images.sideInfo1, 0, 0, 64, 150, 70, 26, 64, 150);}
         setNextPieceVisuals(nextPiece);
-        updateVisuals();
+        drawGame();
         //Update GM qualifier
         if ((level+linesCleared) >= 300 && (score < 12000 || time > 255)) {GMQualifying = false;}
         if ((level+linesCleared) >= 500 && (score < 40000 || time > 450)) {GMQualifying = false;}
@@ -2304,7 +2304,7 @@ function clearLines() {
             images.sideInfo1.src = "img/sega/sideInfo.png";
             ctx.drawImage(images.sideInfo1, leftSide-56, 16);
             setNextPieceVisuals(nextPiece);
-            updateVisuals();
+            drawGame();
         }
     }
 
@@ -2320,7 +2320,7 @@ function clearLines() {
         if (!settings.levelLock && settings.gameMechanics != "onTheBeat") level += linesCleared;
         if (level > 999 && settings.gameMechanics != "onTheBeat") level = 999;
         if (settings.visuals != "tgm") playSound("lineClear");
-        updateVisuals();
+        drawGame();
     }
     else if (linesCleared && settings.gameMechanics == "classicStyle") { //Similar to NES/GB/DX
         switch (linesCleared) {
@@ -2340,7 +2340,7 @@ function clearLines() {
         if (!settings.levelLock) level += linesCleared;
         if (level > 999) level = 999;
         playSound("lineClear");
-        updateVisuals();
+        drawGame();
     }
     else if (linesCleared && settings.gameMechanics == "sega") {
         let finalScore = segaLineScores[linesCleared-1][Math.min(level,8)];
@@ -2368,29 +2368,29 @@ function clearLines() {
     //Update classic style grade
     if (settings.gameMechanics == "classicStyle" && score > classicStyleGradeConditions[grade+1]) {
         while (score > classicStyleGradeConditions[grade+1]) grade++;
-        updateVisuals();
+        drawGame();
     }
     //Update master style grade
     else if (settings.gameMechanics == "masterStyle" && score > masterStyleGradeConditions[grade+1]) {
         while (score > masterStyleGradeConditions[grade+1]) grade++;
-        updateVisuals();
+        drawGame();
     }
     //Update dragon style grade
     else if (settings.gameMechanics == "dragonStyle" && Math.floor(level/50) > grade && grade < 19) {
         grade = Math.floor(level/50);
-        updateVisuals();
+        drawGame();
     }
     else if (settings.gameMechanics == "dragonStyle" && level >= 999 && grade == 19) {
         grade = 20;
-        updateVisuals();
+        drawGame();
     }
 
     //Update TGM grade
     if (settings.gameMechanics == "tgm" && score > tgmGradeConditions[grade+1]) {
         while (score > tgmGradeConditions[grade+1]) grade++;
-        updateVisuals();
+        drawGame();
     }
-    if (level == 999 && GMQualifying && score >= 126000 && time < 810) {grade = 18; updateVisuals();} //GM grade
+    if (level == 999 && GMQualifying && score >= 126000 && time < 810) {grade = 18; drawGame();} //GM grade
 
     //Line clear visuals
     if (settings.ARELineClear == 0 && linesCleared > 0) { //No ARE
@@ -2406,7 +2406,7 @@ function clearLines() {
                 }
             }
         }
-        updateVisuals();
+        drawGame();
     }
 
     else if ((inCampaignMode()) && linesCleared > 0) { //Main line clear visuals
@@ -2424,7 +2424,7 @@ function clearLines() {
                 board[line][j] = 0;
             }
         }
-        updateVisuals();
+        drawGame();
         let startTime = Date.now()
         visualInterval = mainVisualClearLines(startTime, [...fullLines], piecesInFullLines);
         let lineClearLength = Math.max(Math.min(12, currentDropTime-2),0);
@@ -2475,7 +2475,7 @@ function mainClearLines(fullLinesTemp) {
             board[0][j] = 0;
         }
     }
-    updateVisuals();
+    drawGame();
 }
 
 function GBVisualClearLines(stage) {
@@ -2503,7 +2503,7 @@ function GBVisualClearLines(stage) {
         for (const line of fullLines) {
             ctx.fillRect(leftSide + 16, line * 8, settings.boardWidth * 8, 8);
             moveLineDown(line);
-            setTimeout(updateVisuals, 1000/3);
+            setTimeout(drawGame, 1000/3);
         }
     }
 }
@@ -2537,7 +2537,7 @@ function NESVisualClearLines(width) {
         for (const line of fullLines) {
             ctx.fillRect(leftSide+(roundedWidth*4)-(width*8)+8, line*8+32, width*16, 8);
             moveLineDown(line);
-            setTimeout(updateVisuals, 1000/15);
+            setTimeout(drawGame, 1000/15);
         }
     }
 }
@@ -2566,7 +2566,7 @@ function DXVisualClearLines(stage) {
     }
     else {
         fullLines.forEach(moveLineDown);
-        updateVisuals();
+        drawGame();
     }
 }
 
@@ -2616,7 +2616,7 @@ function segaVisualClearLines(stage, scoreGained) {
     }
     else {
         fullLines.forEach(moveLineDown);
-        updateVisuals();
+        drawGame();
     }
 }
 
@@ -2628,7 +2628,7 @@ function TGMVisualClearLines(stage, fullLinesTemp) {
                 board[line][j] = 0;
             }
         }
-        updateVisuals();
+        drawGame();
         visualInterval = setTimeout(function() {TGMVisualClearLines(2, fullLinesTemp)}, (1000 / 60) * 41);
     }
     else {
@@ -2646,7 +2646,7 @@ function TGMVisualClearLines(stage, fullLinesTemp) {
                 board[0][j] = 0;
             }
         }
-        updateVisuals();
+        drawGame();
     }w
     
 }

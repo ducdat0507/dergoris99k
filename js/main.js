@@ -3,6 +3,7 @@
 function startGame() {
     hideBlackCover();
     stopSound("menuMusic");
+
     level = settings.startingLevel;
     document.getElementsByClassName("container")[1].style.display = "none"; //Campaign screen
     document.getElementsByClassName("container")[2].style.display = "none"; //Custom game screen
@@ -10,6 +11,8 @@ function startGame() {
     document.getElementById("game").style.display = "block";
     document.getElementById("effectOverlay").style.display = "block";
     document.getElementById("textOverlay").style.display = "block";
+    drawInputPrompts([])
+
     //Setting webGL canvas attributes
     if (settings.visuals == "classicStyle") {
         document.getElementById("gameCanvas").style.display = game.gameBackgroundEnabled ? "block" : "none";
@@ -55,7 +58,7 @@ function startGame() {
         placePiece(getRandomPiece());
         nextPiece = getRandomPiece();
         setNextPieceVisuals(nextPiece);
-        updateVisuals();
+        drawGame();
     }
 }
 
@@ -156,7 +159,7 @@ function updateVariables() {
     // Lock time update when landed
     if (checkPieceLanded(piecePositions) && locking) {
         currentLockTime -= (timeMultiplier * 60);
-        updateVisuals();
+        drawGame();
     }
 
     // Gravity
@@ -177,7 +180,7 @@ function updateVariables() {
                 // Next piece sound removed for classic modes
                 setNextPieceVisuals(nextPiece);
             }
-            updateVisuals();
+            drawGame();
             if (inCampaignMode() && settings.gameMechanics != "onTheBeat" && keysHeld[3]) { //Starting soft drop if key is held
                 currentDropTime = Math.min(getDropInterval(), settings.softDropSpeed);
                 softDropping = true;
@@ -209,7 +212,7 @@ function updateVariables() {
             }
             else if (locking) { currentDropTime = 1; }
             else { currentDropTime += getDropInterval(); }
-            updateVisuals();
+            drawGame();
             if (checkPieceLanded(piecePositions) && !locking && settings.lockDelay != 0) {
                 locking = true;
                 currentLockTime = settings.lockDelay;
@@ -217,7 +220,7 @@ function updateVariables() {
         }
     }
 
-    updateVisuals();
+    drawGame();
     timeOfLastUpdate = Date.now();
 }
 
@@ -260,7 +263,7 @@ function readyGo(stage) {
             //Next piece
             setNextPieceVisuals(nextPiece);
 
-            //Text (Copied from updateVisuals, any change there should also happen here)
+            //Text (Copied from drawGame, any change there should also happen here)
             //This is a lot of code duplication! Find a way to reduce this ASAP
             let nextGradeString;
             let nextGradeLength;
@@ -338,7 +341,7 @@ function readyGo(stage) {
             }
             else { setNextPieceVisuals(nextPiece); }
 
-            //Text (Copied from updateVisuals, any change there should also happen here)
+            //Text (Copied from drawGame, any change there should also happen here)
             //This is a lot of code duplication! Find a way to reduce this ASAP
             let nextGradeString;
             let nextGradeLength;
@@ -448,7 +451,7 @@ function readyGo(stage) {
             playSound("gameMusic");
             setSoundVolume("gameMusic", game.musicVolume);
         }
-        updateVisuals();
+        drawGame();
         if (settings.gameMechanics == "tgm" && keysHeld[3]) { //Starting soft drop if key is held
             currentDropTime = Math.min(getDropInterval(), settings.softDropSpeed);
             softDropping = true;
@@ -468,63 +471,6 @@ function endGame() {
         }
         else { playSound("finish"); }
         let leftSide = 160 - settings.boardWidth * 4;
-
-        // Record update
-        let recordIndex = {
-            classicStyle: 0,
-            masterStyle: 1,
-            dragonStyle: 2,
-        }[settings.gameMechanics] ?? -1;
-
-        if (settings.gameMechanics == "classicStyle") {
-            runPower = (level + 1) * 15; //Level component
-            if (sectionTimes.length > 0) runPower += Math.max((1875000 / averageSectionTime - 20000), 0); //Section time component
-            runPower += score ** 0.5 * 8; //Score component
-        } else if (settings.gameMechanics == "masterStyle") {
-            runPower = (level + 1) * 15; //Level component
-            if (sectionTimes.length > 0) runPower += Math.max((2800000 / averageSectionTime - 30000), 0); //Section time component
-        } else if (settings.gameMechanics == "dragonStyle") {
-            runPower = (level + 1) * 20; //Level component
-            if (sectionTimes.length > 0) runPower += Math.max((1200000 / averageSectionTime - 20000), 0); //Section time component
-        } else if (settings.gameMechanics == "onTheBeat") {
-            if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;
-            if (inCampaign && level > game.onTheBeatBests[1]) game.onTheBeatBests[1] = level;
-        }
-
-        let oldPower = game.bestPowers[recordIndex] ?? NaN
-        let oldScore = game.bestScores[recordIndex] ?? NaN
-        let oldLevel = game.bestLevels[recordIndex] ?? NaN
-        let oldAchTime = game.bestAchievementTimes[recordIndex] ?? NaN;
-        if (inCampaign && recordIndex >= 0) {
-            if (runPower > game.bestPowers[recordIndex]) game.bestPowers[recordIndex] = runPower;
-            if (score > game.bestScores[recordIndex]) game.bestScores[recordIndex] = score;
-            if (level > game.bestLevels[recordIndex])  {
-                game.bestLevels[recordIndex] = level;
-                game.bestAchievementTimes[recordIndex] = time;
-            } else if (level == game.bestLevels[recordIndex] && game.bestAchievementTimes[recordIndex] <= time) {
-                game.bestAchievementTimes[recordIndex] = time;
-            }
-        }
-
-        // Clear HUD
-        ctx.clearRect(0, 0, leftSide - 8, 240);
-        ctx.clearRect(168 + settings.boardWidth * 4, 0, leftSide - 16, 240);
-        ctx.clearRect(0, 0, 320, 112 - settings.boardHeight * 4);
-        ctx.clearRect(0, 128 + settings.boardHeight * 4, 320, 240);
-        
-        // Draw board
-        ctx.clearRect(leftSide, 40, (8 * settings.boardWidth), (8 * settings.boardHeight));
-        ctx.drawImage(images.sideInfo4, leftSide, 40);
-        for (let i = 0; i < settings.boardHeight; i++) {
-            for (let j = 0; j < settings.boardWidth; j++) {
-                if (board[i][j] != 0) {
-                    if (settings.pieceColouring === "monotoneFixed" || settings.pieceColouring === "monotoneAll") { ctx.drawImage(images.tiles, 8, 0, 8, 8, j * 8 + leftSide, i * 8 + 40, 8, 8); }
-                    else { ctx.drawImage(images.tiles, 8, (board[i][j]) * 8, 8, 8, j * 8 + leftSide, i * 8 + 40, 8, 8); }
-                }
-            }
-        }
-
-        // Achievement
 
         // Average section time
         let averageSectionTime;
@@ -565,18 +511,145 @@ function endGame() {
                 }
             }
         }
+
+        // Record update
+        let recordIndex = {
+            classicStyle: 0,
+            masterStyle: 1,
+            dragonStyle: 2,
+        }[settings.gameMechanics] ?? -1;
+
+        if (settings.gameMechanics == "classicStyle") {
+            // Level component
+            runPower = Math.max((level - 49) * 15, 0); 
+            // Section time component 
+            if (sectionTimes.length > 0) runPower += Math.sqrt(Math.max((1850000 / averageSectionTime - 200) * (level + 500), 0)); 
+            // Score component
+            runPower += score ** 0.5 * 8;
+
+        } else if (settings.gameMechanics == "masterStyle") {
+            // Level component
+            runPower = Math.max((level - 49) * 15, 0); 
+            // Section time component
+            if (sectionTimes.length > 0) runPower += Math.sqrt(Math.max((2800000 / averageSectionTime - 300) * (level + 500), 0)); 
+
+        } else if (settings.gameMechanics == "dragonStyle") {
+            // Level component
+            runPower = Math.max((level - 49) * 20, 0); 
+            // Section time component
+            if (sectionTimes.length > 0) runPower += Math.sqrt(Math.max((1200000 / averageSectionTime - 200) * (level + 500), 0)); 
+
+        } else if (settings.gameMechanics == "onTheBeat") {
+            if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;
+            if (inCampaign && level > game.onTheBeatBests[1]) game.onTheBeatBests[1] = level;
+        }
+
+        let oldPower = game.bestPowers[recordIndex] ?? NaN
+        let oldScore = game.bestScores[recordIndex] ?? NaN
+        let oldLevel = game.bestLevels[recordIndex] ?? NaN
+        let oldAchTime = game.bestAchievementTimes[recordIndex] ?? NaN;
+        if (inCampaign && recordIndex >= 0) {
+            if (runPower > game.bestPowers[recordIndex]) game.bestPowers[recordIndex] = runPower;
+            if (score > game.bestScores[recordIndex]) game.bestScores[recordIndex] = score;
+            if (level > game.bestLevels[recordIndex])  {
+                game.bestLevels[recordIndex] = level;
+                game.bestAchievementTimes[recordIndex] = time;
+            } else if (level == game.bestLevels[recordIndex] && game.bestAchievementTimes[recordIndex] <= time) {
+                game.bestAchievementTimes[recordIndex] = time;
+            }
+        }
+
+        // Clear HUD
+        ctx.clearRect(0, 0, leftSide - 8, 240);
+        ctx.clearRect(168 + settings.boardWidth * 4, 0, leftSide - 16, 240);
+        ctx.clearRect(0, 0, 320, 112 - settings.boardHeight * 4);
+        ctx.clearRect(0, 128 + settings.boardHeight * 4, 320, 240);
         
+        // Draw board
+        ctx.clearRect(leftSide, 40, (8 * settings.boardWidth), (8 * settings.boardHeight));
+        ctx.drawImage(images.sideInfo4, leftSide, 40);
+        for (let i = 0; i < settings.boardHeight; i++) {
+            for (let j = 0; j < settings.boardWidth; j++) {
+                if (board[i][j] != 0) {
+                    if (settings.pieceColouring === "monotoneFixed" || settings.pieceColouring === "monotoneAll") { ctx.drawImage(images.tiles, 8, 0, 8, 8, j * 8 + leftSide, i * 8 + 40, 8, 8); }
+                    else { ctx.drawImage(images.tiles, 8, (board[i][j]) * 8, 8, 8, j * 8 + leftSide, i * 8 + 40, 8, 8); }
+                }
+            }
+        }
+
+        // Achievement
+        let timeString = formatTime(time);
+        let levelString = Math.floor(level).toString();
+        let highlightTime = level == oldLevel
+        drawBMText(ctx, 68, 35, "ACHIEVEMENT:", "text5-white");
+        let x = 252
+        if (level == oldLevel) {
+            x -= drawBMText(ctx, x - measureBMText(timeString, "text10-white"), 39, timeString, "text10-white") + 3;
+            x -= drawBMText(ctx, x - measureBMText("IN", "text5-white"), 44, "IN", "text5-white") + 3;
+            x -= drawBMText(ctx, x - measureBMText(levelString, "text7-white"), 41, levelString, "text7-white") + 3;
+            x -= drawBMText(ctx, x - measureBMText("LEVEL", "text5-white"), 44, "LEVEL", "text5-white");
+        } else {
+            x -= drawBMText(ctx, x - measureBMText(timeString, "text7-white"), 41, timeString, "text7-white") + 3;
+            x -= drawBMText(ctx, x - measureBMText("IN", "text5-white"), 44, "IN", "text5-white") + 3;
+            x -= drawBMText(ctx, x - measureBMText(levelString, "text10-white"), 39, levelString, "text10-white") + 3;
+            x -= drawBMText(ctx, x - measureBMText("LEVEL", "text5-white"), 44, "LEVEL", "text5-white");
+        }
+
+        let oldLevelString = Math.floor(oldLevel).toString();
+        let oldTimeString = formatTime(oldAchTime)
+        let newAchRecord = level > oldLevel || (level == oldLevel && time < oldAchTime);
+        drawBMText(ctx, 108, 53, newAchRecord ? "NEW BEST!" : "BEST:", newAchRecord ? "text5-gold" : "text5-gray");
+        x = 252
+        x -= drawBMText(ctx, x - measureBMText(oldTimeString, "text5-white"), 53, oldTimeString, "text5-white") + 2;
+        x -= drawBMText(ctx, x - measureBMText("IN", "text5-white"), 53, "IN", "text5-gray") + 2;
+        x -= drawBMText(ctx, x - measureBMText(oldLevelString, "text5-white"), 53, oldLevelString, "text5-white") + 2;
+        x -= drawBMText(ctx, x - measureBMText("LEVEL", "text5-white"), 53, "LEVEL", "text5-gray");
+        
+        // Score & grade
+        let scoreString = formatScore(score);
+        drawBMText(ctx, 68, 75, "POINTS:", "text5-white");
+        drawBMText(ctx, 152 - measureBMText(scoreString, "text7-white"), 75, scoreString, "text7-white");
+
+        let oldScoreString = Math.floor(oldScore).toString()
+        let newScoreRecord = score > oldScore;
+        drawBMText(ctx, 78, 87, newScoreRecord ? "NEW BEST!" : "BEST:", newScoreRecord ? "text5-gold" : "text5-gray");
+        drawBMText(ctx, 152 - measureBMText(oldScoreString, "text5-white"), 87, oldScoreString, "text5-white");
+        
+        drawBMText(ctx, 68, 103, "GRADE:", "text5-white");
+        ctx.drawImage(images.grades, 0, 32 * grade, 48, 32, 78, 116, 48, 32);
+
+        // Section times
+        drawBMText(ctx, 168, 75, "SECTION TIMES:", "text5-white");
+        if (true) {
+            let lastSectionTime = 0
+            for (let i = 0; i < 10; i++) {
+                let sectionTime = sectionTimes[i] - lastSectionTime
+                
+                if (sectionTime > 0) {
+                    lastSectionTime += sectionTime
+                    let sectionTimeString = formatTime(sectionTime);
+                    let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
+                    drawBMText(ctx, 178, 86 + i * 7, Math.min(i * 100 + 100, 999).toString(), "text5-white");
+                    drawBMText(ctx, 194, 86 + i * 7, sectionTimeString, sectionTimeColor);
+                } else {
+                    drawBMText(ctx, 178, 86 + i * 7, "---", "text5-gray");
+                    drawBMText(ctx, 194, 86 + i * 7, "---", "text5-gray");
+                }
+            }
+        }
+
         // Power
         let powerString = Math.floor(runPower).toString();
         let maxPower = settings.gameMechanics == "dragonStyle" ? 39000 : 30000
         let powerColor = (runPower >= maxPower) ? "-gold" : "-white";
-        drawBMText(ctx, 98, 179, "POWER THIS RUN:", "text5-white");
-        drawBMText(ctx, 221 - measureBMText(powerString, "text10-white"), 174, powerString, "text10" + powerColor);
+        drawBMText(ctx, 98, 189, "POWER THIS RUN:", "text5-white");
+        drawBMText(ctx, 221 - measureBMText(powerString, "text10-white"), 184, powerString, "text10" + powerColor);
+        drawBMText(ctx, 221, 189, "/" + Math.floor(maxPower).toString(), "text5-gray");
 
         let oldPowerString = Math.floor(oldPower).toString()
         let newPowerRecord = runPower > oldPower;
-        drawBMText(ctx, 108, 189, newPowerRecord ? "NEW BEST!" : "BEST:", newPowerRecord ? "text5-gold" : "text5-gray");
-        drawBMText(ctx, 221 - measureBMText(oldPowerString, "text5-white"), 189, oldPowerString, "text5-white");
+        drawBMText(ctx, 108, 198, newPowerRecord ? "NEW BEST!" : "BEST:", newPowerRecord ? "text5-gold" : "text5-gray");
+        drawBMText(ctx, 221 - measureBMText(oldPowerString, "text5-white"), 198, oldPowerString, "text5-white");
 
         // Decoration
         if (inCampaign) {
@@ -585,7 +658,7 @@ function endGame() {
             decorPointsEarned += (decorSectionWeights[settings.gameMechanics] ?? 0) * (level >= 999 ? 10 : Math.floor(level / 100))
             let sectionTimeMedals = 0, lastSectionTime = 0
             for (let i = 0; i < getSectionTimesLength(); i++) {
-                sectionTimeMedals += getTimeColor(sectionTimes[i] - lastSectionTime)
+                sectionTimeMedals += getTimeValue(sectionTimes[i] - lastSectionTime)
                 lastSectionTime = sectionTimes[i]
             }
             decorPointsEarned += (decorSectionMedalWeights[settings.gameMechanics] ?? 0) * sectionTimeMedals
@@ -593,11 +666,15 @@ function endGame() {
             game.decorPoints += decorPointsEarned
 
             let decorString = formatScore(decorPointsEarned);
-            drawBMText(ctx, 98, 199, "EARNED DECORATION:", "text5-white");
-            drawBMText(ctx, 215 - measureBMText("+" + decorString, "text5-white"), 199, "+" + decorString, "text5-white");
-            drawBMText(ctx, 217, 199, "G", "text5-gold");
+            drawBMText(ctx, 98, 210, "EARNED DECORATION:", "text5-white");
+            drawBMText(ctx, 215 - measureBMText("+" + decorString, "text5-white"), 210, "+" + decorString, "text5-white");
+            drawBMText(ctx, 217, 210, "G", "text5-gold");
         }
     }
+
+    drawInputPrompts([
+        { action: "exit", label: "EXIT" }
+    ])
 }
 
 function returnToMenu() {
@@ -640,6 +717,7 @@ function returnToMenu() {
     document.getElementById("textOverlay").innerHTML = "";
     document.getElementsByClassName("container")[1].style.display = "block"; //Campaign screen
     document.getElementsByClassName("container")[2].style.display = "block"; //Custom game screen
+    drawTabInputPrompts(currentTab);
     if (inCampaign) selectMenuMode(currentMenuMode);
     document.body.style.backgroundColor = "#333";
     document.body.style.backgroundImage = "none";

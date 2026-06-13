@@ -300,7 +300,7 @@ function initialiseCanvasBoard() {
     }
 }
 
-function updateVisuals() {
+function drawGame() {
     if (!gamePlaying) return;
     if (settings.visuals == "classicStyle" || settings.visuals == "masterStyle" || settings.visuals == "dragonStyle" || settings.visuals == "onTheBeat") {
         let leftSide = 160-settings.boardWidth*4;

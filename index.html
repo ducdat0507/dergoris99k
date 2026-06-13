@@ -17,6 +17,7 @@
     <img src="img/menuBar.png" style="display: none">
     <img src="img/menuBar2.png" style="display: none">
     <img src="img/overallGrades.png" style="display: none">
+    <img src="img/decorBlocks.png" style="display: none">
     <img src="img/main/background1.png" style="display: none">
     <img src="img/main/board.png" style="display: none">
     <img src="img/main/board2.png" style="display: none">
@@ -51,7 +52,7 @@
     <!--Campaign menu-->
     <div class="container" style="left: 100vw; padding: 40px;">
         <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button>
-        <canvas id="overallGradeCanvas" width="190px" height="40px"></canvas>
+        <canvas id="overallGradeCanvas" width="190px" height="48px"></canvas>
         <div id="modeSelectContainer">
             <img class="menuMode" src="img/style1.png" onclick="playSound('buttonClick'); selectMenuMode(1)">
             <img class="menuMode" src="img/style2.png" onclick="playSound('buttonClick'); selectMenuMode(2)">
@@ -67,7 +68,7 @@
         <div id="modeInfoContainer">
             <img id="modeInfoImage" src="img/style1.png" style="width: 400px; max-width: 100%; margin-left: auto; margin-right: auto; display: block;">
             <hr style="height: 4px; background-color: #eaeaff">
-            <p id="modeInfo"></p>
+            <div id="modeInfo"></div>
             <img src="img/play.png" id="playButton" onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)">
         </div>
     </div>
@@ -223,8 +224,10 @@
     <canvas id="effectOverlay" width="320" height="240"></canvas>
     <div id="blackCoverLeft" style="left: 0"></div>
     <div id="blackCoverRight" style="right: 0"></div>
-    <button class="startingButton" style="top: calc(50% - 40px)" onclick="hideBlackCover(); initializeGameMusic(); playSound('menuMusic')">PLAY WITH SOUND</button>
-    <button class="startingButton" style="top: calc(50% + 40px)" onclick="soundEnabled=false; hideBlackCover()">PLAY WITHOUT SOUND</button>
+    <canvas id="inputPromptCanvas" width="320" height="12"></canvas>
+    <button class="startingButton" style="top: calc(50% - 40px)" onclick="drawTabInputPrompts(1); hideBlackCover(); initializeGameMusic(); playSound('menuMusic')">PLAY WITH SOUND</button>
+    <button class="startingButton" style="top: calc(50% + 40px)" onclick="drawTabInputPrompts(1); soundEnabled=false; hideBlackCover()">PLAY WITHOUT SOUND</button>
+
     <script src="js/howler.js"></script>
     <script src="js/bmtext.js"></script>
     <script src="fonts/text5.js"></script>
@@ -246,6 +249,9 @@
     <script src="js/sound.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/menu.js"></script>
-    <script defer>document.getElementsByClassName("startingButton")[0].style.display = "block"; document.getElementsByClassName("startingButton")[1].style.display = "block";</script>
+    <script defer>
+        document.getElementsByClassName("startingButton")[0].style.display = "block"; 
+        document.getElementsByClassName("startingButton")[1].style.display = "block";
+    </script>
 </body>
 </html>

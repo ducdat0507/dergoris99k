@@ -47,7 +47,7 @@ function moveLeft() {
 			if (settings.lockReset == "step") locking = false;
 			if (getDropInterval() <= 0.05) {maxDrop();} //20G
 		}
-		updateVisuals();
+		drawGame();
 	}
 }
 
@@ -62,7 +62,7 @@ function moveRight() {
 			if (settings.lockReset == "step") locking = false;
 			if (getDropInterval() <= 0.05) {maxDrop();} //20G
 		}
-		updateVisuals();
+		drawGame();
 	}
 }
 
@@ -130,7 +130,7 @@ function rotatePiece(clockwise=true, override=false, alt=false) {
         if (!checkPieceLanded(piecePositions)) {
             if (settings.lockReset == "step") locking = false;
         }
-        updateVisuals();
+        drawGame();
     }
     return;
 }
@@ -196,7 +196,7 @@ function hardDrop() {
 			boardVisualPosition[1] = 1.5; //Vertical bump
 			landPiece();
 		}
-		else {updateVisuals();}
+		else {drawGame();}
 	}
 }
 
@@ -254,7 +254,7 @@ function landPiece() {
     else {currentDropTime = 60;} //Backup
     waitingForNextPiece = true;
     if (inCampaignMode()) playSound("lock");
-    updateVisuals();
+    drawGame();
     clearLines();
     //Disable softdrop until key is pressed again
     softDropping = false;
@@ -400,7 +400,7 @@ function placePiece(pieceType) {
                 }
             }
         }
-        updateVisuals();
+        drawGame();
     }
 
     //Update dropped piece statistics

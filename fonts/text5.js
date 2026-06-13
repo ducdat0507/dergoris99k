@@ -54,10 +54,16 @@ fonts["text5-white"].image.src = "fonts/text5.png";
 
 {
     let variants = [
-        ["text5-blue",   6],
-        ["text5-green", 12],
-        ["text5-gold",  18],
-        ["text5-gray",  24],
+        ["text5-blue",        6],
+        ["text5-green",      12],
+        ["text5-gray",       24],
+        ["text5-bronze",     30],
+        ["text5-silver",     36],
+        ["text5-gold",       42],
+        ["text5-ruby",       48],
+        ["text5-amethyst",   54],
+        ["text5-diamond",    60],
+        ["text5-flat-black", 66],
     ]
     for (let font of variants) {
         fonts[font[0]] = {
