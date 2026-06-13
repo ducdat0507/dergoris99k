@@ -395,18 +395,33 @@ function drawInputPrompts(prompts) {
 
         x -= 6
         if (primaryInputMethod == "keyboard") {
-            let keyString = getActionKey(prompt.action)?.toUpperCase() ?? "???"
-            let keyWidth = measureBMText(keyString, "text5-white")
-            let buttonWidth = Math.max(keyWidth + 5, 11);
-            draw9Patch(inputPromptCtx, inputIconImage, 0, 0, 11, 12, 3, 3, 4, 3, x - buttonWidth, 0, buttonWidth, 12)
-            drawBMText(inputPromptCtx, Math.round(x - (buttonWidth + keyWidth) / 2), 3, keyString, "text5-flat-black")
-            x -= keyWidth + 6
+            let actions = prompt.actions ?? [prompt.action]
+            for (let action of actions) {
+                let keyString = getActionKey(action)?.toUpperCase() ?? "???"
+                let keyWidth = measureBMText(keyString, "text5-white")
+                let buttonWidth = Math.max(keyWidth + 5, 11);
+                draw9Patch(inputPromptCtx, inputIconImage, 0, 0, 11, 12, 3, 3, 4, 3, x - buttonWidth, 0, buttonWidth, 12)
+                drawBMText(inputPromptCtx, Math.round(x - (buttonWidth + keyWidth) / 2), 3, keyString, "text5-flat-black")
+                x -= keyWidth + 8
+            }
         } else if (primaryInputMethod == "gamepad") {
-            let iconPos = controllerButtonIconPos[gamepadState.type][getActionGamepadButton(prompt.action)]
-            inputPromptCtx.drawImage(inputIconImage, iconPos[0], iconPos[1], iconPos[2], iconPos[3], x -= iconPos[2], 0, iconPos[2], iconPos[3]);
+            let actions = prompt.actions ?? [prompt.action]
+            let iconPack = controllerButtonIconPos[gamepadState.type]
+            if (iconPack) {
+                let buttons = actions.map(x => getActionGamepadButton(x)).sort()
+                let iconPos = iconPack[buttons.join(",")]
+                if (iconPos) {
+                    inputPromptCtx.drawImage(inputIconImage, iconPos[0], iconPos[1], iconPos[2], iconPos[3], x -= iconPos[2], 0, iconPos[2], iconPos[3]);
+                    x -= 2
+                } else for (let icon of buttons) {
+                    let iconPos = iconPack[icon]
+                    inputPromptCtx.drawImage(inputIconImage, iconPos[0], iconPos[1], iconPos[2], iconPos[3], x -= iconPos[2], 0, iconPos[2], iconPos[3]);
+                    x -= 2
+                }
+            }
         }
 
-        x -= 20
+        x -= 10
     }
 }
 
@@ -418,24 +433,31 @@ function drawTabInputPrompts(x) {
     switch(x) {
         case 1:
             drawInputPrompts([
+                { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
                 { action: "rotClockwise", label: "SELECT" },
             ])
             break;
 
         case 2: 
             drawInputPrompts([
-                { action: "rotClockwise", label: "PLAY!" },
+                { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
                 { action: "rotAnticlockwise", label: "BACK" },
+                { action: "rotClockwise", label: "PLAY!" },
             ])
+            break;
 
         case 3: 
             drawInputPrompts([
+                { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
                 { action: "rotAnticlockwise", label: "BACK" },
+                { action: "rotClockwise", label: "SELECT" },
             ])
+            break;
 
         case 4: 
             drawInputPrompts([
                 { action: "rotAnticlockwise", label: "BACK" },
             ])
+            break;
     }
 }
