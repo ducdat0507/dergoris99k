@@ -4,9 +4,9 @@ let keyConfig = {
     w: "hardDrop",
     s: "softDrop",
     j: "rotClockwise",
-    n: "rotClockwiseAlt",
+    l: "rotClockwiseAlt",
     k: "rotAnticlockwise",
-    l: "rotAnticlockwiseAlt",
+    n: "rotAnticlockwiseAlt",
     Escape: "exit",
 };
 const keybindNames = [

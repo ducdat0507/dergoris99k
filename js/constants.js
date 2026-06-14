@@ -72,24 +72,24 @@ const decorSectionWeights = {
     dragonStyle: 18,
 }
 const decorSectionMedalWeights = {
-    classicStyle: 3,
-    masterStyle: 3,
-    dragonStyle: 4,
+    classicStyle: 5,
+    masterStyle: 6,
+    dragonStyle: 7,
 }
 
 // [value, x, y]
 const decorBlockPos = [
-    [3000000, 40, 8],
+    [5000000, 40, 8],
     [1000000, 40, 0],
-    [300000, 32, 8],
+    [500000, 32, 8],
     [100000, 32, 0],
-    [30000, 24, 8],
+    [50000, 24, 8],
     [10000, 24, 0],
-    [3000, 16, 8],
+    [5000, 16, 8],
     [1000, 16, 0],
-    [300, 8, 8],
+    [500, 8, 8],
     [100, 8, 0],
-    [30, 0, 8],
+    [50, 0, 8],
     [10, 0, 0],
 ]
 

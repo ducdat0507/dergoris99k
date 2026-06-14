@@ -4,13 +4,14 @@ let activeForm = null;
 
 /** 
  * @param {HTMLDivElement} holder  
- * @param {GamepadFormElement[]} items  
+ * @param {GamepadFormElement | HTMLElement[]} items  
 */
 function buildForm(holder, items) {
     holder.$selectedItem = 0;
     holder.classList.add("form-holder");
     for (let item of items) {
-        holder.append(item.element);
+        if (item instanceof GamepadFormElement) holder.append(item.element);
+        else holder.append(item);
     }
 }
 
@@ -35,12 +36,26 @@ function navigateForm(direction) {
     let pointer = activeForm.$selectedItem;
     while (true) {
         pointer += direction;
-        if (pointer < 0 || pointer >= activeForm.childElementCount) return;
-        if (activeForm.children[activeForm.$selectedItem]?.$form?.canFocus()) break;
+        if (pointer < 0 || pointer >= activeForm.childElementCount) {
+            activeForm.children[activeForm.$selectedItem].animate([
+                { transform: `translateY(${6 * direction}px)` },
+                { transform: `translateY(0px)` },
+            ], {
+                duration: 500,
+                easing: "cubic-bezier(0.19, 1, 0.22, 1)",
+            })
+            playSound("buttonHover");
+            return;
+        }
+        if (activeForm.children[pointer]?.$form?.canFocus()) {
+            activeForm.$selectedItem = pointer;
+            activeForm.children[pointer].$form.doFocus();
+            activeForm.children[pointer].scrollIntoView({ behavior: "smooth", block: "center" })
+            updateInputPrompts();
+            playSound("buttonHover");
+            return;
+        }
     }
-    activeForm.$selectedItem = pointer;
-    activeForm.children[activeForm.$selectedItem].$form.doFocus();
-    playSound("buttonHover");
 }
 
 
@@ -54,10 +69,10 @@ function initForms() {
                 playSound('menuMusic');
 
                 hideBlackCover(); 
-                drawTabInputPrompts(1); 
+                updateInputPrompts(1); 
                 document.getElementById("introSoundForm").style.display = "none";
                 setActiveForm(document.getElementById("mainMenuForm"));
-                displayModeInfo(currentMenuMode);
+                displayProfileInfo();
             },
         }),
         new formElements.button({
@@ -66,10 +81,10 @@ function initForms() {
                 soundEnabled = false; 
 
                 hideBlackCover();
-                drawTabInputPrompts(1); 
+                updateInputPrompts(1); 
                 document.getElementById("introSoundForm").style.display = "none";
                 setActiveForm(document.getElementById("mainMenuForm"));
-                displayModeInfo(currentMenuMode);
+                displayProfileInfo();
             },
         }),
     ])
@@ -107,6 +122,299 @@ function initForms() {
                 switchToTab(4)
             },
         }),
+    ])
+
+    // Custom game
+    buildForm(document.getElementById("customGameForm"), [
+        new formElements.select({
+            label: "PRESETS",
+            value: "classicStyle",
+            values: [
+                { value: "classicStyle", label: "Classic Style" },
+                { value: "masterStyle", label: "Master Style" },
+                { value: "dragonStyle", label: "Dragon Style" },
+            ],
+            onSet(value) {
+                setPreset(value);
+            }
+        }),
+        new formElements.spacing(4),
+        gameSettingElements.visuals = new formElements.select({
+            label: "VISUAL PRESET",
+            value: settings.visuals,
+            values: [
+                { value: "classicStyle", label: "Classic Style" },
+                { value: "masterStyle", label: "Master Style" },
+                { value: "dragonStyle", label: "Dragon Style" },
+            ],
+            onSet(value) {
+                settings.visuals = value;
+            }
+        }),
+        gameSettingElements.gameMechanics = new formElements.select({
+            label: "MECHANICS PRESET",
+            value: settings.gameMechanics,
+            values: [
+                { value: "classicStyle", label: "Classic Style" },
+                { value: "masterStyle", label: "Master Style" },
+                { value: "dragonStyle", label: "Dragon Style" },
+            ],
+            onSet(value) {
+                settings.gameMechanics = value;
+                gameSettingElements.DASInitial.disabled = (settings.gameMechanics == "dragonStyle");
+                gameSettingElements.DAS.disabled = (settings.gameMechanics == "dragonStyle");
+                gameSettingElements.lockDelay.disabled = (settings.gameMechanics == "dragonStyle");
+            }
+        }),
+        new formElements.description("Controls general gameplay rules, including speed curves and scoring system."),
+        new formElements.spacing(4),
+        new formElements.heading("LEVEL"),
+        gameSettingElements.startingLevel = new formElements.number({
+            label: "STARTING LEVEL",
+            value: settings.startingLevel,
+            min: 0,
+            max: 998,
+            arrowStep: 25,
+            onSet(value) {
+                const capTable = {
+                    classicStyle: 998,
+                    masterStyle: 998,
+                    dragonStyle: 998,
+                    onTheBeat: 998
+                };
+                const max = capTable[settings.gameMechanics] || 998;
+                startingLevel = clamp(0, value, max);
+                settings.startingLevel = startingLevel;
+            }
+        }),
+        gameSettingElements.levelLock = new formElements.boolean({
+            label: "FREEZE LEVEL",
+            value: settings.levelLock,
+            onSet(value) {
+                settings.levelLock = value;
+            }
+        }),
+        // new formElements.spacing(4),
+        // gameSettingElements.boardWidth = new formElements.number({
+        //     label: "BOARD WIDTH",
+        //     value: settings.boardWidth,
+        //     min: 4,
+        //     max: 20,
+        //     onSet(value) {
+        //         settings.boardWidth = value;
+        //     }
+        // }),
+        // gameSettingElements.boardHeight = new formElements.number({
+        //     label: "BOARD HEIGHT",
+        //     value: settings.boardHeight,
+        //     min: 4,
+        //     max: 25,
+        //     onSet(value) {
+        //         settings.boardHeight = value;
+        //     }
+        // }),
+        new formElements.spacing(4),
+
+        new formElements.heading("APPEARANCE"),
+        gameSettingElements.pieceColouring = new formElements.select({
+            label: "PIECE COLOURING",
+            value: settings.pieceColouring,
+            values: [
+                { value: "regular", label: "Regular" },
+                { value: "monotoneFixed", label: "Monochrome board" },
+                { value: "monotoneAll", label: "Monochrome board & active piece" },
+                { value: "border", label: "Border-only board" },
+            ],
+            onSet(value) {
+                settings.pieceColouring = value;
+            }
+        }),
+        gameSettingElements.invisible = new formElements.boolean({
+            label: "INVISIBLE BOARD",
+            value: settings.invisible,
+            onSet(value) {
+                settings.invisible = value;
+            }
+        }),
+        new formElements.spacing(4),
+
+        new formElements.heading("PIECES"),
+        gameSettingElements.randomizer = new formElements.select({
+            label: "RANDOMIZER",
+            value: settings.randomizer,
+            values: [
+                { value: "random", label: "Random" },
+                { value: "tgm", label: "The Grand Master" },
+            ],
+            onSet(value) {
+                settings.randomizer = value;
+            }
+        }),
+        new formElements.description("Influences how next pieces are chosen."),
+        new formElements.spacing(4),
+
+        new formElements.heading("DROPS AND GRAVITY"),
+        gameSettingElements.softDrop = new formElements.boolean({
+            label: "SOFT DROP",
+            value: settings.softDrop,
+            onSet(value) {
+                settings.softDrop = value;
+                gameSettingElements.softDropSpeed.disabled = !settings.softDrop;
+            }
+        }),
+        gameSettingElements.softDropSpeed = new formElements.number({
+            label: "SOFT DROP INTERVAL",
+            value: settings.softDropSpeed,
+            min: 1,
+            max: 20,
+            step: 1,
+            onSet(value) {
+                settings.softDropSpeed = value;
+            }
+        }),
+        new formElements.description("Hold soft drop to make pieces descend faster."),
+        new formElements.spacing(4),
+        gameSettingElements.hardDrop = new formElements.boolean({
+            label: "HARD DROP",
+            value: settings.hardDrop,
+            onSet(value) {
+                settings.hardDrop = value ?? gameSettingElements.hardDrop.value;
+                gameSettingElements.sonicDrop.disabled = !settings.hardDrop;
+            }
+        }),
+        gameSettingElements.sonicDrop = new formElements.boolean({
+            label: "SONIC DROP",
+            value: settings.sonicDrop,
+            onSet(value) {
+                settings.sonicDrop = value;
+            }
+        }),
+        new formElements.description(
+            "Press hard drop to instantly drop pieces to the bottom of the board." +
+            "\nSonic drop does not automatically lock pieces."
+        ),
+        new formElements.spacing(4),
+        gameSettingElements.twentyGOverride = new formElements.boolean({
+            label: "INSTANT GRAVITY",
+            value: settings.twentyGOverride,
+            onSet(value) {
+                settings.twentyGOverride = value;
+            }
+        }),
+        new formElements.spacing(4),
+
+        new formElements.heading("ROTATION"),
+        gameSettingElements.rotationSystem = new formElements.select({
+            label: "ROTATION SYSTEM",
+            value: settings.rotationSystem,
+            values: [
+                { value: "nintendo-r", label: "Classic Rotation" },
+                { value: "dergoris", label: "Dergoris Custom Rotation" },
+            ],
+            onSet(value) {
+                settings.rotationSystem = value;
+            }
+        }),
+        new formElements.description("Different rotation systems define different rotation anchors and kick tests which can affect game feel significantly."),
+        gameSettingElements.IRS = new formElements.boolean({
+            label: "INITIAL ROTATION",
+            value: settings.IRS,
+            onSet(value) {
+                settings.IRS = value;
+            }
+        }),
+        new formElements.description("Allow pieces to spawn pre-rotated when rotation buttons are held during entry delay."),
+        new formElements.spacing(4),
+
+        new formElements.heading("AUTO-REPEAT"),
+        gameSettingElements.DASInitial = new formElements.number({
+            label: "INITIAL DELAY",
+            value: settings.DASInitial,
+            min: 1,
+            max: 60,
+            step: 1,
+            onSet(value) {
+                settings.DASInitial = value;
+            }
+        }),
+        gameSettingElements.DAS = new formElements.number({
+            label: "REPEAT INTERVAL",
+            value: settings.DAS,
+            min: 1,
+            max: 60,
+            step: 1,
+            onSet(value) {
+                settings.DAS = value;
+            }
+        }),
+        new formElements.description("Hold left or right to continuously move pieces to that direction."),
+        new formElements.spacing(4),
+
+        new formElements.heading("ENTRY DELAY"),
+        gameSettingElements.overrideGameARE = new formElements.boolean({
+            label: "USE GAME-SPECIFIC VALUES",
+            value: !settings.overrideGameARE,
+            onSet(value) {
+                settings.overrideGameARE = !value;
+                gameSettingElements.ARE.disabled = !settings.overrideGameARE;
+                gameSettingElements.ARELineClear.disabled = !settings.overrideGameARE;
+            }
+        }),
+        gameSettingElements.ARE = new formElements.number({
+            label: "NORMAL DELAY",
+            value: settings.ARE,
+            min: 0,
+            max: 200,
+            step: 1,
+            onSet(value) {
+                settings.ARE = value;
+            }
+        }),
+        gameSettingElements.ARELineClear = new formElements.number({
+            label: "LINE CLEAR DELAY",
+            value: settings.ARELineClear,
+            min: 0,
+            max: 200,
+            step: 1,
+            onSet(value) {
+                settings.ARELineClear = value;
+            }
+        }),
+        new formElements.description(
+            "Adjusts the delay between a piece locking into place and the next piece spawns."
+        ),
+        new formElements.spacing(4),
+
+        new formElements.heading("LOCK DELAY"),
+        gameSettingElements.lockDelay = new formElements.number({
+            label: "LOCK DELAY",
+            value: settings.lockDelay,
+            min: 0,
+            max: 9999,
+            step: 1,
+            onSet(value) {
+                settings.lockDelay = value;
+            }
+        }),
+        new formElements.description(
+            "Adjusts the delay between a piece landing and it locking into place." +
+            "\nSet to 0 to disable."
+        ),
+        gameSettingElements.lockReset = new formElements.select({
+            label: "LOCK DELAY RESET",
+            value: settings.lockReset,
+            values: [
+                { value: "move", label: "Move" },
+                { value: "step", label: "Step" },
+            ],
+            onSet(value) {
+                settings.lockReset = value;
+            }
+        }),
+        new formElements.description(
+            "Move = reset lock delay when piece moves or rotate in any direction." +
+            "\nStep = reset lock delay only when piece moves down."
+        ),
     ])
 }
 

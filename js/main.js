@@ -7,6 +7,7 @@ function startGame() {
     level = settings.startingLevel;
     document.getElementsByClassName("container")[1].style.display = "none"; //Campaign screen
     document.getElementsByClassName("container")[2].style.display = "none"; //Custom game screen
+    document.getElementById("overallGradeCanvas").style.display = "none";
     document.getElementById("backgroundCanvas").style.display = "none";
     document.getElementById("game").style.display = "block";
     document.getElementById("effectOverlay").style.display = "block";
@@ -521,23 +522,23 @@ function endGame() {
 
         if (settings.gameMechanics == "classicStyle") {
             // Level component
-            runPower = Math.max((level - 49) * 15, 0); 
+            runPower = Math.max((level - 24) * 20, 0); 
             // Section time component 
-            if (sectionTimes.length > 0) runPower += Math.max((1850000 / averageSectionTime - 200), 0) * (level + 500) / 1000; 
+            if (sectionTimes.length > 0) runPower += Math.max((1500000 / averageSectionTime - 20000), 0) * (level + 1000) / 1500; 
             // Score component
             runPower += score ** 0.5 * 8;
 
         } else if (settings.gameMechanics == "masterStyle") {
             // Level component
-            runPower = Math.max((level - 49) * 15, 0); 
+            runPower = Math.max((level - 24) * 20, 0); 
             // Section time component
-            if (sectionTimes.length > 0) runPower += Math.max((2800000 / averageSectionTime - 300), 0) * (level + 500) / 1000;
+            if (sectionTimes.length > 0) runPower += Math.max((2100000 / averageSectionTime - 25000), 0) * (level + 1000) / 1500;
 
         } else if (settings.gameMechanics == "dragonStyle") {
             // Level component
-            runPower = Math.max((level - 49) * 20, 0); 
+            runPower = Math.max((level - 24) * 25, 0); 
             // Section time component
-            if (sectionTimes.length > 0) runPower += Math.max((1200000 / averageSectionTime - 200), 0) * (level + 500) / 1000; 
+            if (sectionTimes.length > 0) runPower += Math.max((1000000 / averageSectionTime - 20000), 0) * (level + 1000) / 2000; 
 
         } else if (settings.gameMechanics == "onTheBeat") {
             if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;
@@ -584,91 +585,99 @@ function endGame() {
         drawBMText(ctx, 68, 35, "ACHIEVEMENT:", "text5-white");
         let x = 252
         if (level == oldLevel) {
-            x -= drawBMText(ctx, x - measureBMText(timeString, "text10-white"), 39, timeString, "text10-white") + 3;
-            x -= drawBMText(ctx, x - measureBMText("IN", "text5-white"), 44, "IN", "text5-white") + 3;
-            x -= drawBMText(ctx, x - measureBMText(levelString, "text7-white"), 41, levelString, "text7-white") + 3;
-            x -= drawBMText(ctx, x - measureBMText("LEVEL", "text5-white"), 44, "LEVEL", "text5-white");
+            x -= drawBMTextAnchor(ctx, x, 39, timeString, "text10-white") + 3;
+            x -= drawBMTextAnchor(ctx, x, 44, "IN", "text5-white") + 3;
+            x -= drawBMTextAnchor(ctx, x, 41, levelString, "text7-white") + 3;
+            x -= drawBMTextAnchor(ctx, x, 44, "LEVEL", "text5-white");
         } else {
-            x -= drawBMText(ctx, x - measureBMText(timeString, "text7-white"), 41, timeString, "text7-white") + 3;
-            x -= drawBMText(ctx, x - measureBMText("IN", "text5-white"), 44, "IN", "text5-white") + 3;
-            x -= drawBMText(ctx, x - measureBMText(levelString, "text10-white"), 39, levelString, "text10-white") + 3;
-            x -= drawBMText(ctx, x - measureBMText("LEVEL", "text5-white"), 44, "LEVEL", "text5-white");
+            x -= drawBMTextAnchor(ctx, x, 41, timeString, "text7-white") + 3;
+            x -= drawBMTextAnchor(ctx, x, 44, "IN", "text5-white") + 3;
+            x -= drawBMTextAnchor(ctx, x, 39, levelString, "text10-white") + 3;
+            x -= drawBMTextAnchor(ctx, x, 44, "LEVEL", "text5-white");
         }
-
-        let oldLevelString = Math.floor(oldLevel).toString();
-        let oldTimeString = formatTime(oldAchTime)
-        let newAchRecord = level > oldLevel || (level == oldLevel && time < oldAchTime);
-        drawBMText(ctx, 108, 53, newAchRecord ? "NEW BEST!" : "BEST:", newAchRecord ? "text5-gold" : "text5-gray");
-        x = 252
-        x -= drawBMText(ctx, x - measureBMText(oldTimeString, "text5-white"), 53, oldTimeString, "text5-white") + 2;
-        x -= drawBMText(ctx, x - measureBMText("IN", "text5-white"), 53, "IN", "text5-gray") + 2;
-        x -= drawBMText(ctx, x - measureBMText(oldLevelString, "text5-white"), 53, oldLevelString, "text5-white") + 2;
-        x -= drawBMText(ctx, x - measureBMText("LEVEL", "text5-white"), 53, "LEVEL", "text5-gray");
+        if (inCampaign) {
+            let oldLevelString = Math.floor(oldLevel).toString();
+            let oldTimeString = formatTime(oldAchTime)
+            let newAchRecord = level > oldLevel || (level == oldLevel && time < oldAchTime);
+            drawBMText(ctx, 108, 53, newAchRecord ? "NEW BEST!" : "BEST:", newAchRecord ? "text5-gold" : "text5-gray");
+            x = 252
+            x -= drawBMTextAnchor(ctx, x, 53, oldTimeString, "text5-white") + 2;
+            x -= drawBMTextAnchor(ctx, x, 53, "IN", "text5-gray") + 2;
+            x -= drawBMTextAnchor(ctx, x, 53, oldLevelString, "text5-white") + 2;
+            x -= drawBMTextAnchor(ctx, x, 53, "LEVEL", "text5-gray");
+        }
         
         // Score & grade
         let scoreString = formatScore(score);
         drawBMText(ctx, 68, 75, "POINTS:", "text5-white");
-        drawBMText(ctx, 152 - measureBMText(scoreString, "text7-white"), 75, scoreString, "text7-white");
-
-        let oldScoreString = Math.floor(oldScore).toString()
-        let newScoreRecord = score > oldScore;
-        drawBMText(ctx, 78, 87, newScoreRecord ? "NEW BEST!" : "BEST:", newScoreRecord ? "text5-gold" : "text5-gray");
-        drawBMText(ctx, 152 - measureBMText(oldScoreString, "text5-white"), 87, oldScoreString, "text5-white");
+        drawBMTextAnchor(ctx, 152, 75, scoreString, "text7-white");
+        if (inCampaign) {
+            let oldScoreString = Math.floor(oldScore).toString()
+            let newScoreRecord = score > oldScore;
+            drawBMText(ctx, 78, 87, newScoreRecord ? "NEW BEST!" : "BEST:", newScoreRecord ? "text5-gold" : "text5-gray");
+            drawBMTextAnchor(ctx, 152, 87, oldScoreString, "text5-white");
+        }
         
         drawBMText(ctx, 68, 103, "GRADE:", "text5-white");
         ctx.drawImage(images.grades, 0, 32 * grade, 48, 32, 78, 116, 48, 32);
 
         // Section times
-        drawBMText(ctx, 168, 75, "SECTION TIMES:", "text5-white");
-        if (true) {
-            let lastSectionTime = 0
-            for (let i = 0; i < 10; i++) {
-                let sectionTime = sectionTimes[i] - lastSectionTime
-                
-                if (sectionTime > 0) {
-                    lastSectionTime += sectionTime
-                    let sectionTimeString = formatTime(sectionTime);
-                    let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
-                    drawBMText(ctx, 178, 86 + i * 7, Math.min(i * 100 + 100, 999).toString(), "text5-white");
-                    drawBMText(ctx, 194, 86 + i * 7, sectionTimeString, sectionTimeColor);
-                } else {
-                    drawBMText(ctx, 178, 86 + i * 7, "---", "text5-gray");
-                    drawBMText(ctx, 194, 86 + i * 7, "---", "text5-gray");
+        if (settings.gameMechanics != "onTheBeat") {
+            drawBMText(ctx, 168, 75, "SECTION TIMES:", "text5-white");
+            if (true) {
+                let lastSectionTime = 0
+                for (let i = 0; i < 10; i++) {
+                    let sectionTime = sectionTimes[i] - lastSectionTime
+                    
+                    if (sectionTime > 0) {
+                        lastSectionTime += sectionTime
+                        let sectionTimeString = formatTime(sectionTime);
+                        let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
+                        drawBMText(ctx, 178, 86 + i * 7, Math.min(i * 100 + 100, 999).toString(), "text5-white");
+                        drawBMText(ctx, 194, 86 + i * 7, sectionTimeString, sectionTimeColor);
+                    } else {
+                        drawBMText(ctx, 178, 86 + i * 7, "---", "text5-gray");
+                        drawBMText(ctx, 194, 86 + i * 7, "---", "text5-gray");
+                    }
                 }
             }
         }
 
-        // Power
-        let powerString = Math.floor(runPower).toString();
-        let maxPower = settings.gameMechanics == "dragonStyle" ? 39000 : 30000
-        let powerColor = (runPower >= maxPower) ? "-gold" : "-white";
-        drawBMText(ctx, 98, 189, "POWER THIS RUN:", "text5-white");
-        drawBMText(ctx, 221 - measureBMText(powerString, "text10-white"), 184, powerString, "text10" + powerColor);
-        drawBMText(ctx, 221, 189, "/" + Math.floor(maxPower).toString(), "text5-gray");
+        // Power & decor
+        if (settings.gameMechanics != "onTheBeat") {
+            let powerString = Math.floor(runPower).toString();
+            let maxPower = settings.gameMechanics == "dragonStyle" ? 39000 : 30000
+            let powerColor = (runPower >= maxPower) ? "-gold" : "-white";
+            drawBMText(ctx, 98, 189, "POWER THIS RUN:", "text5-white");
+            drawBMTextAnchor(ctx, 221, 184, powerString, "text10" + powerColor);
+            drawBMText(ctx, 221, 189, "/" + Math.floor(maxPower).toString(), "text5-gray");
 
-        let oldPowerString = Math.floor(oldPower).toString()
-        let newPowerRecord = runPower > oldPower;
-        drawBMText(ctx, 108, 198, newPowerRecord ? "NEW BEST!" : "BEST:", newPowerRecord ? "text5-gold" : "text5-gray");
-        drawBMText(ctx, 221 - measureBMText(oldPowerString, "text5-white"), 198, oldPowerString, "text5-white");
-
-        // Decoration
-        if (inCampaign) {
-            let decorPointsEarned = 0;
-            decorPointsEarned += (decorGradeWeights[settings.gameMechanics] ?? 0) * grade
-            decorPointsEarned += (decorSectionWeights[settings.gameMechanics] ?? 0) * (level >= 999 ? 10 : Math.floor(level / 100))
-            let sectionTimeMedals = 0, lastSectionTime = 0
-            for (let i = 0; i < getSectionTimesLength(); i++) {
-                sectionTimeMedals += getTimeValue(sectionTimes[i] - lastSectionTime)
-                lastSectionTime = sectionTimes[i]
+            if (inCampaign) {
+                let oldPowerString = Math.floor(oldPower).toString()
+                let newPowerRecord = runPower > oldPower;
+                drawBMText(ctx, 108, 198, newPowerRecord ? "NEW BEST!" : "BEST:", newPowerRecord ? "text5-gold" : "text5-gray");
+                drawBMTextAnchor(ctx, 221, 198, oldPowerString, "text5-white");
             }
-            decorPointsEarned += (decorSectionMedalWeights[settings.gameMechanics] ?? 0) * sectionTimeMedals
 
-            game.decorPoints += decorPointsEarned
+            // Decoration
+            if (inCampaign) {
+                let decorPointsEarned = 0;
+                decorPointsEarned += (decorGradeWeights[settings.gameMechanics] ?? 0) * grade
+                decorPointsEarned += (decorSectionWeights[settings.gameMechanics] ?? 0) * (level >= 999 ? 10 : Math.floor(level / 100))
+                let sectionTimeMedals = 0, lastSectionTime = 0
+                for (let i = 0; i < getSectionTimesLength(); i++) {
+                    sectionTimeMedals += getTimeValue(sectionTimes[i] - lastSectionTime)
+                    lastSectionTime = sectionTimes[i]
+                }
+                decorPointsEarned += (decorSectionMedalWeights[settings.gameMechanics] ?? 0) * sectionTimeMedals
 
-            let decorString = formatScore(decorPointsEarned);
-            drawBMText(ctx, 98, 210, "EARNED DECORATION:", "text5-white");
-            drawBMText(ctx, 215 - measureBMText("+" + decorString, "text5-white"), 210, "+" + decorString, "text5-white");
-            drawBMText(ctx, 217, 210, "G", "text5-gold");
+                game.decorPoints += decorPointsEarned
+
+                let decorString = formatScore(decorPointsEarned);
+                drawBMText(ctx, 98, 210, "EARNED DECORATION:", "text5-white");
+                drawBMTextAnchor(ctx, 215, 210, "+" + decorString, "text5-white");
+                drawBMText(ctx, 217, 210, "G", "text5-gold");
+            }
         }
     }
 
@@ -717,8 +726,14 @@ function returnToMenu() {
     document.getElementById("textOverlay").innerHTML = "";
     document.getElementsByClassName("container")[1].style.display = "block"; //Campaign screen
     document.getElementsByClassName("container")[2].style.display = "block"; //Custom game screen
-    drawTabInputPrompts(currentTab);
-    if (inCampaign) selectMenuMode(currentMenuMode);
+    document.getElementById("overallGradeCanvas").style.display = "block";
+    updateInputPrompts(currentTab);
+    if (inCampaign) {
+        selectMenuMode(currentMenuMode);
+        displayProfileInfo();
+    } else if (currentTab == 3) {
+        setActiveForm(document.getElementById("customGameForm"));
+    }
     document.body.style.backgroundColor = "#333";
     document.body.style.backgroundImage = "none";
     save();

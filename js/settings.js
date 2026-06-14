@@ -33,42 +33,39 @@ function setMusicVolume() {
     save();
 }
 
-//Game settings
+let gameSettingElements = {}
 
 function updateSettingVisuals() {
-    document.getElementById("startingLevelSetting").value = settings.startingLevel;
-    document.getElementById("boardWidthSetting").value = settings.boardWidth;
-    document.getElementById("boardHeightSetting").value = settings.boardHeight;
-    document.getElementById("visualsSetting").value = settings.visuals;
-    document.getElementById("gameMechanicsSetting").value = settings.gameMechanics;
-    document.getElementById("DASInitialSetting").disabled = (settings.gameMechanics == "dragonStyle");
-    document.getElementById("DASSetting").disabled = (settings.gameMechanics == "dragonStyle");
-    document.getElementById("lockDelaySetting").disabled = (settings.gameMechanics == "dragonStyle");
-    document.getElementById("randomizerSetting").value = settings.randomizer;
-    document.getElementById("pieceColouringSetting").value = settings.pieceColouring;
-    document.getElementById("softDropSetting").checked = settings.softDrop;
-    document.getElementById("softDropSpeedSetting").value = settings.softDropSpeed;
-    document.getElementById("hardDropSetting").checked = settings.hardDrop;
-    document.getElementById("sonicDropSetting").checked = settings.sonicDrop;
-    document.getElementById("sonicDropSetting").disabled = !settings.hardDrop;
-    document.getElementById("rotationSystemSetting").value = settings.rotationSystem;
-    document.getElementById("IRSSetting").checked = settings.IRS;
-    document.getElementById("twentyGSetting").checked = settings.twentyGOverride;
-    document.getElementById("levelLockSetting").disabled = (settings.gameMechanics != "classicStyle" && settings.gameMechanics != "masterStyle" && settings.gameMechanics != "dragonStyle" && settings.gameMechanics != "onTheBeat");
-    document.getElementById("levelLockSetting").checked = settings.levelLock;
-    document.getElementById("overrideGameARESetting").checked = settings.overrideGameARE;
-    document.getElementById("ARESetting").value = settings.ARE;
-    document.getElementById("ARESetting").disabled = !settings.overrideGameARE;
-    document.getElementById("ARELineClearSetting").value = settings.ARELineClear;
-    document.getElementById("ARELineClearSetting").disabled = !settings.overrideGameARE;
-    document.getElementById("DASInitialSetting").value = settings.DASInitial;
-    document.getElementById("DASSetting").value = settings.DAS;
-    document.getElementById("lockDelaySetting").value = settings.lockDelay;
-    document.getElementById("lockResetSetting").value = settings.lockReset;
+    gameSettingElements.startingLevel.value = settings.startingLevel;
+    // gameSettingElements.boardWidth.value = settings.boardWidth;
+    // gameSettingElements.boardHeight.value = settings.boardHeight;
+    gameSettingElements.pieceColouring.value = settings.pieceColouring;
+    gameSettingElements.invisible.value = settings.invisible;
+    gameSettingElements.softDrop.value = settings.softDrop;
+    gameSettingElements.softDropSpeed.value = settings.softDropSpeed;
+    gameSettingElements.hardDrop.value = settings.hardDrop;
+    gameSettingElements.sonicDrop.value = settings.sonicDrop;
+    gameSettingElements.sonicDrop.disabled = !settings.hardDrop;
+    gameSettingElements.rotationSystem.value = settings.rotationSystem;
+    gameSettingElements.IRS.value = settings.IRS;
+    gameSettingElements.twentyGOverride.value = settings.twentyGOverride;
+    gameSettingElements.overrideGameARE.value = !settings.overrideGameARE;
+    gameSettingElements.ARE.value = settings.ARE;
+    gameSettingElements.ARE.disabled = !settings.overrideGameARE;
+    gameSettingElements.ARELineClear.value = settings.ARELineClear;
+    gameSettingElements.ARELineClear.disabled = !settings.overrideGameARE;
+    gameSettingElements.DASInitial.value = settings.DASInitial;
+    gameSettingElements.DAS.value = settings.DAS;
+    gameSettingElements.lockDelay.value = settings.lockDelay;
+    gameSettingElements.lockReset.value = settings.lockReset;
+    gameSettingElements.visuals.value = settings.visuals;
+    gameSettingElements.gameMechanics.value = settings.gameMechanics;
+    gameSettingElements.DASInitial.disabled = (settings.gameMechanics == "dragonStyle");
+    gameSettingElements.DAS.disabled = (settings.gameMechanics == "dragonStyle");
+    gameSettingElements.lockDelay.disabled = (settings.gameMechanics == "dragonStyle");
+    gameSettingElements.randomizer.value = settings.randomizer;
+    gameSettingElements.levelLock.value = settings.levelLock;
 }
-
-updateSettingVisuals()
-document.getElementById("presetsSetting").value = "classicStyle";
 
 function clamp(min, val, max) {
     if(val < min) {
@@ -80,8 +77,7 @@ function clamp(min, val, max) {
     return val;
 }
 
-function setPreset(preset = document.getElementById("presetsSetting").value) {
-    document.getElementById("presetsSetting").value = preset;
+function setPreset(preset) {
     switch (preset) {
         case "classicStyle":
             settings.boardWidth = 10;
@@ -167,8 +163,7 @@ function setPreset(preset = document.getElementById("presetsSetting").value) {
     updateSettingVisuals();
 }
 
-function setStartingLevel() {
-    let startingLevel = parseInt(document.getElementById("startingLevelSetting").value);
+function setStartingLevel(value) {
     const capTable = {
         classicStyle: 998,
         masterStyle: 998,
@@ -176,141 +171,111 @@ function setStartingLevel() {
         onTheBeat: 998
     };
     const max = capTable[settings.gameMechanics] || 998;
-    startingLevel = clamp(0, startingLevel, max);
-    document.getElementById("startingLevelSetting").value = startingLevel;
+    startingLevel = clamp(0, value, max);
     settings.startingLevel = startingLevel;
 }
 
-function setBoardWidth() {
-    let boardWidth = parseInt(document.getElementById("boardWidthSetting").value);
+function setBoardWidth(value) {
+    let boardWidth = parseInt(value ?? gameSettingElements.boardWidth.value);
     boardWidth = clamp(4, boardWidth, 20);
-    document.getElementById("boardWidthSetting").value = boardWidth;
+    const input = gameSettingElements.boardWidth.element.querySelector('input');
+    if (input) input.value = boardWidth;
     settings.boardWidth = boardWidth;
 }
 
-function setBoardHeight() {
-    let boardHeight = parseInt(document.getElementById("boardHeightSetting").value);
+function setBoardHeight(value) {
+    let boardHeight = parseInt(value ?? gameSettingElements.boardHeight.value);
     boardHeight = clamp(4, boardHeight, 25);
-    document.getElementById("boardHeightSetting").value = boardHeight;
+    const input = gameSettingElements.boardHeight.element.querySelector('input');
+    if (input) input.value = boardHeight;
     settings.boardHeight = boardHeight;
 }
-
-function setVisuals() {
-    let visuals = document.getElementById("visualsSetting").value;
-    settings.visuals = visuals;
+function setPieceColouring(value) {
+    settings.pieceColouring = value ?? gameSettingElements.pieceColouring.value;
 }
 
-function setGameMechanics() {
-    let gameMechanics = document.getElementById("gameMechanicsSetting").value;
-    settings.gameMechanics = gameMechanics;
-    document.getElementById("DASInitialSetting").disabled = (settings.gameMechanics == "dragonStyle");
-    document.getElementById("DASSetting").disabled = (settings.gameMechanics == "dragonStyle");
-    document.getElementById("lockDelaySetting").disabled = (settings.gameMechanics == "dragonStyle");
-    document.getElementById("levelLockSetting").disabled = (settings.gameMechanics != "classicStyle" && settings.gameMechanics != "masterStyle" && settings.gameMechanics != "dragonStyle" && settings.gameMechanics != "onTheBeat");
+function setInvisible(value) {
+    settings.invisible = value ?? gameSettingElements.invisible.value;
 }
 
-function setRandomizer() {
-    let randomizer = document.getElementById("randomizerSetting").value;
-    settings.randomizer = randomizer;
+function setSoftDrop(value) {
+    settings.softDrop = value ?? gameSettingElements.softDrop.value;
 }
 
-function setPieceColouring() {
-    let pieceColouring = document.getElementById("pieceColouringSetting").value;
-    settings.pieceColouring = pieceColouring;
-}
-
-function setInvisible() {
-    let invisible = document.getElementById("invisibleSetting").checked;
-    settings.invisible = invisible;
-}
-
-function setSoftDrop() {
-    let softDrop = document.getElementById("softDropSetting").checked;
-    settings.softDrop = softDrop;
-}
-
-function setSoftDropSpeed() {
-    let softDropSpeed = parseInt(document.getElementById("softDropSpeedSetting").value);
+function setSoftDropSpeed(value) {
+    let softDropSpeed = parseInt(value ?? gameSettingElements.softDropSpeed.value);
     softDropSpeed = clamp(1, softDropSpeed, 20);
-    document.getElementById("softDropSpeedSetting").value = softDropSpeed;
+    gameSettingElements.softDropSpeed.value = softDropSpeed;
     settings.softDropSpeed = softDropSpeed;
 
 }
 
-function setHardDrop() {
-    let hardDrop = document.getElementById("hardDropSetting").checked;
-    settings.hardDrop = hardDrop;
-    document.getElementById("sonicDropSetting").disabled = (!hardDrop);
+function setHardDrop(value) {
+    settings.hardDrop = value ?? gameSettingElements.hardDrop.value;
+    if (gameSettingElements.sonicDrop) gameSettingElements.sonicDrop.disabled = !settings.hardDrop;
 }
 
-function setSonicDrop() {
-    let sonicDrop = document.getElementById("sonicDropSetting").checked;
-    settings.sonicDrop = sonicDrop;
+function setSonicDrop(value) {
+    settings.sonicDrop = value ?? gameSettingElements.sonicDrop.value;
 }
 
-function setRotationSystem() {
-    let rotationSystem = document.getElementById("rotationSystemSetting").value;
-    settings.rotationSystem = rotationSystem;
+function setRotationSystem(value) {
+    settings.rotationSystem = value ?? gameSettingElements.rotationSystem.value;
 }
 
-function setIRS() {
-    let IRS = document.getElementById("IRSSetting").checked;
-    settings.IRS = IRS;
+function setIRS(value) {
+    settings.IRS = value ?? gameSettingElements.IRS.value;
 }
 
-function setTwentyGOverride() {
-    let twentyGOverride = document.getElementById("twentyGSetting").checked;
-    settings.twentyGOverride = twentyGOverride;
+function setTwentyGOverride(value) {
+    settings.twentyGOverride = value ?? gameSettingElements.twentyGOverride.value;
 }
 
-function setLevelLock() {
-    let levelLock = document.getElementById("levelLockSetting").checked;
-    settings.levelLock = levelLock;
+function setLevelLock(value) {
+    settings.levelLock = value ?? gameSettingElements.levelLock.value;
 }
 
-function setOverrideGameARE() {
-    let overrideGameARE = document.getElementById("overrideGameARESetting").checked;
-    settings.overrideGameARE = overrideGameARE;
-    document.getElementById("ARESetting").disabled = !settings.overrideGameARE;
-    document.getElementById("ARELineClearSetting").disabled = !settings.overrideGameARE;
+function setOverrideGameARE(value) {
+    settings.overrideGameARE = value ?? gameSettingElements.overrideGameARE.value;
+    gameSettingElements.ARE.disabled = !settings.overrideGameARE;
+    ameSettingElements.ARELineClear.disabled = !settings.overrideGameARE;
 }
 
-function setARE() {
-    let ARE = parseInt(document.getElementById("ARESetting").value);
+function setARE(value) {
+    let ARE = parseInt(value ?? gameSettingElements.ARE.value);
     ARE = clamp(0, ARE, 200);
-    document.getElementById("ARESetting").value = ARE;
+    gameSettingElements.ARE.value = ARE;
     settings.ARE = ARE;
 }
 
-function setARELineClear() {
-    let ARELineClear = parseInt(document.getElementById("ARELineClearSetting").value);
+function setARELineClear(value) {
+    let ARELineClear = parseInt(value ?? gameSettingElements.ARELineClear.value);
     ARELineClear = clamp(0, ARELineClear, 200);
-    document.getElementById("ARELineClearSetting").value = ARELineClear;
+    gameSettingElements.ARELineClear.value = ARELineClear;
     settings.ARELineClear = ARELineClear;
 }
 
-function setDASInitial() {
-    let DASInitial = parseInt(document.getElementById("DASInitialSetting").value);
+function setDASInitial(value) {
+    let DASInitial = parseInt(value ?? gameSettingElements.DASInitial.value);
     DASInitial = clamp(1, DASInitial, 60);
-    document.getElementById("DASInitialSetting").value = DASInitial;
+    gameSettingElements.DASInitial.value = DASInitial;
     settings.DASInitial = DASInitial;
 }
 
-function setDAS() {
-    let DAS = parseInt(document.getElementById("DASSetting").value);
+function setDAS(value) {
+    let DAS = parseInt(value ?? gameSettingElements.DAS.value);
     DAS = clamp(1, DAS, 60);
-    document.getElementById("DASSetting").value = DAS;
+    gameSettingElements.DAS.value = DAS;
     settings.DAS = DAS;
 }
 
-function setLockDelay() {
-    let lockDelay = parseInt(document.getElementById("lockDelaySetting").value);
+function setLockDelay(value) {
+    let lockDelay = parseInt(value ?? gameSettingElements.lockDelay.value);
     lockDelay = clamp(0, lockDelay, 9999);
-    document.getElementById("lockDelaySetting").value = lockDelay;
+    gameSettingElements.lockDelay.value = lockDelay;
     settings.lockDelay = lockDelay;
 }
 
-function setLockReset() {
-    let lockReset = document.getElementById("lockResetSetting").value;
-    settings.lockReset = lockReset;
+function setLockReset(value) {
+    settings.lockReset = value ?? gameSettingElements.lockReset.value;
 }

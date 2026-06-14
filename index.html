@@ -10,7 +10,7 @@
     <meta content="#005a00" data-react-helmet="true" name="theme-color" />
     <meta name="color-scheme" content="light only">
     <title>Dergoris 99k</title>
-    <link rel="stylesheet" href="style.css?v110=1">
+    <link rel="stylesheet" href="css/style.css?v110=1">
     <link rel="icon" href="img/icon2.png">
     <!--Preload board-->
     <img src="img/modeInfo.png" style="display: none">
@@ -43,7 +43,7 @@
     <!--Main menu-->
     <div class="container" style="padding: 60px;">
         <img src="img/title.png" style="height: 66px;"><br><p style="margin-top: 4px; color: #ddd; font-size: 16px; margin-bottom: 40px">V1.2.2</p>
-        <div ID="mainMenuForm"></div>
+        <div id="mainMenuForm"></div>
         <canvas id="overallGradeCanvas" width="190px" height="48px"></canvas>
     </div>
     <!--Campaign menu-->
@@ -62,102 +62,18 @@
             <!-- <img id="modeInfoImage" src="img/style1.png" style="width: 400px; max-width: 100%; margin-left: auto; margin-right: auto; display: block;"> -->
             <div id="modeInfo"></div>
             <br><br>
-            <canvas id="modeStatsCanvas" width="180px" height="160px"></canvas><br>
+            <canvas id="modeStatsCanvas" width="320px" height="100px"></canvas><br>
             <!-- <img src="img/play.png" id="playButton" onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)"> -->
         </div>
     </div>
     <!--Custom game-->
-    <div class="container" style="left: 100vw; padding: 60px;">
-        <div id="settings" style="overflow: auto; max-height: 98vh;">
-            <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button><br><br>
-            <button onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)">START GAME</button><br><br>
-            <label for="presetsSetting" style="color: #bdf">PRESETS - </label>
-            <select id="presetsSetting" onchange="setPreset()">
-                <option value="classicStyle" selected>Classic Style</option>
-                <option value="masterStyle">Master Style</option>
-                <option value="dragonStyle">Dragon Style</option>
-            </select><br><br>
-            <label for="startingLevelSetting">STARTING LEVEL - </label>
-            <input type="number" id="startingLevelSetting" value="0" min="0" max="999" onchange="setStartingLevel()"><br><br>
-            <label for="boardWidthSetting" style="display: none">BOARD WIDTH - </label>
-            <input type="number" id="boardWidthSetting" value="10" min="4" max="20" step="2" onchange="setBoardWidth()" style="display: none">
-            <label for="boardHeightsetting" style="display: none">BOARD HEIGHT - </label>
-            <input type="number" id="boardHeightSetting" value="20" min="4" max="25" onchange="setBoardHeight()" style="display: none">
+    <div class="container" style="left: 100vw; padding: 0;">
+        
+        <div id="settings" style="overflow: auto; max-height: 100vh; padding: 60px 60px 180px 60px;">
+            <!-- <button class="menuButton" onmouseover="playSound('buttonHover');" onclick="playSound('buttonClick'); switchToTab(1)">BACK</button><br><br>
+            <button onclick="showBlackCover(); playSound('buttonClick'); fadeOutSound('menuMusic', 500); setTimeout(startGame, 1000)">START GAME</button><br><br> -->
+            <div id="customGameForm" style="max-width: 900px; margin: auto;"></div>
 
-            <label for="visualsSetting">VISUALS - </label>
-            <select id="visualsSetting" onchange="setVisuals()">
-                <option value="classicStyle" selected>Classic Style</option>
-                <option value="masterStyle">Master Style</option>
-                <option value="dragonStyle">Dragon Style</option>
-            </select><br>
-            <label for="gameMechanicsSetting">GAME MECHANICS - </label>
-            <select id="gameMechanicsSetting" onchange="setGameMechanics()">
-                <option value="classicStyle" selected>Classic Style</option>
-                <option value="masterStyle">Master Style</option>
-                <option value="dragonStyle">Dragon Style</option>
-            </select><br>
-            <p>MAIN GAME MECHANICS. INCLDUES DROP SPEED, ARE AND SCORING SYSTEM.</p><br>
-            <label for="randomizerSetting">RANDOMIZER - </label>
-            <select id="randomizerSetting" onchange="setRandomizer()">
-                <option value="random">Random</option>
-                <option value="tgm" selected>The Grand Master</option>
-            </select><br>
-            <p>HOW PIECES ARE CHOSEN.</p><br>
-            <label for="pieceColouringSetting">PIECE COLOURING - </label>
-            <select id="pieceColouringSetting" onchange="setPieceColouring()">
-                <option value="regular" selected>Regular</option>
-                <option value="monotoneFixed">Monotone (fixed)</option>
-                <option value="monotoneAll">Monotone (all)</option>
-                <option value="border">Border only</option>
-            </select><br>
-            <p>HOW PIECES ARE COLOURED.<br>REGULAR = COLOURS BASED ON PIECE.<br>MONOTONE (FIXED) = FIXED BLOCKS ARE MONOTONE.<br>MONOTONE (ALL) = ALL BLOCKS ARE MONOTONE</p>
-            <label for="invisibleSetting">INVISIBLE BOARD</label>
-            <input type="checkbox" id="invisibleSetting" onchange="setInvisible()" /><br><br>
-
-            <label for="softDropSetting">SOFT DROP</label>
-            <input type="checkbox" id="softDropSetting" onchange="setSoftDrop()" checked /><br>
-            <label for="softDropSpeedSetting">SOFT DROP SPEED - </label>
-            <input type="number" id="softDropSpeedSetting" value="2" min="1" max="20" onchange="setSoftDropSpeed()"><br>
-            <label for="hardDropSetting">HARD DROP</label>
-            <input type="checkbox" id="hardDropSetting" onchange="setHardDrop()" checked /><br>
-            <label for="sonicDropSetting">SONIC DROP</label>
-            <input type="checkbox" id="sonicDropSetting" onchange="setSonicDrop()" /><br>
-            <p>OVERRIDES HARD DROP</p><br>
-
-            <label for="rotationSystemSetting">ROTATION SYSTEM - </label>
-            <select id="rotationSystemSetting" onchange="setRotationSystem()">
-                <option value="dergoris" selected>Dergoris Custom Rotation</option>
-            </select><br>
-            <label for="IRSSetting">IRS</label>
-            <input type="checkbox" id="IRSSetting" onchange="setIRS()" checked /><br><br>
-
-            <label for="twentyGSetting">20G MODE</label>
-            <input type="checkbox" id="twentyGSetting" onchange="setTwentyGOverride()" /><br><br>
-
-            <label for="levelLockSetting">LEVEL LOCK</label>
-            <input type="checkbox" id="levelLockSetting" onchange="setLevelLock()" /><br>
-            <p>PREVENTS THE LEVEL FROM INCREASING FOR TGM-LIKE GAMES. GOOD FOR PRACTICE.</p><br>
-
-            <label for="overrideGameARESetting">OVERRIDE GAME-SPECIFIC ARE</label>
-            <input type="checkbox" id="overrideGameARESetting" onchange="setOverrideGameARE()" /><br>
-            <label for="ARESetting">ARE - NORMAL - </label>
-            <input type="number" id="ARESetting" value="0" min="0" max="200" onchange="setARE()"><br>
-            <label for="ARELineClearSetting">ARE - LINE CLEAR - </label>
-            <input type="number" id="ARELineClearSetting" value="0" min="0" max="200" onchange="setARELineClear()"><br><br>
-
-            <label for="DASInitialSetting">DAS - INITIAL - </label>
-            <input type="number" id="DASInitialSetting" value="16" min="1" max="60" onchange="setDASInitial()"><br>
-            <label for="DASSetting">DAS - REPEAT - </label>
-            <input type="number" id="DASSetting" value="6" min="1" max="60" onchange="setDAS()"><br>
-            <label for="lockDelaySetting">LOCK DELAY - </label>
-            <input type="number" id="lockDelaySetting" value="0" min="0" max="9999" onchange="setLockDelay()"><br>
-            <p>SET TO 0 TO DISABLE.</p><br>
-            <label for="lockResetSetting">LOCK DELAY RESET - </label>
-            <select id="lockResetSetting" onchange="setLockReset()">
-                <option value="move">Move</option>
-                <option value="step" selected>Step</option>
-            </select><br>
-            <p>MOVE = RESET LOCK DELAY WHEN PIECE MOVES.<br>STEP = RESET LOCK DELAY WHEN PIECE MOVES DOWN.</p>
         </div>
     </div>
     <!--Credits-->
@@ -246,6 +162,7 @@
     <script src="js/menu.js"></script>
     <script defer>
         initForms();
+        selectMenuMode(1);
         setActiveForm(document.getElementById("introSoundForm"));
     </script>
 </body>

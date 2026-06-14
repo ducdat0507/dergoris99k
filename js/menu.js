@@ -27,6 +27,7 @@ const modeDescriptions = {
     2: `
         <b>
             Faster-paced mode for those who want a bit more of a challenge.
+            <br>Heads up: this mode can get quite <i>fast.</i>
         </b><br>
         <br>- Gravity increases very quickly
         <br>- Combo-based scoring (make the best combo as you can!)
@@ -34,17 +35,17 @@ const modeDescriptions = {
     `,
     3: `
         <b>
-            Think you're good? Try stacking at overdrive speeds.
+            Think you're good? Try stacking at the speed of a dragon.
             <br>Not for the faint of heart.
         </b><br>
         <br>- Maximum gravity, all delays get shorter as you go
         <br>- Combo-based scoring (make the best combo as you can!)
         <br>- Power is based on level reached and average section time.
     `,
-    5: `
+    4: `
         <b>
             Bonus mode - Can you stack in time with the beat?
-            <br>That's actually harder than it sounds!
+            <br>It's actually harder than it sounds!
         </b><br>
         <br>- Pieces drop and lock on the beat
         <br>- Grade based on distance through the song
@@ -73,6 +74,7 @@ function switchToTab(x) {
         case 1:
             onCampaignScreen = false;
             backgroundColorDestination = [80, 120, 120];
+            document.getElementById("overallGradeCanvas").style.right = "";
             document.getElementsByClassName("container")[0].style.top = "0";
             document.getElementsByClassName("container")[0].style.left = "0";
             document.getElementsByClassName("container")[1].style.top = "0";
@@ -87,6 +89,7 @@ function switchToTab(x) {
             onCampaignScreen = true;
             settings.startingLevel = 0;
             backgroundColorDestination = [50, 50, 50];
+            document.getElementById("overallGradeCanvas").style.right = "calc(60px - 100vw)";
             document.getElementsByClassName("container")[0].style.top = "0";
             document.getElementsByClassName("container")[0].style.left = "-100vw";
             document.getElementsByClassName("container")[1].style.top = "0";
@@ -101,8 +104,9 @@ function switchToTab(x) {
             break;
         case 3:
             onCampaignScreen = false;
-            backgroundColorDestination = [100, 100, 100];
+            backgroundColorDestination = [50, 50, 50];
             if (settings.gameMechanics == "onTheBeat") setPreset("classicStyle"); //On the beat is not selectable in custom game
+            document.getElementById("overallGradeCanvas").style.right = "";
             document.getElementsByClassName("container")[0].style.top = "0";
             document.getElementsByClassName("container")[0].style.left = "-100vw";
             document.getElementsByClassName("container")[1].style.top = "0";
@@ -111,13 +115,14 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "0";
             document.getElementsByClassName("container")[3].style.top = "100vh";
             document.getElementsByClassName("container")[3].style.left = "-100vw";
-            setActiveForm(document.getElementById(null));
+            setActiveForm(document.getElementById("customGameForm"));
             hideKeybinds();
             hideSettings();
             break;
         case 4:
             onCampaignScreen = false;
             backgroundColorDestination = [50, 50, 50];
+            document.getElementById("overallGradeCanvas").style.right = "";
             document.getElementsByClassName("container")[0].style.top = "-100vh";
             document.getElementsByClassName("container")[0].style.left = "0";
             document.getElementsByClassName("container")[1].style.top = "-100vh";
@@ -132,7 +137,7 @@ function switchToTab(x) {
             break;
     }
 
-    drawTabInputPrompts(x);
+    updateInputPrompts();
 }
 
 let currentMenuMode = 1;
@@ -140,83 +145,42 @@ let onCampaignScreen = false;
 function selectMenuMode(x) {
     let containerCenter;
     if (document.getElementsByClassName("container")[1].style.display != "none") containerCenter = document.getElementById('modeSelectContainer').offsetHeight / 2; //Recalculate containerCenter
-    document.getElementsByClassName("menuArrow")[0].style.top = (containerCenter - 90) + "px";
-    document.getElementsByClassName("menuArrow")[1].style.top = (containerCenter + 90) + "px";
+    document.getElementsByClassName("menuArrow")[0].style.top = (containerCenter - 75) + "px";
+    document.getElementsByClassName("menuArrow")[1].style.top = (containerCenter + 75) + "px";
     document.getElementsByClassName("menuArrow")[0].style.display = x!=1 ? "block" : "none";
     document.getElementsByClassName("menuArrow")[1].style.display = x!=4 ? "block" : "none";
     currentMenuMode = x;
+
+    let menuModeImages = document.getElementsByClassName("menuMode");
+    for (let i = 0; i < menuModeImages.length; i++) {
+        document.getElementsByClassName("menuMode")[i].style.top = (containerCenter + 150 * (i + 1 - x)) + "px";
+        document.getElementsByClassName("menuMode")[i].style.left = i + 1 == x ? "90px" : "30px";
+        document.getElementsByClassName("menuMode")[i].style.filter = i + 1 == x ? "none" : "brightness(0.6)";
+    }
     switch(x) {
         case 1:
             setPreset("classicStyle");
-            document.getElementsByClassName("menuMode")[0].style.top = containerCenter + "px";
-            document.getElementsByClassName("menuMode")[1].style.top = (containerCenter + 200) + "px";
-            document.getElementsByClassName("menuMode")[2].style.top = (containerCenter + 400) + "px";
-            document.getElementsByClassName("menuMode")[3].style.top = (containerCenter + 600) + "px";
-            document.getElementsByClassName("menuMode")[0].style.left = "60px";
-            document.getElementsByClassName("menuMode")[1].style.left = "10px";
-            document.getElementsByClassName("menuMode")[2].style.left = "10px";
-            document.getElementsByClassName("menuMode")[3].style.left = "10px";
-            document.getElementsByClassName("menuMode")[0].style.filter = "none";
-            document.getElementsByClassName("menuMode")[1].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[2].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[3].style.filter = "brightness(0.7)";
             break;
         case 2:
             setPreset("masterStyle");
-            document.getElementsByClassName("menuMode")[0].style.top = (containerCenter - 200) + "px";
-            document.getElementsByClassName("menuMode")[1].style.top = containerCenter + "px";
-            document.getElementsByClassName("menuMode")[2].style.top = (containerCenter + 200) + "px";
-            document.getElementsByClassName("menuMode")[3].style.top = (containerCenter + 400) + "px";
-            document.getElementsByClassName("menuMode")[0].style.left = "10px";
-            document.getElementsByClassName("menuMode")[1].style.left = "60px";
-            document.getElementsByClassName("menuMode")[2].style.left = "10px";
-            document.getElementsByClassName("menuMode")[3].style.left = "10px";
-            document.getElementsByClassName("menuMode")[0].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[1].style.filter = "none";
-            document.getElementsByClassName("menuMode")[2].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[3].style.filter = "brightness(0.7)";
             break;
         case 3:
             setPreset("dragonStyle");
-            document.getElementsByClassName("menuMode")[0].style.top = (containerCenter - 400) + "px";
-            document.getElementsByClassName("menuMode")[1].style.top = (containerCenter - 200) + "px";
-            document.getElementsByClassName("menuMode")[2].style.top = containerCenter + "px";
-            document.getElementsByClassName("menuMode")[3].style.top = (containerCenter + 200) + "px";
-            document.getElementsByClassName("menuMode")[0].style.left = "10px";
-            document.getElementsByClassName("menuMode")[1].style.left = "10px";
-            document.getElementsByClassName("menuMode")[2].style.left = "60px";
-            document.getElementsByClassName("menuMode")[3].style.left = "10px";
-            document.getElementsByClassName("menuMode")[0].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[1].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[2].style.filter = "none";
-            document.getElementsByClassName("menuMode")[3].style.filter = "brightness(0.7)";
             break;
         case 4:
             setPreset("onTheBeat");
-            document.getElementsByClassName("menuMode")[0].style.top = (containerCenter - 600) + "px";
-            document.getElementsByClassName("menuMode")[1].style.top = (containerCenter - 400) + "px";
-            document.getElementsByClassName("menuMode")[2].style.top = (containerCenter - 200) + "px";
-            document.getElementsByClassName("menuMode")[3].style.top = containerCenter + "px";
-            document.getElementsByClassName("menuMode")[0].style.left = "10px";
-            document.getElementsByClassName("menuMode")[1].style.left = "10px";
-            document.getElementsByClassName("menuMode")[2].style.left = "10px";
-            document.getElementsByClassName("menuMode")[3].style.left = "60px";
-            document.getElementsByClassName("menuMode")[0].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[1].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[2].style.filter = "brightness(0.7)";
-            document.getElementsByClassName("menuMode")[3].style.filter = "none";
             break;
     }
     displayModeInfo(x);
 }
-selectMenuMode(1);
 
 //Reselect the current menu mode on window resize
 window.addEventListener("resize", function() {
     if (!gamePlaying) selectMenuMode(currentMenuMode);
 });
 
-function displayModeInfo(mode) {
+function displayProfileInfo() {
+    
     overallGradeCtx.clearRect(0, 0, 190, 48);
     overallGradeCtx.imageSmoothingEnabled = false;
 
@@ -243,7 +207,7 @@ function displayModeInfo(mode) {
 
     // Initials
     let initialString = game.playerInitials
-    drawBMText(overallGradeCtx, 135 - measureBMText(initialString, "text7-white"), 0, initialString, "text7-white");
+    drawBMTextAnchor(overallGradeCtx, 135, 0, initialString, "text7-white");
     
 
     // Overall grade info
@@ -253,7 +217,7 @@ function displayModeInfo(mode) {
     // Overall power string
     let overallPowerString = Math.floor(overallPower).toString();
     drawBMText(overallGradeCtx, 0, 14, "OVERALL POWER:", "text5-gold")
-    drawBMText(overallGradeCtx, 135 - measureBMText(overallPowerString, "text10-white"), 17, overallPowerString, "text10-white");
+    drawBMTextAnchor(overallGradeCtx, 135, 17, overallPowerString, "text10-white");
 
     let powX = 0;
     // Classic power string
@@ -278,55 +242,66 @@ function displayModeInfo(mode) {
     // Decor points
     let decorationString = formatScore(game.decorPoints)
     drawBMText(overallGradeCtx, 0, 33, "DECORATION:", "text5-gold")
-    drawBMText(overallGradeCtx, 129 - measureBMText(decorationString, "text5-white"), 33, decorationString, "text5-white");
+    drawBMTextAnchor(overallGradeCtx, 129, 33, decorationString, "text5-white");
     drawBMText(overallGradeCtx, 131, 33, "G", "text5-gold");
 
+}
+
+function displayModeInfo(mode) {
 
     // Mode info
-    let bestPowerString, bestScoreString, bestLevelString, bestLevelColor;
+    let bestPowerString, bestScoreString, bestLevelString, bestLevelColor, x, y;
 
     // document.getElementById("modeInfoImage").src = `img/style${mode}.png`;
     document.getElementById("modeInfo").innerHTML = modeDescriptions[mode];
 
+    modeStatsCtx.clearRect(0, 0, 320, 160);
 
     switch (mode) {
+
         case 1: case 2: case 3:
 
             //document.getElementById("modeInfo").innerHTML += "<br><br><img src='img/medal1.png' style='height: 30px; vertical-align: middle'> <b>Bronze medal requirements:</b><br>-Best score: 150,000<br>-Best level: 700"
             //document.getElementById("modeInfo").innerHTML += "<br><br><img src='img/medal2.png' style='height: 30px; vertical-align: middle'> <b>Silver medal requirements:</b><br>-Best score: 300,000<br>-Best level: 999<br>-All section times under 1:15:00"
 
-            modeStatsCtx.clearRect(0, 0, 180, 160);
 
             //Best power
-            let x = 0;
-            let y = 0;
+            x = 0;
+            y = 0;
             x += drawBMText(modeStatsCtx, x, y, "BEST POWER: ", "text5-gold")
-            x += drawBMText(modeStatsCtx, x, y, Math.floor(game.bestPowers[mode - 1]).toString().padStart(5, "0"), "text5-white")
-            x = 0, y += 8;
-            x += drawBMText(modeStatsCtx, x, y, `(MAX ${mode == 3 ? "39000" : "30000"}  TO OVERALL POWER)`, "text5-gray")
+            x = 140, y += 4;
+            x -= drawBMTextAnchor(modeStatsCtx, x, y + 5, mode == 3 ? "/39000" : "/30000", "text5-gray")
+            x -= drawBMTextAnchor(modeStatsCtx, x, y, Math.floor(game.bestPowers[mode - 1]).toString(), "text10-white")
+
+            //Best achievement
+            x = 0, y += 20;
+            x += drawBMText(modeStatsCtx, x, y, "BEST ACHIEVEMENT: ", "text5-white")
+            let highlightTime = game.bestLevels[mode - 1] == 999
+            x = 140, y += 8;
+            x -= drawBMTextAnchor(modeStatsCtx, x, y + (highlightTime ? 0 : 2), formatTime(game.bestAchievementTimes[mode - 1]), highlightTime ? "text10-white" : "text7-white") + 3
+            x -= drawBMTextAnchor(modeStatsCtx, x, y + 5, "IN", "text5-white") + 3
+            x -= drawBMTextAnchor(modeStatsCtx, x, y + (highlightTime ? 2 : 0), Math.floor(game.bestLevels[mode - 1]).toString(), highlightTime ? "text7-white" : "text10-white") + 3
+            x -= drawBMTextAnchor(modeStatsCtx, x, y + 5, "LEVEL", "text5-white")
 
             //Best score
-            x = 0, y += 8;
+            x = 0, y += 20;
             x += drawBMText(modeStatsCtx, x, y, "BEST SCORE: ", "text5-white")
-            x += drawBMText(modeStatsCtx, x, y, Math.floor(game.bestScores[mode - 1]).toString(), "text5-white")
+            x = 140, y += 4;
+            x -= drawBMTextAnchor(modeStatsCtx, x, y, Math.floor(game.bestScores[mode - 1]).toString(), "text10-white")
 
-            //Best level
-            x = 0, y += 8;
-            x += drawBMText(modeStatsCtx, x, y, "BEST LEVEL: ", "text5-white")
-            x += drawBMText(modeStatsCtx, x, y, Math.floor(game.bestLevels[mode - 1]).toString(), game.bestLevels[0] >= 999 ? "text5-gold" : "text5-white")
 
             //Best highest section time
-            x = 0, y += 8;
+            x = 0, y += 20;
             if (game.bestLevels[0] >= 999) {
                 x += drawBMText(modeStatsCtx, x, y, "ALL SECTION TIMES UNDER", "text5-white")
 
                 let time = game.bestHighestSectionTimes[mode - 1];
                 let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
-                x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
+                x += drawBMText(modeStatsCtx, x, y, timeString, "text5-" + timeColor)
             }
             else {
-                x += drawBMText(modeStatsCtx, x, y, "UNLOCKS AT ", "text5-white")
+                x += drawBMText(modeStatsCtx, x, y, "MORE STATS UNLOCK AT ", "text5-gray")
                 x += drawBMText(modeStatsCtx, x, y, "LEVEL 999!", "text5-green")
             }
 
@@ -338,15 +313,11 @@ function displayModeInfo(mode) {
                 let time = game.bestHighestSectionTimes[mode - 1];
                 let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
-                x += drawBMText(modeStatsCtx, x, y, timeString, timeColor)
-            }
-            else {
-                x += drawBMText(modeStatsCtx, x, y, "UNLOCKS AT ", "text5-white")
-                x += drawBMText(modeStatsCtx, x, y, "LEVEL 999!", "text5-green")
+                x += drawBMText(modeStatsCtx, x, y, timeString, "text5-" + timeColor)
             }
 
             //Best individual section times
-            x = 0, y += 16;
+            x = 160, y =0;
             drawBMText(modeStatsCtx, x, y, "BEST INDIVIDUAL SECTION TIMES: ", "text5-gold");
             let bestSectionTimes = {
                 1: game.classicStyleBestSectionTimes,
@@ -358,41 +329,43 @@ function displayModeInfo(mode) {
                     let sectionTime = bestSectionTimes[i];
                     let levelString = Math.min((i + 1) * 100, 999).toString();
                     let timeString = formatTime(sectionTime);
+                    let timeValue = getTimeValue(sectionTime);
                     let sectionTimeColor = getTimeColor(sectionTime);
 
-                    x = 0, y += 8;
+                    x = 160, y += 8;
                     x += drawBMText(modeStatsCtx, x, y, `${levelString}  `, "text5-white");
                     x += drawBMText(modeStatsCtx, x, y, timeString, "text5" + sectionTimeColor);
+
+                    for (let i = 0; i < timeValue; i++) {
+                        overallGradeCtx.drawImage(decorBlocksImage, 
+                            i * 8, 16, 6, 6, 
+                            x, y, 6, 6
+                        );
+                        x += 6
+                    }
                 }
                 else {
-                    x = 0, y += 8;
+                    x = 160, y += 8;
                     drawBMText(modeStatsCtx, x, y, "---  ---", "text5-gray");
                 }
             }
 
             break;
         case 4:
-            modeStatsCtx.clearRect(0, 0, 130, 160);
-            modeStatsCtx.fillStyle = "#eaeaff";
-            modeStatsCtx.fillRect(0, 1, 129, 1);
-            modeStatsCtx.fillStyle = "#000008";
-            modeStatsCtx.fillRect(1, 2, 129, 1);
-            // document.getElementById("modeInfoImage").src = "img/style5.png";
-            document.getElementById("modeInfo").innerHTML = modeDescriptions[5];
-            modeStatsCtx.clearRect(0, 0, 130, 160);
+            x = 0;
+            y = 0;
 
+            x += drawBMText(modeStatsCtx, x, y, "BEST ACHIEVEMENT: ", "text5-white")
+            x = 140, y += 8;
+            x -= drawBMTextAnchor(modeStatsCtx, x, y, Math.floor(game.onTheBeatBests[1]).toString(), "text10-white") + 3
+            x -= drawBMTextAnchor(modeStatsCtx, x, y + 5, "LEVEL", "text5-white")
+            
             //Best score
-            modeStatsCtx.drawImage(modeStatsImage, 0, 24, 130, 16, 0, 0, 130, 16);
-            bestScoreString = Math.floor(game.onTheBeatBests[0]).toString();
-            for (let i = 0; i < bestScoreString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestScoreString[i] * 4, 0, 4, 6, 45 + i * 4, 0, 4, 6);
-            }
-            //Best level
-            bestLevelString = Math.floor(game.onTheBeatBests[1]).toString();
-            bestLevelColor = game.bestLevels[2] >= 999 ? 3 : 0;
-            for (let i = 0; i < bestLevelString.length; i++) {
-                modeStatsCtx.drawImage(digitsSmall, bestLevelString[i] * 4, bestLevelColor * 6, 4, 6, 44 + i * 4, 8, 4, 6);
-            }
+            x = 0, y += 20;
+            x += drawBMText(modeStatsCtx, x, y, "BEST SCORE: ", "text5-white")
+            x = 140, y += 4;
+            x -= drawBMTextAnchor(modeStatsCtx, x, y, Math.floor(game.onTheBeatBests[0]).toString(), "text10-white")
+
             break;
     }
 }
@@ -448,35 +421,43 @@ function redrawCurrentInputPrompts() {
     drawInputPrompts(currentInputPrompts);
 }
 
-function drawTabInputPrompts(x) {
-    switch(x) {
+function updateInputPrompts() {
+    let inputPrompts = []
+    
+    switch(currentTab) {
         case 1:
-            drawInputPrompts([
-                { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
-                { action: "rotClockwise", label: "SELECT" },
-            ])
             break;
 
         case 2: 
-            drawInputPrompts([
+            inputPrompts.push(
                 { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
                 { action: "rotAnticlockwise", label: "BACK" },
-                { action: "rotClockwise", label: "PLAY!" },
-            ])
+                { action: "rotClockwise", label: "START GAME" },
+            )
             break;
 
         case 3: 
-            drawInputPrompts([
-                { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
+            inputPrompts.push(
                 { action: "rotAnticlockwise", label: "BACK" },
-                { action: "rotClockwise", label: "SELECT" },
-            ])
+                { action: "rotClockwiseAlt", label: "START GAME" },
+            )
             break;
 
         case 4: 
-            drawInputPrompts([
+            inputPrompts.push(
                 { action: "rotAnticlockwise", label: "BACK" },
-            ])
+            )
             break;
     }
+
+    if (activeForm) {
+        inputPrompts.unshift(
+            { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
+        )
+        inputPrompts.push(
+            ...activeForm.children[activeForm.$selectedItem]?.$form?.getActionPrompts() ?? []
+        )
+    }
+
+    drawInputPrompts(inputPrompts);
 }

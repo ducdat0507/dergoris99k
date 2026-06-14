@@ -2,14 +2,14 @@
     font-family:"NES";
     font-style:normal;
     font-weight:400;
-    src:url(nintendo-nes-font.woff) format("woff");
+    src:url(../fonts/nintendo-nes-font.woff) format("woff");
 }
 
 @font-face{
     font-family:"GameBoy";
     font-style:normal;
     font-weight:400;
-    src:url(GameBoy.woff) format("woff");
+    src:url(../fonts/GameBoy.woff) format("woff");
 }
 
 * {
@@ -17,6 +17,7 @@
 }
 
 body {
+    margin: 0;
     background-color: #333;
     image-rendering: pixelated;
     background-position: center;
@@ -26,6 +27,16 @@ body {
 
 body.prefer-key-nav {
     cursor: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 #backgroundCanvas {
@@ -102,16 +113,16 @@ button {
 #modeSelectContainer {
     position: absolute;
     top: 0;
-    left: 60px;
-    width: 500px;
+    left: 90px;
+    width: 435px;
     height: 100%;
-    background-color: rgba(0,0,0,0.3);
+    background: linear-gradient(to right, #0000, rgba(0,0,0,0.3) 5%, #0000);
     overflow: hidden;
 }
 
 .menuMode {
     position: absolute;
-    width: 400px;
+    width: 300px;
     transform: translateY(-50%);
     transition: top cubic-bezier(.15,.67,.53,1.02) 0.5s, left cubic-bezier(.15,.67,.53,1.02) 0.5s;
     cursor: pointer;
@@ -123,7 +134,7 @@ button {
     left: 250px;
     transform: translate(-50%, -50%);
     transition: top cubic-bezier(.15,.67,.53,1.02) 0.5s, left cubic-bezier(.15,.67,.53,1.02) 0.5s;
-    width: 40px;
+    width: 30px;
     cursor: pointer;
     user-select: none;
 }
@@ -131,9 +142,10 @@ button {
 #overallGradeCanvas {
     position: absolute;
     top: 30px;
-    right: 110px;
+    right: 60px;
     transform: scale(3);
     transform-origin: top right;
+    transition: right cubic-bezier(.15,.67,.53,1.02) 0.5s;
 }
 
 #modeStatsContainer {
@@ -154,9 +166,9 @@ button {
 #modeInfoContainer {
     position: absolute;
     top: 50%;
-    left: 570px;
+    left: 510px;
     padding-left: 30px;
-    width: calc(100% - 900px);
+    width: calc(100% - 600px);
     transform: translateY(-50%);
     min-width: 400px;
     max-height: 75%;
@@ -174,16 +186,15 @@ button {
 }
 
 #modeInfo {
-    font-family: 'Courier New', monospace;
-    font-size: 20px;
+    font-family: 'Courier New', Courier, monospace;;
+    font-size: 18px;
     line-height: 24px;
-    margin-top: 20px;
     color: white;
     user-select: none;
 }
 
 #modeStatsCanvas {
-    height: 480px;
+    height: 300px;
     transform-origin: top left;
 }
 
@@ -209,7 +220,7 @@ button {
 
 .keybindsText {
     font-size: 24px;
-    font-family: 'Courier New', monospace;
+    font-family: 'Courier New', Courier, monospace;
     display: inline-block;
     margin-right: 20px;
 }
@@ -297,16 +308,21 @@ button {
     background: #222a;
     color: #aaa;
     display: flex;
+    align-items: center;
     min-height: 45px;
 }
 body.prefer-key-nav .form-element:focus-within {
+    color: #fff;
     z-index: 1;
     animation: 
-        form-element-focus 1s cubic-bezier(0.455, 0.03, 0.515, 0.955) alternate infinite, 
+        form-element-focus 1s 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) alternate infinite, 
         form-element-focus-in 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
+.form-element[aria-disabled="true"] {
+    filter: contrast(0.5) brightness(0.5);
+}
 
-.form-element-button button {
+.form-element button {
     margin: 0;
     flex-grow: 1;
     background: transparent;
@@ -315,8 +331,21 @@ body.prefer-key-nav .form-element:focus-within {
     padding: 0 15px;
     text-align: left;
 }
-.form-element-button button:focus-visible {
+.form-element :is(button, input, textarea):focus-visible {
     outline: none;
+}
+
+.form-element > .label {
+    outline: none;
+    padding: 0 15px;
+    width: 60px;
+    flex-grow: 1;
+    font-family: "NES";
+    font-size: 16px;
+}
+
+.form-element-button button {
+    flex-grow: 1;
 }
 
 .form-element-button.menuButton {
@@ -332,18 +361,82 @@ body.prefer-key-nav .form-element:focus-within {
 }
 
 
+.form-element .value {
+    flex-grow: 1;
+    background: #111a;
+    border: none;
+    color: inherit;
+    width: 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    padding: 0 15px;
+    height: 45px;
+}
+.form-element button.value {
+    text-align: center;
+}
+.form-element :is(.left-button, .right-button) {
+    width: 45px;
+    height: 45px;
+    flex: 0 0 45px;
+    background: url(../img/menuArrowUp.png) center / 20px 20px no-repeat;
+}
+.form-element .left-button {
+    transform: rotate(-90deg);
+}
+.form-element .right-button {
+    transform: rotate(90deg);
+}
+
+.form-element input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 33px;
+    height: 33px;
+    flex: 0 0 33px;
+    margin: 6px;
+    padding: 0;
+    border: 3px solid currentColor;
+    position: relative;
+}
+
+.form-element input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    background: currentColor;
+}
+
+
+.form-heading {
+    color: white;
+    font-family: 'GameBoy', monospace;
+    font-size: 16px;
+    margin-block: 6px;
+    font-weight: normal;
+}
+.form-description {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    line-height: 24px;
+}
+.form-spacing {
+    border: none;
+    margin: 0;
+}
+
 @keyframes form-element-focus-in {
     from {
         box-shadow: 0 0 0 12px #0000;
     } to {
-        box-shadow: 0 0 0 3px #fffd;
+        box-shadow: 0 0 0 3px #fff;
     }
 }
 @keyframes form-element-focus {
     from {
-        box-shadow: 0 0 0 3px #fffd;
+        box-shadow: 0 0 0 3px #fff;
     } to {
-        box-shadow: 0 0 0 3px #fff7;
+        box-shadow: 0 0 0 3px #fffa;
     }
 }
 

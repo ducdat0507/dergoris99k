@@ -51,7 +51,7 @@ function doActionDown(action) {
         case "rotClockwise":
             if (!gamePlaying && onCampaignScreen && document.getElementsByClassName("container")[1].style.display != "none") {
                 if (!blackCoverShown) {
-                    showBlackCover(); 
+                    showBlackCover();
                     playSound('buttonClick'); 
                     fadeOutSound('menuMusic', 500); 
                     setTimeout(startGame, 1000)
@@ -62,7 +62,17 @@ function doActionDown(action) {
             break;
 
         case "rotClockwiseAlt":
-            if (keysHeld[6] == 0) keysHeld[6] = 1;
+            if (!gamePlaying && currentTab == 3 && document.getElementsByClassName("container")[1].style.display != "none") {
+                if (!blackCoverShown) {
+                    setActiveForm(null);
+                    showBlackCover(); 
+                    playSound('buttonClick'); 
+                    fadeOutSound('menuMusic', 500); 
+                    setTimeout(startGame, 1000)
+                }
+            } else {
+                if (keysHeld[6] == 0) keysHeld[6] = 1;
+            }
             break;
 
         case "rotAnticlockwise":
@@ -180,9 +190,14 @@ document.addEventListener("keydown", function(event) {
         return;
     }
 
-    if(!(event.key in keyConfig)) return;
-    const action = keyConfig[event.key];
-    doActionDown(action);
+    if(event.key in keyConfig) {
+        const action = keyConfig[event.key];
+        doActionDown(action);
+        event.preventDefault();
+    } else if (event.key == "Tab" && activeForm) {
+        navigateForm(event.shiftKey ? -1 : 1)
+        event.preventDefault();
+    }
 })
 
 document.addEventListener("keyup", function(event) {

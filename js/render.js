@@ -255,31 +255,31 @@ function drawHud() {
         for (let i=0;i<levelLength2;i++) {
             ctx.drawImage(images.digits, parseInt(levelString2[i])*8, 0, 8, 9, leftSide+settings.boardWidth*8+11+i*8, 197, 8, 9);
         }
-    }
 
-    if (settings.timeDisplay) {
-        let leftSide = 160-settings.boardWidth*4;
-        let timeString = formatTime(time);
-        let timeLength = 8;
-        ctx.clearRect(leftSide-74, 82, 64, 9);
-        for (let i=0;i<timeLength;i++) {
-            if (timeString[i] == ":") {ctx.drawImage(images.digits, 88, 0, 8, 9, leftSide-74+i*8, 82, 8, 9);}
-            else {ctx.drawImage(images.digits, parseInt(timeString[i])*8, 0, 8, 9, leftSide-74+i*8, 82, 8, 9);}
-        }
-        //Current section time
-        if (level < 999) {
-            let currentSection = Math.floor(level/100);
-            let currentSectionTime = time - timeAtLastSection;
-            ctx.clearRect(61, 117+7*currentSection, 48, 6);
+        if (settings.timeDisplay) {
+            let leftSide = 160-settings.boardWidth*4;
+            let timeString = formatTime(time);
+            let timeLength = 8;
+            ctx.clearRect(leftSide-74, 82, 64, 9);
+            for (let i=0;i<timeLength;i++) {
+                if (timeString[i] == ":") {ctx.drawImage(images.digits, 88, 0, 8, 9, leftSide-74+i*8, 82, 8, 9);}
+                else {ctx.drawImage(images.digits, parseInt(timeString[i])*8, 0, 8, 9, leftSide-74+i*8, 82, 8, 9);}
+            }
+            //Current section time
+            if (level < 999) {
+                let currentSection = Math.floor(level/100);
+                let currentSectionTime = time - timeAtLastSection;
+                ctx.clearRect(61, 117+7*currentSection, 48, 6);
 
-            let levelString = (currentSection*100+100).toString().padStart(2, "0");
-            if (levelString == "1000") {levelString = "999";}
-            for (let i=0;i<3;i++) ctx.drawImage(images.sideInfo2, levelString[i]*4, 0, 4, 6, 61+4*i, 117+7*currentSection, 4, 6);
+                let levelString = (currentSection*100+100).toString().padStart(2, "0");
+                if (levelString == "1000") {levelString = "999";}
+                for (let i=0;i<3;i++) ctx.drawImage(images.sideInfo2, levelString[i]*4, 0, 4, 6, 61+4*i, 117+7*currentSection, 4, 6);
 
-            let sectionTimeString = formatTime(currentSectionTime);
-            for (let i=0;i<8;i++) {
-                if (sectionTimeString [i] == ":") {ctx.drawImage(images.sideInfo2, 40, 0, 4, 6, 77+4*i, 117+7*currentSection, 4, 6);}
-                else {ctx.drawImage(images.sideInfo2, sectionTimeString[i]*4, 0, 4, 6, 77+4*i, 117+7*currentSection, 4, 6);}
+                let sectionTimeString = formatTime(currentSectionTime);
+                for (let i=0;i<8;i++) {
+                    if (sectionTimeString [i] == ":") {ctx.drawImage(images.sideInfo2, 40, 0, 4, 6, 77+4*i, 117+7*currentSection, 4, 6);}
+                    else {ctx.drawImage(images.sideInfo2, sectionTimeString[i]*4, 0, 4, 6, 77+4*i, 117+7*currentSection, 4, 6);}
+                }
             }
         }
     }

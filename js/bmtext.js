@@ -33,6 +33,12 @@ function drawBMText(ctx, x, y, text, font="text5-white")
     return offset;
 }
 
+function drawBMTextAnchor(ctx, x, y, text, font="text5-white", anchor = 1) 
+{
+    let width = measureBMText(text, font) 
+    return drawBMText(ctx, x - Math.round(width * anchor), y, text, font) 
+}
+
 function measureBMText(text, font="text5-white") 
 {
     const fontData = fonts[font];
