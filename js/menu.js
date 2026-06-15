@@ -334,10 +334,12 @@ function displayModeInfo(mode) {
 
                     x = 160, y += 8;
                     x += drawBMText(modeStatsCtx, x, y, `${levelString}  `, "text5-white");
-                    x += drawBMText(modeStatsCtx, x, y, timeString, "text5" + sectionTimeColor);
-
+                    x += drawBMText(modeStatsCtx, x, y, timeString, "text5" + sectionTimeColor);x
+                    x += 4;
+                    
                     for (let i = 0; i < timeValue; i++) {
-                        overallGradeCtx.drawImage(decorBlocksImage, 
+                        console.log(i, x, y);
+                        modeStatsCtx.drawImage(decorBlocksImage, 
                             i * 8, 16, 6, 6, 
                             x, y, 6, 6
                         );

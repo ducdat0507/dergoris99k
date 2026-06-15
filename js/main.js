@@ -629,15 +629,27 @@ function endGame() {
                 for (let i = 0; i < 10; i++) {
                     let sectionTime = sectionTimes[i] - lastSectionTime
                     
+                    let x = 178;
+
                     if (sectionTime > 0) {
                         lastSectionTime += sectionTime
                         let sectionTimeString = formatTime(sectionTime);
-                        let sectionTimeColor = ["text5-white", "text5-blue", "text5-green", "text5-gold"][getTimeColor(sectionTime)];
-                        drawBMText(ctx, 178, 86 + i * 7, Math.min(i * 100 + 100, 999).toString(), "text5-white");
-                        drawBMText(ctx, 194, 86 + i * 7, sectionTimeString, sectionTimeColor);
+                        let timeValue = getTimeValue(sectionTime);
+                        let timeColor = getTimeColor(sectionTime);
+                        x += drawBMText(ctx, 178, 86 + i * 7, Math.min(i * 100 + 100, 999).toString() + "  ", "text5-white");
+                        x += drawBMText(ctx, 194, 86 + i * 7, sectionTimeString, "text5" + timeColor);
+                        x += 4;
+                        
+                        for (let j = 0; j < timeValue; j++) {
+                            ctx.drawImage(decorBlocksImage, 
+                                j * 8, 16, 6, 6, 
+                                x, 86 + i * 7, 6, 6
+                            );
+                            x += 6
+                        }
+
                     } else {
-                        drawBMText(ctx, 178, 86 + i * 7, "---", "text5-gray");
-                        drawBMText(ctx, 194, 86 + i * 7, "---", "text5-gray");
+                        drawBMText(ctx, 178, 86 + i * 7, "---  ---", "text5-gray");
                     }
                 }
             }

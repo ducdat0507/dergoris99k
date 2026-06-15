@@ -18,10 +18,13 @@ function buildForm(holder, items) {
 
 /** @param {HTMLDivElement} form */
 function setActiveForm(form) {
-    activeForm = form;
     if (form) {
+        activeForm = form;
         let item = form.children[form.$selectedItem].$form;
         item.doFocus();
+    } else {
+        activeForm.blur();
+        activeForm = null;
     }
 }
 
