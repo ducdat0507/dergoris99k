@@ -46,6 +46,9 @@ function updateSettingVisuals() {
     gameSettingElements.hardDrop.value = settings.hardDrop;
     gameSettingElements.sonicDrop.value = settings.sonicDrop;
     gameSettingElements.sonicDrop.disabled = !settings.hardDrop;
+    gameSettingElements.includePentominoes.value = settings.includePentominoes;
+    gameSettingElements.includeDiscordant.value = settings.includeDiscordant;
+    gameSettingElements.includeMega.value = settings.includeMega;
     gameSettingElements.rotationSystem.value = settings.rotationSystem;
     gameSettingElements.IRS.value = settings.IRS;
     gameSettingElements.twentyGOverride.value = settings.twentyGOverride;
@@ -84,6 +87,9 @@ function setPreset(preset) {
             settings.boardHeight = 20;
             settings.visuals = "classicStyle";
             settings.gameMechanics = "classicStyle";
+            settings.includePentominoes = "none";
+            settings.includeDiscordant = "none";
+            settings.includeMega = "none";
             settings.randomizer = "tgm";
             settings.pieceColouring = "regular";
             settings.softDrop = true;
@@ -104,6 +110,9 @@ function setPreset(preset) {
             settings.boardHeight = 20;
             settings.visuals = "masterStyle";
             settings.gameMechanics = "masterStyle";
+            settings.includePentominoes = "none";
+            settings.includeDiscordant = "none";
+            settings.includeMega = "none";
             settings.randomizer = "tgm";
             settings.pieceColouring = "regular";
             settings.softDrop = true;
@@ -124,6 +133,9 @@ function setPreset(preset) {
             settings.boardHeight = 20;
             settings.visuals = "dragonStyle";
             settings.gameMechanics = "dragonStyle";
+            settings.includePentominoes = "none";
+            settings.includeDiscordant = "none";
+            settings.includeMega = "none";
             settings.randomizer = "tgm";
             settings.pieceColouring = "regular";
             settings.softDrop = true;
@@ -144,6 +156,9 @@ function setPreset(preset) {
             settings.boardHeight = 20;
             settings.visuals = "onTheBeat";
             settings.gameMechanics = "onTheBeat";
+            settings.includePentominoes = "none";
+            settings.includeDiscordant = "none";
+            settings.includeMega = "none";
             settings.randomizer = "tgm";
             settings.pieceColouring = "regular";
             settings.softDrop = false;

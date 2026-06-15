@@ -520,6 +520,11 @@ function endGame() {
             dragonStyle: 2,
         }[settings.gameMechanics] ?? -1;
 
+        let oldPower = game.bestPowers[recordIndex] ?? NaN
+        let oldScore = game.bestScores[recordIndex] ?? NaN
+        let oldLevel = game.bestLevels[recordIndex] ?? NaN
+        let oldAchTime = game.bestAchievementTimes[recordIndex] ?? NaN;
+
         if (settings.gameMechanics == "classicStyle") {
             // Level component
             runPower = Math.max((level - 24) * 20, 0); 
@@ -541,14 +546,13 @@ function endGame() {
             if (sectionTimes.length > 0) runPower += Math.max((1000000 / averageSectionTime - 20000), 0) * (level + 1000) / 2000; 
 
         } else if (settings.gameMechanics == "onTheBeat") {
+            oldScore = game.onTheBeatBests[0]
+            oldLevel = game.onTheBeatBests[1]
             if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;
             if (inCampaign && level > game.onTheBeatBests[1]) game.onTheBeatBests[1] = level;
         }
 
-        let oldPower = game.bestPowers[recordIndex] ?? NaN
-        let oldScore = game.bestScores[recordIndex] ?? NaN
-        let oldLevel = game.bestLevels[recordIndex] ?? NaN
-        let oldAchTime = game.bestAchievementTimes[recordIndex] ?? NaN;
+
         if (inCampaign && recordIndex >= 0) {
             if (runPower > game.bestPowers[recordIndex]) game.bestPowers[recordIndex] = runPower;
             if (score > game.bestScores[recordIndex]) game.bestScores[recordIndex] = score;
@@ -584,7 +588,10 @@ function endGame() {
         let highlightTime = level == oldLevel
         drawBMText(ctx, 68, 35, "ACHIEVEMENT:", "text5-white");
         let x = 252
-        if (level == oldLevel) {
+        if (settings.gameMechanics == "onTheBeat") {
+            x -= drawBMTextAnchor(ctx, x, 39, levelString, "text10-white") + 3;
+            x -= drawBMTextAnchor(ctx, x, 44, "LEVEL", "text5-white");
+        } else if (level == oldLevel) {
             x -= drawBMTextAnchor(ctx, x, 39, timeString, "text10-white") + 3;
             x -= drawBMTextAnchor(ctx, x, 44, "IN", "text5-white") + 3;
             x -= drawBMTextAnchor(ctx, x, 41, levelString, "text7-white") + 3;
@@ -601,8 +608,10 @@ function endGame() {
             let newAchRecord = level > oldLevel || (level == oldLevel && time < oldAchTime);
             drawBMText(ctx, 108, 53, newAchRecord ? "NEW BEST!" : "BEST:", newAchRecord ? "text5-gold" : "text5-gray");
             x = 252
-            x -= drawBMTextAnchor(ctx, x, 53, oldTimeString, "text5-white") + 2;
-            x -= drawBMTextAnchor(ctx, x, 53, "IN", "text5-gray") + 2;
+            if (settings.gameMechanics != "onTheBeat") {
+                x -= drawBMTextAnchor(ctx, x, 53, oldTimeString, "text5-white") + 2;
+                x -= drawBMTextAnchor(ctx, x, 53, "IN", "text5-gray") + 2;
+            }
             x -= drawBMTextAnchor(ctx, x, 53, oldLevelString, "text5-white") + 2;
             x -= drawBMTextAnchor(ctx, x, 53, "LEVEL", "text5-gray");
         }

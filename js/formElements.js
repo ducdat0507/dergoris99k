@@ -239,14 +239,17 @@ const formElements = {
             
             this.arrowStep = arrowStep;
             this.onSet = onSet;
+
+            let id = "form-element-" + Math.random().toString().substring(2)
             
             this.element = document.createElement("div");
             this.element.$form = this;
             this.element.classList.add("form-element", "form-element-number");
 
-            this.#elements.label = document.createElement("div");
+            this.#elements.label = document.createElement("label");
             this.#elements.label.classList.add("label");
             this.#elements.label.innerText = label;
+            this.#elements.label.htmlFor = id;
             this.element.append(this.#elements.label);
 
             this.#elements.leftButton = document.createElement("button");
@@ -259,6 +262,7 @@ const formElements = {
             this.element.append(this.#elements.leftButton);
 
             this.#elements.value = document.createElement("input");
+            this.#elements.value.id = id;
             this.#elements.value.type = "number"
             this.#elements.value.value = value
             this.#elements.value.classList.add("value");
@@ -298,10 +302,16 @@ const formElements = {
         }
 
         getActionPrompts() {
-            return [
-                { "actions": ["rotClockwise"], "label": "SET" },
-                { "actions": ["right", "left"], "label": "ADJUST" },
-            ];
+            if (primaryInputMethod == "keyboard") {
+                return [
+                    { "actions": ["right", "left"], "label": "ADJUST" },
+                ];
+            } else {
+                return [
+                    { "actions": ["rotClockwise"], "label": "SET" },
+                    { "actions": ["right", "left"], "label": "ADJUST" },
+                ];
+            }
         }
         doInput(action) {
             if (action == "left") {
@@ -339,12 +349,16 @@ const formElements = {
             this.element.$form = this;
             this.element.classList.add("form-element", "form-element-boolean");
 
-            this.#elements.label = document.createElement("div");
+            let id = "form-element-" + Math.random().toString().substring(2)
+
+            this.#elements.label = document.createElement("label");
             this.#elements.label.classList.add("label");
             this.#elements.label.innerText = label;
+            this.#elements.label.htmlFor = id;
             this.element.append(this.#elements.label);
 
             this.#elements.value = document.createElement("input");
+            this.#elements.value.id = id;
             this.#elements.value.type = "checkbox"
             this.#elements.value.value = value
             this.#elements.value.classList.add("value");

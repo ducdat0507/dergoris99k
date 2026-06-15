@@ -23,6 +23,8 @@ body {
     background-position: center;
     background-size: 64px 64px;
     overflow: hidden;
+
+    --body-font: "MS Gothic", "Courier New", Courier, monospace;
 }
 
 body.prefer-key-nav, body.prefer-kry-nav * {
@@ -186,7 +188,7 @@ button {
 }
 
 #modeInfo {
-    font-family: 'Courier New', Courier, monospace;;
+    font-family: var(--body-font);;
     font-size: 18px;
     line-height: 24px;
     color: white;
@@ -220,7 +222,7 @@ button {
 
 .keybindsText {
     font-size: 24px;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--body-font);
     display: inline-block;
     margin-right: 20px;
 }
@@ -301,7 +303,7 @@ button {
     display: flex;
     flex-flow: column;
     align-items: stretch;
-    gap: 6px;
+    gap: 9px;
 }
 
 .form-element {
@@ -326,6 +328,7 @@ body:not(.prefer-key-nav) .form-element:hover {
 .form-element button {
     margin: 0;
     flex-grow: 1;
+    align-self: stretch;
     background: transparent;
     border: none;
     color: inherit;
@@ -343,6 +346,8 @@ body:not(.prefer-key-nav) .form-element:hover {
     flex-grow: 1;
     font-family: "NES";
     font-size: 16px;
+    user-select: none;
+    color: inherit;
 }
 
 .form-element-button button {
@@ -369,7 +374,7 @@ body:not(.prefer-key-nav) .form-element:hover {
     border: none;
     color: inherit;
     width: 0;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--body-font);
     font-size: 18px;
     padding: 0 15px;
     height: 45px;
@@ -418,7 +423,7 @@ body:not(.prefer-key-nav) .form-element:hover {
     font-weight: normal;
 }
 .form-description {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--body-font);
     font-size: 18px;
     line-height: 24px;
 }

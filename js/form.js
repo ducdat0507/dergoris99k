@@ -23,7 +23,7 @@ function setActiveForm(form) {
         let item = form.children[form.$selectedItem].$form;
         item.doFocus();
     } else {
-        activeForm.blur();
+        activeForm?.blur();
         activeForm = null;
     }
 }
@@ -242,6 +242,43 @@ function initForms() {
         new formElements.spacing(4),
 
         new formElements.heading("PIECES"),
+        gameSettingElements.includePentominoes = new formElements.select({
+            label: "PENTOMINOES",
+            value: settings.includePentominoes,
+            values: [
+                { value: "none", label: "None" },
+                { value: "rare", label: "Rare" },
+                { value: "common", label: "Common" },
+            ],
+            onSet(value) {
+                settings.includePentominoes = value;
+            }
+        }),
+        gameSettingElements.includeDiscordant = new formElements.select({
+            label: "DISCORDANT PIECES",
+            value: settings.includeDiscordant,
+            values: [
+                { value: "none", label: "None" },
+                { value: "rare", label: "Rare" },
+                { value: "common", label: "Common" },
+            ],
+            onSet(value) {
+                settings.includeDiscordant = value;
+            }
+        }),
+        gameSettingElements.includeMega = new formElements.select({
+            label: "MEGA PIECES",
+            value: settings.includeMega,
+            values: [
+                { value: "none", label: "None" },
+                { value: "rare", label: "Rare" },
+                { value: "common", label: "Common" },
+            ],
+            onSet(value) {
+                settings.includeMega = value;
+            }
+        }),
+        new formElements.spacing(4),
         gameSettingElements.randomizer = new formElements.select({
             label: "RANDOMIZER",
             value: settings.randomizer,
@@ -320,7 +357,7 @@ function initForms() {
         }),
         new formElements.description("Different rotation systems define different rotation anchors and kick tests which can affect game feel significantly."),
         gameSettingElements.IRS = new formElements.boolean({
-            label: "INITIAL ROTATION",
+            label: "CHARGED ROTATION",
             value: settings.IRS,
             onSet(value) {
                 settings.IRS = value;
