@@ -216,6 +216,7 @@ button {
     transform: translate(-50%, -50%);
     background-color: #888;
     border: 4px outset;
+    width: 900px;
     padding: 30px;
     display: none;
 }
@@ -313,6 +314,10 @@ button {
     align-items: center;
     min-height: 45px;
 }
+.form-element.dangerous {
+    background: #311a;
+    color: #f77;
+}
 body.prefer-key-nav .form-element:focus-within,
 body:not(.prefer-key-nav) .form-element:hover {
     color: #fff;
@@ -320,6 +325,10 @@ body:not(.prefer-key-nav) .form-element:hover {
     animation: 
         form-element-focus 1s 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) alternate infinite, 
         form-element-focus-in 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+body.prefer-key-nav .form-element.dangerous:focus-within,
+body:not(.prefer-key-nav) .form-element.dangerous:hover {
+    color: #fcc;
 }
 .form-element[aria-disabled="true"] {
     filter: contrast(0.5) brightness(0.5);

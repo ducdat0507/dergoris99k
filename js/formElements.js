@@ -239,6 +239,7 @@ const formElements = {
             
             this.arrowStep = arrowStep;
             this.onSet = onSet;
+            this.#lastGoodValue = value;
 
             let id = "form-element-" + Math.random().toString().substring(2)
             
@@ -264,6 +265,121 @@ const formElements = {
             this.#elements.value = document.createElement("input");
             this.#elements.value.id = id;
             this.#elements.value.type = "number"
+            this.#elements.value.value = value
+            this.#elements.value.classList.add("value");
+            this.#elements.value.tabIndex = -1;
+            for (let opt in fieldOptions) this.#elements.value[opt] = fieldOptions[opt];
+            this.#elements.value.addEventListener("input", () => {
+                this.value = this.#elements.value.value;
+            })
+            this.#elements.value.addEventListener("blur", () => {
+                this.#elements.value.value = this.#lastGoodValue;
+            })
+            this.element.append(this.#elements.value);
+
+            this.#elements.rightButton = document.createElement("button");
+            this.#elements.rightButton.classList.add("right-button");
+            this.#elements.rightButton.tabIndex = -1;
+            this.#elements.rightButton.addEventListener("click", () => {
+                this.adjustValue(1);
+                playSound("buttonClick");
+            });
+            this.element.append(this.#elements.rightButton);
+        }
+
+        adjustValue(amount) {
+            this.value += amount * (this.arrowStep || this.#elements.value.step || 1);
+        }
+
+        updateDisabled() {
+            this.element.ariaDisabled = this.#disabled
+        }
+
+        canFocus() {
+            return !this.disabled;
+        }
+        doFocus() {
+            this.#elements.value.focus();
+        }
+
+        getActionPrompts() {
+            if (primaryInputMethod == "keyboard") {
+                return [
+                    { "actions": ["right", "left"], "label": "ADJUST" },
+                ];
+            } else {
+                return [
+                    { "actions": ["rotClockwise"], "label": "SET" },
+                    { "actions": ["right", "left"], "label": "ADJUST" },
+                ];
+            }
+        }
+        doInput(action) {
+            if (action == "left") {
+                this.#elements.leftButton.click();
+            } else if (action == "right") {
+                this.#elements.rightButton.click();
+            }
+        }
+    },
+    slider: class extends GamepadFormElement {
+        #elements = {}
+
+        #lastGoodValue;
+        get value() { return +this.#elements.value.value; }
+        set value(val) { 
+            val = +val;
+            if (!Number.isFinite(val)) return;
+            if (Number.isFinite(+this.#elements.value.min) && val < this.#elements.value.min) val = +this.#elements.value.min;
+            if (Number.isFinite(+this.#elements.value.max) && val > this.#elements.value.max) val = +this.#elements.value.max;
+            this.#lastGoodValue = this.#elements.value.value = val; this.onSet?.(val)
+        }
+
+        #disabled;
+        get disabled() { return this.#disabled; }
+        set disabled(val) { this.#disabled = val; this.updateDisabled() }
+
+        onSet = null;
+
+        constructor(options = {}) {
+            super();
+
+            let {
+                label,
+                value,
+                onSet,
+                arrowStep,
+                ...fieldOptions
+            } = options
+            
+            this.arrowStep = arrowStep;
+            this.onSet = onSet;
+            this.#lastGoodValue = value;
+
+            let id = "form-element-" + Math.random().toString().substring(2)
+            
+            this.element = document.createElement("div");
+            this.element.$form = this;
+            this.element.classList.add("form-element", "form-element-slider");
+
+            this.#elements.label = document.createElement("label");
+            this.#elements.label.classList.add("label");
+            this.#elements.label.innerText = label;
+            this.#elements.label.htmlFor = id;
+            this.element.append(this.#elements.label);
+
+            this.#elements.leftButton = document.createElement("button");
+            this.#elements.leftButton.classList.add("left-button");
+            this.#elements.leftButton.tabIndex = -1;
+            this.#elements.leftButton.addEventListener("click", () => {
+                this.adjustValue(-1);
+                playSound("buttonClick");
+            });
+            this.element.append(this.#elements.leftButton);
+
+            this.#elements.value = document.createElement("input");
+            this.#elements.value.id = id;
+            this.#elements.value.type = "range"
             this.#elements.value.value = value
             this.#elements.value.classList.add("value");
             this.#elements.value.tabIndex = -1;
@@ -360,7 +476,7 @@ const formElements = {
             this.#elements.value = document.createElement("input");
             this.#elements.value.id = id;
             this.#elements.value.type = "checkbox"
-            this.#elements.value.value = value
+            this.#elements.value.checked = value
             this.#elements.value.classList.add("value");
             this.#elements.value.tabIndex = -1;
             for (let opt in fieldOptions) this.#elements.value[opt] = fieldOptions[opt];

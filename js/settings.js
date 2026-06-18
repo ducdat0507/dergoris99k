@@ -1,9 +1,4 @@
 //User settings
-document.getElementById("boardBumpSetting").checked = game.boardBumpVisuals;
-document.getElementById("menuBackgroundSetting").checked = game.menuBackgroundEnabled;
-document.getElementById("gameBackgroundSetting").checked = game.gameBackgroundEnabled;
-document.getElementById("volumeSetting").value = (game.volume*100);
-document.getElementById("musicVolumeSetting").value = (game.musicVolume*100);
 
 function setBoardBump() {
     game.boardBumpVisuals = document.getElementById("boardBumpSetting").checked;

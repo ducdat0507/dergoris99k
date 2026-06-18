@@ -80,6 +80,12 @@ function doActionDown(action) {
                 if (currentTab != 1) {
                     playSound('buttonClick'); 
                     switchToTab(1);
+                } else if (document.getElementById("settingsContainer").style.display != "none") {
+                    playSound('buttonClick'); 
+                    hideSettings();
+                } else if (document.getElementById("keybindsContainer").style.display != "none") {
+                    playSound('buttonClick'); 
+                    hideKeybinds();
                 }
             } else {
                 if (keysHeld[5] == 0) keysHeld[5] = 1;
@@ -91,8 +97,11 @@ function doActionDown(action) {
             break;
 
         case "exit":
-            if (document.getElementById("keybindsContainer").style.display == "block") hideKeybinds();
-            else if (document.getElementById("game").style.display == "block") {
+            if (document.getElementById("settingsContainer").style.display != "none") {
+                hideSettings();
+            } else if (document.getElementById("keybindsContainer").style.display != "none") {
+                hideKeybinds();
+            } else if (document.getElementById("game").style.display == "block") {
                 if (!blackCoverShown) {
                     gamePlaying = false;
                     showBlackCover();

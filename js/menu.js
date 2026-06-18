@@ -98,9 +98,9 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "100vw";
             document.getElementsByClassName("container")[3].style.top = "100vh";
             document.getElementsByClassName("container")[3].style.left = "-100vw";
-            setActiveForm(document.getElementById(null));
             hideKeybinds();
             hideSettings();
+            setActiveForm(document.getElementById(null));
             break;
         case 3:
             onCampaignScreen = false;
@@ -115,9 +115,9 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "0";
             document.getElementsByClassName("container")[3].style.top = "100vh";
             document.getElementsByClassName("container")[3].style.left = "-100vw";
-            setActiveForm(document.getElementById("customGameForm"));
             hideKeybinds();
             hideSettings();
+            setActiveForm(document.getElementById("customGameForm"));
             break;
         case 4:
             onCampaignScreen = false;
@@ -131,9 +131,9 @@ function switchToTab(x) {
             document.getElementsByClassName("container")[2].style.left = "100vw";
             document.getElementsByClassName("container")[3].style.top = "0";
             document.getElementsByClassName("container")[3].style.left = "0";
-            setActiveForm(document.getElementById(null));
             hideKeybinds();
             hideSettings();
+            setActiveForm(document.getElementById(null));
             break;
     }
 
@@ -425,8 +425,12 @@ function redrawCurrentInputPrompts() {
 
 function updateInputPrompts() {
     let inputPrompts = []
-    
-    switch(currentTab) {
+
+    if (document.getElementById("settingsContainer").style.display != "none" || document.getElementById("keybindsContainer").style.display != "none") {
+        inputPrompts.push(
+            { action: "rotAnticlockwise", label: "BACK" },
+        )
+    } else switch(currentTab) {
         case 1:
             break;
 

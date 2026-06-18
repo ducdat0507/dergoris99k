@@ -127,6 +127,84 @@ function initForms() {
         }),
     ])
 
+    // Settings
+    let resetSaveButton;
+    buildForm(document.getElementById("settingsForm"), [
+        new formElements.heading("SOUND"),
+        new formElements.slider({
+            label: "OVERALL VOLUME",
+            value: game.volume * 100,
+            min: 0,
+            max: 100,
+            arrowStep: 5,
+            onSet(value) {
+                game.volume = value / 100;
+                Howler.volume(game.volume);
+                save();
+            }
+        }),
+        new formElements.slider({
+            label: "MUSIC VOLUME",
+            value: game.musicVolume * 100,
+            min: 0,
+            max: 100,
+            arrowStep: 5,
+            onSet(value) {
+                game.musicVolume = value / 100;
+                setSoundVolume("menuMusic", game.musicVolume);
+                save();
+            }
+        }),
+        new formElements.spacing(4),
+        new formElements.heading("VISUALS"),
+        new formElements.boolean({
+            label: "MENU BACKGROUND",
+            value: game.menuBackgroundEnabled,
+            onSet(value) {
+                game.menuBackgroundEnabled = value;
+                backgroundCanvas.style.display = game.menuBackgroundEnabled ? "block" : "none";
+                save();
+            }
+        }),
+        new formElements.boolean({
+            label: "GAME BACKGROUND",
+            value: game.gameBackgroundEnabled,
+            onSet(value) {
+                game.gameBackgroundEnabled = value;
+                save();
+            }
+        }),
+        new formElements.boolean({
+            label: "BOARD BUMP VISUALS",
+            value: game.boardBumpVisuals,
+            onSet(value) {
+                game.boardBumpVisuals = value;
+                save();
+            }
+        }),
+        new formElements.spacing(4),
+        new formElements.heading("STORAGE"),
+        new formElements.button({
+            label: "EXPORT GAME",
+            callback() {
+                exportGame();
+            },
+        }),
+        new formElements.button({
+            label: "IMPORT GAME",
+            callback() {
+                importGame();
+            },
+        }),
+        resetSaveButton = new formElements.button({
+            label: "RESET SAVE",
+            callback() {
+                hardReset();
+            },
+        }),
+    ]);
+    resetSaveButton.element.classList.add("dangerous")
+
     // Custom game
     buildForm(document.getElementById("customGameForm"), [
         new formElements.select({
