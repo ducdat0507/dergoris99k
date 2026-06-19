@@ -509,6 +509,70 @@ const formElements = {
             }
         }
     },
+    keybind: class extends GamepadFormElement {
+        #elements = {}
+
+        #disabled;
+        get disabled() { return this.#disabled; }
+        set disabled(val) { this.#disabled = val; this.updateDisabled() }
+
+        constructor(options = {}) {
+            super();
+
+            let {
+                label,
+                value,
+                onSet,
+            } = options
+            
+            this.element = document.createElement("div");
+            this.element.$form = this;
+            this.element.classList.add("form-element", "form-element-button");
+
+            this.#elements.label = document.createElement("label");
+            this.#elements.label.classList.add("label");
+            this.#elements.label.innerText = label;
+            this.element.append(this.#elements.label);
+
+            this.#elements.button = document.createElement("button");
+            this.#elements.button.classList.add("value");
+            this.#elements.button.innerText = value;
+            this.#elements.button.tabIndex = -1;
+            this.#elements.button.addEventListener("click", () => {
+                if (!changeKeybind((key) => {
+                    this.#elements.button.innerText = key;
+                    onSet(key);
+                    playSound("buttonClick");
+                })) return;
+                this.#elements.button.innerText = "Press a key...";
+                playSound("buttonClick");
+            });
+            this.element.append(this.#elements.button);
+        }
+
+        updateDisabled() {
+            this.element.ariaDisabled = this.#disabled
+        }
+
+        canFocus() {
+            return true;
+        }
+        doFocus() {
+            this.#elements.button.focus();
+        }
+
+        getActionPrompts() {
+            return [
+                { "action": "rotClockwise", "label": "SELECT" },
+            ];
+        }
+        doInput(action) {
+            if (action == "rotClockwise") {
+                this.#elements.button.click();
+                return true;
+            }
+        }
+    },
 }
 
 formElements.menuButton = class extends formElements.button {

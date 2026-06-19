@@ -7,6 +7,7 @@ let keyConfig = {
     l: "rotClockwiseAlt",
     k: "rotAnticlockwise",
     n: "rotAnticlockwiseAlt",
+    r: "restart",
     Escape: "exit",
 };
 const keybindNames = [
@@ -17,7 +18,9 @@ const keybindNames = [
     "rotClockwise",
     "rotClockwiseAlt",
     "rotAnticlockwise",
-    "rotAnticlockwiseAlt"
+    "rotAnticlockwiseAlt",
+    "restart",
+    "exit",
 ];
 let gamepadButtonConfig = {
     14: "left",
@@ -28,6 +31,7 @@ let gamepadButtonConfig = {
     2: "rotClockwiseAlt",
     1: "rotAnticlockwise",
     3: "rotAnticlockwiseAlt",
+    4: "restart",
     9: "exit",
 };
 let gamepadAxisConfig = {
@@ -82,7 +86,12 @@ let boardVisualPosition = [0,0];
 let soundEnabled = true;
 let gamePlaying = false;
 let inCampaign = false;
-let keysHeld = [false, false, false, false, 0, 0, 0, 0]; //Left, Right, Up, Down, CW, CCW, CW alt, CCW alt, rotations have 3 states
+let keysHeld = [false, false, false, false, 0, 0, 0, 0, false, false]; //Left, Right, Up, Down, CW, CCW, CW alt, CCW alt, rotations have 3 states
+let gameReadying = false;
+let restartTimer = 0;
+let restartTimerUI = 0;
+let exitTimer = 0;
+let exitTimerUI = 0;
 let keybindToReplace = "";
 let timeOfLastUpdate = Date.now();
 
@@ -218,10 +227,8 @@ function load() {
     
     const keybinds = localStorage.getItem("dergorisKeybinds");
     if (keybinds != null) {
-        keyConfig = JSON.parse(keybinds);
+        keyConfig = { ...keyConfig, ...JSON.parse(keybinds) };
     }
-    
-    updateKeybindList();
 }
 load()
   

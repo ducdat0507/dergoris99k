@@ -96,6 +96,18 @@ function doActionDown(action) {
             if (keysHeld[7] == 0) keysHeld[7] = 1;
             break;
 
+        case "restart":
+            if (document.getElementById("game").style.display == "block") {
+                if (!blackCoverShown) {
+                    if (gameReadying || gamePlaying) {
+                        keysHeld[8] = true;
+                    } else {
+                        restartGame();
+                    }
+                }
+            }
+            break;
+
         case "exit":
             if (document.getElementById("settingsContainer").style.display != "none") {
                 hideSettings();
@@ -103,9 +115,12 @@ function doActionDown(action) {
                 hideKeybinds();
             } else if (document.getElementById("game").style.display == "block") {
                 if (!blackCoverShown) {
-                    gamePlaying = false;
-                    showBlackCover();
-                    setTimeout(returnToMenu, 1000);
+                    if (gameReadying || gamePlaying) {
+                        keysHeld[9] = true;
+                    } else {
+                        showBlackCover();
+                        setTimeout(returnToMenu, 1000);
+                    }
                 }
             }
             else if (!gamePlaying) switchToTab(1);
@@ -143,6 +158,12 @@ function doActionUp(action) {
             break;
         case "rotAnticlockwiseAlt":
             keysHeld[7] = 0;
+            break;
+        case "restart":
+            keysHeld[8] = false;
+            break;
+        case "exit":
+            keysHeld[9] = false;
             break;
     }
 }
@@ -182,20 +203,10 @@ document.addEventListener("keydown", function(event) {
 
     setActiveInputMethod("keyboard");
 
-    if (keybindToReplace != "") {
-        if (event.key == "Escape") {
-            keybindToReplace = "";
-            updateKeybindList();
-            return;
-        }
-        //Find the key that maps to the value
-        let keyToReplace = getKeybind(keybindToReplace);
-        //Replace the key
-        delete keyConfig[keyToReplace];
-        keyConfig[event.key] = keybindToReplace;
-        keybindToReplace = "";
+    if (keybindToReplace) {
+        keybindToReplace(event.key);
         localStorage.setItem("dergorisKeybinds", JSON.stringify(keyConfig));
-        updateKeybindList();
+        keybindToReplace = null;
         return;
     }
 
@@ -222,22 +233,20 @@ function getKeybind(action) {
     return "";
 }
 
-function changeKeybind(index) {
-    keybindToReplace = keybindNames[index-1];
-    document.getElementsByClassName("keybindButton")[index-1].innerText = "PRESS A KEY..."
-    document.getElementsByClassName("keybindButton")[index-1].blur();
-}
-
-function updateKeybindList() {
-    for (let i=0;i<8;i++) {
-        if (getKeybind(keybindNames[i]) == " ") {document.getElementsByClassName("keybind")[i].innerText = "Space";}
-        else {document.getElementsByClassName("keybind")[i].innerText = getKeybind(keybindNames[i]);}
-        document.getElementsByClassName("keybindButton")[i].innerText = "CHANGE"
+function changeKeybind(callback) {
+    if (!keybindToReplace) {
+        keybindToReplace = callback
+        return true;
     }
+    return false;
 }
-
 function getActionKey(action) {
     return Object.entries(keyConfig).find(x => x[1] == action)?.[0]
+}
+function setActionKey(action, value) {
+    let oldKey = getActionKey(action)
+    if (oldKey) delete keyConfig[oldKey];
+    keyConfig[value] = action;
 }
 
 

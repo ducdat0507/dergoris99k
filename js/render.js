@@ -283,6 +283,31 @@ function drawHud() {
             }
         }
     }
+
+    if (restartTimerUI > 0)
+    {
+        ctx.globalAlpha = Math.min(1, restartTimerUI * 2);
+        drawBMTextAnchor(ctx, 161, 186, "HOLD TO RESTART", "text5-white", 0.5);
+        let barWidth = settings.boardWidth * 8 - 8;
+        ctx.fillStyle = "#fff3";
+        ctx.fillRect(160 - barWidth / 2, 195, barWidth, 1);
+        let fillWidth = Math.floor(barWidth * restartTimer ** 2 / 2) * 2;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(160 - fillWidth / 2, 195, fillWidth, 1);
+        ctx.globalAlpha = 1;
+    }
+    if (exitTimerUI > 0)
+    {
+        ctx.globalAlpha = Math.min(1, exitTimerUI * 2);
+        drawBMTextAnchor(ctx, 161, 186, "HOLD TO FORFEIT", "text5-white", 0.5);
+        let barWidth = settings.boardWidth * 8 - 8;
+        ctx.fillStyle = "#fff3";
+        ctx.fillRect(160 - barWidth / 2, 195, barWidth, 1);
+        let fillWidth = Math.floor(barWidth * exitTimer ** 2 / 2) * 2;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(160 - fillWidth / 2, 195, fillWidth, 1);
+        ctx.globalAlpha = 1;
+    }
 }
 
 function getSectionTimesLength() {

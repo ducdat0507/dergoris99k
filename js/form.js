@@ -203,7 +203,82 @@ function initForms() {
             },
         }),
     ]);
+    document.getElementById("settingsForm").$selectedItem = 1;
     resetSaveButton.element.classList.add("dangerous")
+    
+    // Keybinds
+    buildForm(document.getElementById("keybindsForm"), [
+        new formElements.keybind({
+            label: "LEFT",
+            value: getActionKey("left"),
+            onSet(value) {
+                setActionKey("left", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "RIGHT",
+            value: getActionKey("right"),
+            onSet(value) {
+                setActionKey("right", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "HARD DROP or UI UP",
+            value: getActionKey("hardDrop"),
+            onSet(value) {
+                setActionKey("hardDrop", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "SOFT DROP or UI DOWN",
+            value: getActionKey("softDrop"),
+            onSet(value) {
+                setActionKey("softDrop", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "ROTATE CW or UI SELECT",
+            value: getActionKey("rotClockwise"),
+            onSet(value) {
+                setActionKey("rotClockwise", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "ROTATE CCW or UI BACK",
+            value: getActionKey("rotAnticlockwise"),
+            onSet(value) {
+                setActionKey("rotAnticlockwise", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "ROTATE CW ALT",
+            value: getActionKey("rotClockwiseAlt"),
+            onSet(value) {
+                setActionKey("rotClockwiseAlt", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "ROTATE CCW ALT",
+            value: getActionKey("rotAnticlockwiseAlt"),
+            onSet(value) {
+                setActionKey("rotAnticlockwiseAlt", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "RESTART",
+            value: getActionKey("restart"),
+            onSet(value) {
+                setActionKey("restart", value)
+            }
+        }),
+        new formElements.keybind({
+            label: "EXIT",
+            value: getActionKey("exit"),
+            onSet(value) {
+                setActionKey("exit", value)
+            }
+        }),
+    ])
 
     // Custom game
     buildForm(document.getElementById("customGameForm"), [

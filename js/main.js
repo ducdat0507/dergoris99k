@@ -135,6 +135,33 @@ function updateVariables() {
         keysHeld[7] = 2;
     }
 
+    if (keysHeld[8] == 1) { // Restart
+        restartTimer += timeMultiplier;
+        restartTimerUI = Math.min(restartTimerUI + timeMultiplier * 2, 1);
+        exitTimerUI = Math.max(exitTimerUI - timeMultiplier * 3, 0);
+    } else {
+        restartTimer = Math.max(restartTimer - timeMultiplier * 3, 0);
+        restartTimerUI = Math.max(restartTimerUI - timeMultiplier, 0);
+    }
+    if (restartTimer > 1) {
+        gamePlaying = false;
+        restartGame();
+    }
+
+    if (keysHeld[9] == 1) { // Exit
+        exitTimer += timeMultiplier;
+        exitTimerUI = Math.min(exitTimerUI + timeMultiplier * 2, 1);
+        restartTimerUI = Math.max(restartTimerUI - timeMultiplier * 3, 0);
+    } else {
+        exitTimer = Math.max(exitTimer - timeMultiplier * 3, 0);
+        exitTimerUI = Math.max(exitTimerUI - timeMultiplier, 0);
+    }
+    if (exitTimer > 1) {
+        gamePlaying = false;
+        showBlackCover();
+        setTimeout(returnToMenu, 1000);
+    }
+
     // Horizontal DAS
     if (keysHeld[0] && !waitingForNextPiece) {
         if (!checkCanMoveLeft()) { currentDASTime = 0; } //Wall charge
@@ -229,6 +256,8 @@ setInterval(updateVariables, 1000 / 60);
 
 function readyGo(stage) {
     if (stage == 1) {
+        gameReadying = true;
+
         let leftSide = 160 - settings.boardWidth * 4;
         //Get the current piece to display as the next piece
         if (settings.gameMechanics == "dragonStyle" || settings.gameMechanics == "onTheBeat") {
@@ -448,6 +477,8 @@ function readyGo(stage) {
     }
     else if (stage == 3) {
         gamePlaying = true;
+        gameReadying = false;
+
         if (settings.visuals != "tgm" && settings.visuals != "onTheBeat") {
             playSound("gameMusic");
             setSoundVolume("gameMusic", game.musicVolume);
@@ -703,8 +734,14 @@ function endGame() {
     }
 
     drawInputPrompts([
-        { action: "exit", label: "EXIT" }
+        { action: "exit", label: "EXIT" },
+        { action: "restart", label: "RESTART" }
     ])
+}
+
+function restartGame() {
+    returnToMenu();
+    startGame();
 }
 
 function returnToMenu() {
@@ -739,6 +776,7 @@ function returnToMenu() {
     introSection = 0;
     runPower = 0;
     runDecorPoints = 0;
+    restartTimer = restartTimerUI = exitTimer = exitTimerUI = 0;
     document.getElementById("game").style.display = "none";
     document.getElementById("effectOverlay").style.display = "none";
     document.getElementById("gameCanvas").style.display = "none";

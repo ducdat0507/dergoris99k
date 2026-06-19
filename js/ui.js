@@ -5,10 +5,12 @@ let blackCoverShown = false;
 function showKeybinds() {
 	hideSettings();
 	document.getElementById("keybindsContainer").style.display = "block";
+	setActiveForm(document.getElementById("keybindsForm"));
 	updateInputPrompts();
 }
 function hideKeybinds() {
 	document.getElementById("keybindsContainer").style.display = "none";
+	setActiveForm(document.getElementById("mainMenuForm"));
 	updateInputPrompts();
 }
 function showSettings() {
