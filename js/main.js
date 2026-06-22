@@ -14,6 +14,8 @@ function startGame() {
     document.getElementById("textOverlay").style.display = "block";
     drawInputPrompts([])
 
+    backgroundZOffset = 0;
+
     //Setting webGL canvas attributes
     if (settings.visuals == "classicStyle") {
         document.getElementById("gameCanvas").style.display = game.gameBackgroundEnabled ? "block" : "none";
@@ -247,6 +249,25 @@ function updateVariables() {
             }
         }
     }
+
+    let zSpeed = 0;
+    switch (settings.gameMechanics) 
+    {
+        case "classicStyle":
+            zSpeed = 15 / Math.max(getDropInterval(), 0.05);
+            break;
+        case "masterStyle":
+            zSpeed = 3 / Math.max(Math.sqrt(getDropInterval()), 0.05);
+            break;
+        case "dragonStyle":
+            zSpeed = 50 / dragonStyleLockDelay[Math.floor(level/100)];
+            break;
+        default:
+            zSpeed = 0;
+            break;
+    }
+    backgroundZOffsetSpeed += (zSpeed - backgroundZOffsetSpeed) * 0.1;
+    backgroundZOffset += timeMultiplier * backgroundZOffsetSpeed;
 
     drawGame();
     timeOfLastUpdate = Date.now();
@@ -776,6 +797,7 @@ function returnToMenu() {
     introSection = 0;
     runPower = 0;
     runDecorPoints = 0;
+    backgroundZOffset = 0;
     restartTimer = restartTimerUI = exitTimer = exitTimerUI = 0;
     document.getElementById("game").style.display = "none";
     document.getElementById("effectOverlay").style.display = "none";

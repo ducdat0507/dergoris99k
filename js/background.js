@@ -16,6 +16,7 @@ let fragmentShaderSource = `
 
     uniform vec2 u_resolution;
     uniform float u_time;
+    uniform float u_zOffset;
     uniform vec3 u_seacolor;
     uniform vec3 u_wavecolor;
     uniform vec3 u_suncolor;
@@ -45,6 +46,7 @@ let fragmentShaderSource = `
     }
 
     float map(vec3 p) {
+        p.z += u_zOffset;
         vec2 uv = p.xz + u_time / 2.0;
         float amp = 0.6, freq = 2.0, val = 0.0;
         for (int i = 0; i < 3; ++i) {
@@ -114,9 +116,10 @@ let fragmentShaderSource = `
     }
 
     vec2 bubble(vec2 uv, float scale) {
-        if (uv.y > 0.2) return vec2(0.0);
+        float zpos = mod(scale + u_zOffset, 50.0);
         float t = u_time / 4.0;
-        vec2 st = uv * scale;
+        vec2 st = uv * zpos;
+        if (st.y > 4.0) return vec2(0.0); 
         vec2 _st = floor(st);
         vec2 bias = vec2(0.0, 4.0 * sin(_st.x * 128.0 + t));
         float mask = smoothstep(0.1, 0.2, -cos(_st.x * 128.0 + t));
@@ -124,9 +127,10 @@ let fragmentShaderSource = `
         vec2 _st_ = floor(st);
         st = fract(st);
         float size = noise(_st_) * 0.07 + 0.01;
+        float color = smoothstep(1.0, 0.0, zpos * 0.02);
         vec2 pos = vec2(noise(vec2(t, _st_.y * 64.1)) * 0.8 + 0.1, 0.5);
         if (length(st.xy - pos) < size) {
-            return (st + pos) * vec2(0.1, 0.2) * mask;
+            return (st + pos) * vec2(0.1, 0.2) * mask * color;
         }
         return vec2(0.0);
     }
@@ -142,7 +146,7 @@ let fragmentShaderSource = `
         uv = (-u_resolution.xy + 2.0 * uv) / u_resolution.y;
         uv.y *= 0.5;
         uv.x *= 0.45;
-        uv += bubble(uv, 12.0) + bubble(uv, 24.0); // add bubbles
+        uv += bubble(uv, 10.0) + bubble(uv, 20.0) + bubble(uv, 30.0) + bubble(uv, 40.0) + bubble(uv, 50.0); // add bubbles
 
         vec3 rd = normalize(vec3(uv, -1.0));
         vec3 hitPos;
@@ -238,6 +242,7 @@ function initShaderProgram() {
 
     resolutionUniformLocation = gl.getUniformLocation(shaderProgram, 'u_resolution');
     timeUniformLocation = gl.getUniformLocation(shaderProgram, 'u_time');
+    zOffsetUniformLocation = gl.getUniformLocation(shaderProgram, 'u_zOffset');
     seaColorUniformLocation = gl.getUniformLocation(shaderProgram, 'u_seacolor');
     waveColorUniformLocation = gl.getUniformLocation(shaderProgram, 'u_wavecolor');
     sunColorUniformLocation = gl.getUniformLocation(shaderProgram, 'u_suncolor');
@@ -249,6 +254,8 @@ initShaderProgram();
 let seaColor = [11, 72, 142];
 let waveColor = [15, 120, 152];
 let sunColor = [225, 230, 200];
+let backgroundZOffset = 0;
+let backgroundZOffsetSpeed = 0;
 let backgroundDisabled = false;
 function render(timestamp) {
     if (backgroundDisabled) { requestAnimationFrame(render); return; }
@@ -256,6 +263,7 @@ function render(timestamp) {
     gameCanvas.height = window.innerHeight / 4;
     gl.uniform2f(resolutionUniformLocation, gameCanvas.width, gameCanvas.height);
     gl.uniform1f(timeUniformLocation, timestamp / 1000.0);
+    gl.uniform1f(zOffsetUniformLocation, backgroundZOffset);
     gl.uniform3f(seaColorUniformLocation,  seaColor[0], seaColor[1], seaColor[2]);
     gl.uniform3f(waveColorUniformLocation, waveColor[0], waveColor[1], waveColor[2]);
     gl.uniform3f(sunColorUniformLocation, sunColor[0], sunColor[1], sunColor[2]);
