@@ -130,6 +130,16 @@ function initForms() {
     // Settings
     let resetSaveButton;
     buildForm(document.getElementById("settingsForm"), [
+        new formElements.heading("PROFILE"),
+        new formElements.text({
+            label: "PLAYER INITIALS",
+            value: game.playerInitials,
+            onSet(value) {
+                game.playerInitials = value;
+                save();
+            }
+        }),
+        new formElements.spacing(4),
         new formElements.heading("SOUND"),
         new formElements.slider({
             label: "OVERALL VOLUME",

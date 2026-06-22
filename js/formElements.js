@@ -276,7 +276,8 @@ const formElements = {
         }
         doInput(action) {
             if (action == "rotClockwise") {
-                
+                spawnPopup(popups.keypad, this);
+                return true;
             }
         }
     },
@@ -390,8 +391,10 @@ const formElements = {
         doInput(action) {
             if (action == "left") {
                 this.#elements.leftButton.click();
+                return true;
             } else if (action == "right") {
                 this.#elements.rightButton.click();
+                return true;
             }
         }
     },
@@ -505,8 +508,10 @@ const formElements = {
         doInput(action) {
             if (action == "left") {
                 this.#elements.leftButton.click();
+                return true;
             } else if (action == "right") {
                 this.#elements.rightButton.click();
+                return true;
             }
         }
     },
@@ -579,6 +584,7 @@ const formElements = {
         doInput(action) {
             if (action == "rotClockwise") {
                 this.#elements.value.click();
+                return true;
             }
         }
     },

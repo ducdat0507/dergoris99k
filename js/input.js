@@ -10,6 +10,9 @@ function doActionDown(action) {
     if (activeForm && handleFormInput(action)) {
         return;
     }
+    if (handlePopupInput(action)) {
+        return;
+    }
 
     switch (action) {
         case "left":
