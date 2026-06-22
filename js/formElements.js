@@ -207,6 +207,80 @@ const formElements = {
             }
         }
     },
+    text: class extends GamepadFormElement {
+        #elements = {}
+
+        get value() { return +this.#elements.value.value; }
+        set value(val) { 
+            this.#elements.value.value = val; this.onSet?.(val)
+        }
+
+        #disabled;
+        get disabled() { return this.#disabled; }
+        set disabled(val) { this.#disabled = val; this.updateDisabled() }
+
+        onSet = null;
+
+        constructor(options = {}) {
+            super();
+
+            let {
+                label,
+                value,
+                onSet,
+                ...fieldOptions
+            } = options
+            
+            this.onSet = onSet;
+
+            let id = "form-element-" + Math.random().toString().substring(2)
+            
+            this.element = document.createElement("div");
+            this.element.$form = this;
+            this.element.classList.add("form-element", "form-element-number");
+
+            this.#elements.label = document.createElement("label");
+            this.#elements.label.classList.add("label");
+            this.#elements.label.innerText = label;
+            this.#elements.label.htmlFor = id;
+            this.element.append(this.#elements.label);
+
+            this.#elements.value = document.createElement("input");
+            this.#elements.value.id = id;
+            this.#elements.value.type = "text"
+            this.#elements.value.value = value
+            this.#elements.value.classList.add("value");
+            this.#elements.value.tabIndex = -1;
+            for (let opt in fieldOptions) this.#elements.value[opt] = fieldOptions[opt];
+            this.#elements.value.addEventListener("input", () => {
+                this.value = this.#elements.value.value;
+            })
+            this.element.append(this.#elements.value);
+        }
+
+        updateDisabled() {
+            this.element.ariaDisabled = this.#disabled
+        }
+
+        canFocus() {
+            return !this.disabled;
+        }
+        doFocus() {
+            this.#elements.value.focus();
+        }
+
+        getActionPrompts() {
+            return [
+                { "actions": ["rotClockwise"], "label": "SET" },
+            ];
+        }
+        doInput(action) {
+            if (action == "rotClockwise") {
+                spawnPopup(popups.keypad, this);
+                return true;
+            }
+        }
+    },
     number: class extends GamepadFormElement {
         #elements = {}
 
@@ -317,8 +391,10 @@ const formElements = {
         doInput(action) {
             if (action == "left") {
                 this.#elements.leftButton.click();
+                return true;
             } else if (action == "right") {
                 this.#elements.rightButton.click();
+                return true;
             }
         }
     },
@@ -432,8 +508,10 @@ const formElements = {
         doInput(action) {
             if (action == "left") {
                 this.#elements.leftButton.click();
+                return true;
             } else if (action == "right") {
                 this.#elements.rightButton.click();
+                return true;
             }
         }
     },
@@ -506,6 +584,7 @@ const formElements = {
         doInput(action) {
             if (action == "rotClockwise") {
                 this.#elements.value.click();
+                return true;
             }
         }
     },

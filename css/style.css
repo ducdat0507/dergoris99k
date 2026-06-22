@@ -468,3 +468,46 @@ body:not(.prefer-key-nav) .form-element.dangerous:hover {
 #mainMenuForm {
     width: 600px;
 }
+
+.popup {
+    position: fixed;
+    inset: 0;
+    background: #000a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.keypad {
+    display: flex;
+    flex-flow: column;
+    gap: 6px;
+    margin-block: 12px;
+}
+
+.keypad span {
+    display: flex;
+    gap: 6px;
+}
+
+.keypad button {
+    --width: 1;
+    margin: 0;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    background: #111c;
+    border: 0;
+    font-family: var(--body-font);
+    color: #aaa;
+    padding: 12px;
+    width: calc(51px * var(--width) - 6px);
+    height: 45px;
+}
+.keypad button[aria-selected="true"] {
+    color: #fff;
+    z-index: 1;
+    animation: 
+        form-element-focus 1s 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) alternate infinite, 
+        form-element-focus-in 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
