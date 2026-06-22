@@ -80,7 +80,9 @@ function doActionDown(action) {
 
         case "rotAnticlockwise":
             if (!gamePlaying && document.getElementsByClassName("container")[1].style.display != "none") {
-                if (currentTab != 1) {
+                if (document.getElementById("introSoundForm").style.display != "none") {
+
+                } else if (currentTab != 1) {
                     playSound('buttonClick'); 
                     switchToTab(1);
                 } else if (document.getElementById("settingsContainer").style.display != "none") {

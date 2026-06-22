@@ -249,6 +249,7 @@ const formElements = {
             this.#elements.value.id = id;
             this.#elements.value.type = "text"
             this.#elements.value.value = value
+            this.#elements.value.readOnly = true
             this.#elements.value.classList.add("value");
             this.#elements.value.tabIndex = -1;
             for (let opt in fieldOptions) this.#elements.value[opt] = fieldOptions[opt];
@@ -394,6 +395,9 @@ const formElements = {
                 return true;
             } else if (action == "right") {
                 this.#elements.rightButton.click();
+                return true;
+            } else if (action == "rotClockwise") {
+                spawnPopup(popups.keypad, this, "number");
                 return true;
             }
         }

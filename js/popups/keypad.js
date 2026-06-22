@@ -12,7 +12,6 @@ popups.keypad = {
                 { char: "8" },
                 { char: "9" },
                 { char: "0" },
-                { action: "backspace", width: 2 },
             ],
             [
                 { char: "q" },
@@ -25,7 +24,6 @@ popups.keypad = {
                 { char: "i" },
                 { char: "o" },
                 { char: "p" },
-                { char: "-", shiftChar: "_" },
             ],
             [
                 { char: "a" },
@@ -37,7 +35,7 @@ popups.keypad = {
                 { char: "j" },
                 { char: "k" },
                 { char: "l" },
-                { action: "enter", width: 3 },
+                { char: "m" },
             ],
             [
                 { char: "z" },
@@ -46,15 +44,54 @@ popups.keypad = {
                 { char: "v" },
                 { char: "b" },
                 { char: "n" },
-                { char: "m" },
-                { char: " ", width: 2 },
-                { action: "shift", width: 3 },
+                { char: "-" },
+                { char: "_" },
+                { char: "." },
+                { char: ":" },
             ],
-        ]
+            [
+                { action: "shift", width: 2 },
+                { char: " ", width: 4 },
+                { action: "backspace", width: 2 },
+                { action: "enter", width: 2 },
+            ]
+        ],
+        number: [
+            [
+                { char: "1" },
+                { char: "2" },
+                { char: "3" },
+                { action: "backspace", width: 2 },
+            ],
+            [
+                { char: "4" },
+                { char: "5" },
+                { char: "6" },
+                { action: "enter", width: 2 },
+            ],
+            [
+                { char: "7" },
+                { char: "8" },
+                { char: "9" },
+            ],
+            [
+                { char: "0", width: 2 },
+                { char: "." },
+            ],
+        ],
     },
 
     create(elm, field, type="regular") {
+        let fieldLabel = field.element.querySelector("label");
         let fieldInput = field.element.querySelector("input");
+
+        let inputId = "keypad-field-" + Math.random().toString().substring(2);
+
+        let label = document.createElement("label");
+        label.classList.add("keypad-label");
+        label.innerText = fieldLabel.innerText;
+        label.htmlFor = inputId;
+        elm.$elements.content.append(label);
 
         let inputHolder = document.createElement("div");
         inputHolder.classList.add("form-element");
@@ -63,6 +100,7 @@ popups.keypad = {
 
         let input = document.createElement("input");
         input.classList.add("value");
+        input.id = inputId;
         input.type = fieldInput.type;
         input.value = fieldInput.value;
         input.min = fieldInput.min;
@@ -89,7 +127,7 @@ popups.keypad = {
                 button.$key = key;
                 button.$x = x;
                 button.$y = y;
-                button.onclick = () => this.clickKey(elm, button);
+                button.onclick = () => this.clickKey(elm, button.$key);
                 if (key.width > 1) {
                     button.style.setProperty("--width", key.width);
                     for (let i = 0; i < key.width; i++) {
@@ -111,7 +149,7 @@ popups.keypad = {
         elm.$lastActiveForm = activeForm;
         setActiveForm(null);
 
-        input.focus();
+        setTimeout(() => input.focus(), 0);
         this.updateButtons(elm);
         this.setActiveKey(elm, 0, 0);
     },
@@ -126,19 +164,28 @@ popups.keypad = {
         {
             elm.$activeKey.ariaSelected = true;
         }
+        return true;
     },
 
     moveActiveKey(elm, x, y) {
         if (elm.$activeKey) {
             if (x >= 1) x += (elm.$activeKey.style.getPropertyValue("--width") || 1) - 1;
-            this.setActiveKey(elm, elm.$activeKey.$x + x, elm.$activeKey.$y + y);
+            if (!this.setActiveKey(elm, elm.$activeKey.$x + x, elm.$activeKey.$y + y)) {
+                elm.$activeKey.animate([
+                    { transform: `translate(${6 * x}px, ${6 * y}px)` },
+                    { transform: `translate(0px, 0px)` },
+                ], {
+                    duration: 500,
+                    easing: "cubic-bezier(0.19, 1, 0.22, 1)",
+                })
+                return;
+            }
         }
     },
 
-    clickKey(elm, button) {
+    clickKey(elm, key) {
         let input = elm.$elements.input
         input.focus();
-        let key = button.$key;
         if (key.action) {
             switch (key.action) {
                 case "backspace":
@@ -153,6 +200,7 @@ popups.keypad = {
                     this.updateButtons(elm);
                     break;
                 case "enter":
+                    input.dispatchEvent(new Event("change"))
                     closePopup(elm);
                     break;
             }
@@ -168,8 +216,8 @@ popups.keypad = {
             let key = button.$key;
             if (key.action) {
                 button.innerText = {
-                    backspace: "Backspace",
-                    enter: "Enter",
+                    backspace: "B/K",
+                    enter: "E/D",
                     shift: "Shift",
                 }[key.action];
             } else {
@@ -182,21 +230,53 @@ popups.keypad = {
     },
 
     handleAction(elm, action) {
-        if (action == "left") {
-            this.moveActiveKey(elm, -1, 0);
-        } else if (action == "right") {
-            this.moveActiveKey(elm, 1, 0);
-        } else if (action == "hardDrop") {
-            this.moveActiveKey(elm, 0, -1);
-        } else if (action == "softDrop") {
-            this.moveActiveKey(elm, 0, 1);
-        } else if (action == "rotClockwise") {
-            elm.$activeKey?.click();
-        } else if (action == "exit") {
+        if (action == "exit") {
+            elm.$elements.input.dispatchEvent(new Event("change"))
             closePopup(elm);
+            playSound("buttonClick");
+        } else if (primaryInputMethod == "gamepad") {
+            if (action == "left") {
+                this.moveActiveKey(elm, -1, 0);
+                playSound("buttonHover");
+            } else if (action == "right") {
+                this.moveActiveKey(elm, 1, 0);
+                playSound("buttonHover");
+            } else if (action == "hardDrop") {
+                this.moveActiveKey(elm, 0, -1);
+                playSound("buttonHover");
+            } else if (action == "softDrop") {
+                this.moveActiveKey(elm, 0, 1);
+                playSound("buttonHover");
+            } else if (action == "rotClockwise") {
+                elm.$activeKey?.click();
+                playSound("buttonClick");
+            } else if (action == "rotAnticlockwise") {
+                this.clickKey(elm, { action: "backspace" });
+                playSound("buttonClick");
+            } 
+        } else if (primaryInputMethod == "keyboard") {
+            // throwing an exception here so all action logic is skipped
+            // including the event consumption so the input re
+            // I probably shouldn't rely on this
+            throw new Error();
         }
         
         return true;
+    },
+
+    getInputPrompts(elm) {
+        if (primaryInputMethod == "gamepad") {
+            return [
+                { actions: ["left", "right", "softDrop", "hardDrop"], label: "NAVIGATE" },
+                { action: "exit", label: "E/D" },
+                { action: "rotAnticlockwise", label: "B/K" },
+                { action: "rotClockwise", label: "SELECT" },
+            ]
+        } else {
+            return [
+                { action: "exit", label: "E/D" },
+            ]
+        }
     },
 
     onClose(elm) {

@@ -478,11 +478,18 @@ body:not(.prefer-key-nav) .form-element.dangerous:hover {
     justify-content: center;
 }
 
+.keypad-label {
+    display: block;
+    margin-bottom: 12px;
+}
+
 .keypad {
     display: flex;
     flex-flow: column;
     gap: 6px;
     margin-block: 12px;
+    background: #777;
+    padding: 12px;
 }
 
 .keypad span {

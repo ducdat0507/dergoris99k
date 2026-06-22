@@ -1,6 +1,6 @@
 // UI helpers moved from script.js
 
-let blackCoverShown = false;
+let blackCoverShown = true;
 
 function showKeybinds() {
 	hideSettings();
@@ -22,6 +22,7 @@ function showSettings() {
 function hideSettings() {
 	document.getElementById("settingsContainer").style.display = "none";
 	setActiveForm(document.getElementById("mainMenuForm"));
+	displayProfileInfo();
 	updateInputPrompts();
 }
 

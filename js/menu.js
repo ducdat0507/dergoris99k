@@ -465,5 +465,9 @@ function updateInputPrompts() {
         )
     }
 
+    if (activePopups[0]) {
+        inputPrompts = activePopups[0].popup.getInputPrompts(activePopups[0].elm)
+    }
+
     drawInputPrompts(inputPrompts);
 }

@@ -17,6 +17,7 @@ function spawnPopup(popup, ...args) {
 
     document.getElementById("popupHolder").appendChild(elm);
     activePopups.unshift({popup, elm});
+	updateInputPrompts();
 }
 
 function closePopup(elm) {
@@ -26,6 +27,8 @@ function closePopup(elm) {
         activePopups[index].popup.onClose?.(activePopups[index].elm);
         activePopups.splice(index, 1);
     }
+    
+	updateInputPrompts();
 }
 
 function handlePopupInput(action) {
