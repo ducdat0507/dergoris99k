@@ -1,4 +1,4 @@
-let primaryInputMethod = "keyboard";
+let primaryInputMethod = "";
 let gamepadState = {
     gamepad: null,
     type: "",
@@ -175,8 +175,9 @@ function doActionUp(action) {
 
 function setActiveInputMethod(method) {
     if (method == primaryInputMethod) return;
-
+    document.body.classList.remove("input-" + primaryInputMethod);
     primaryInputMethod = method;
+    document.body.classList.add("input-" + primaryInputMethod);
     redrawCurrentInputPrompts();
 }
 

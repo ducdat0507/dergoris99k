@@ -94,7 +94,7 @@ popups.keypad = {
         elm.$elements.content.append(label);
 
         let inputHolder = document.createElement("div");
-        inputHolder.classList.add("form-element");
+        inputHolder.classList.add("form-element", "keypad-input");
         inputHolder.style.animation = "none";
         elm.$elements.content.append(inputHolder);
 

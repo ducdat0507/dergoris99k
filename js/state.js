@@ -83,7 +83,7 @@ let introSection = 0;
 let onTheBeatNextPieces = [0,1,2];
 
 let boardVisualPosition = [0,0];
-let soundEnabled = true;
+let soundEnabled = false;
 let gamePlaying = false;
 let inCampaign = false;
 let keysHeld = [false, false, false, false, 0, 0, 0, 0, false, false]; //Left, Right, Up, Down, CW, CCW, CW alt, CCW alt, rotations have 3 states
@@ -191,7 +191,7 @@ function reset() {
     onTheBeatNextPieces = [0,1,2];
 
     boardVisualPosition = [0,0];
-    soundEnabled = true;
+    soundEnabled = false;
     gamePlaying = false;
     inCampaign = false;
     keysHeld = [false, false, false, false, 0, 0, 0, 0]; //Left, Right, Up, Down, CW, CCW, CW alt, CCW alt, rotations have 3 states
@@ -200,13 +200,20 @@ function reset() {
 }
 reset();
 
-//If the user confirms the hard reset, resets all variables, saves and refreshes the page
 function hardReset() {
-    if (confirm("Are you sure you want to reset? You will lose everything!")) {
-        reset();
-        save();
-        location.reload();
-    }
+    spawnPopup(popups.prompt, 
+        "RESET SAVE?",
+        "Are you sure you want to reset? You will lose everything!",
+        [
+            { label: "NO, CANCEL" },
+            { label: "YES, RESET", callback: () => {
+                reset();
+                save();
+                location.reload();
+                return true;
+            }}
+        ]
+    )
 }
   
 function save() {
@@ -234,10 +241,23 @@ load()
   
 function exportGame() {
     save()
-    navigator.clipboard.writeText(btoa(JSON.stringify(game))).then(function() {
-        alert("Copied to clipboard!");
+    let saveString = btoa(JSON.stringify(game))
+    navigator.clipboard.writeText(saveString).then(function() {
+        spawnPopup(popups.prompt, 
+            "EXPORTED GAME",
+            "Save data copied to clipboard!",
+            [
+                { label: "OK" }
+            ]
+        )
     }, function() {
-        alert("Error copying to clipboard... Here's the save string: " + btoa(JSON.stringify(game)));
+        spawnPopup(popups.prompt, 
+            "ERROR",
+            "Error copying to clipboard... Here's the save string: \n" + saveString,
+            [
+                { label: "OK" }
+            ]
+        )
     });
 }
   

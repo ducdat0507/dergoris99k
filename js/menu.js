@@ -426,7 +426,11 @@ function redrawCurrentInputPrompts() {
 function updateInputPrompts() {
     let inputPrompts = []
 
-    if (document.getElementById("settingsContainer").style.display != "none" || document.getElementById("keybindsContainer").style.display != "none") {
+    if (activePopups[0]) {
+        inputPrompts.push(...activePopups[0].popup.getInputPrompts(activePopups[0].elm))
+    } else if (document.getElementById("introSoundForm").style.display != "none") {
+        inputPrompts.push() 
+    } else if (document.getElementById("settingsContainer").style.display != "none" || document.getElementById("keybindsContainer").style.display != "none") {
         inputPrompts.push(
             { action: "rotAnticlockwise", label: "BACK" },
         )
@@ -463,10 +467,6 @@ function updateInputPrompts() {
         inputPrompts.push(
             ...activeForm.children[activeForm.$selectedItem]?.$form?.getActionPrompts() ?? []
         )
-    }
-
-    if (activePopups[0]) {
-        inputPrompts = activePopups[0].popup.getInputPrompts(activePopups[0].elm)
     }
 
     drawInputPrompts(inputPrompts);

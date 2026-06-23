@@ -256,6 +256,10 @@ const formElements = {
             this.#elements.value.addEventListener("input", () => {
                 this.value = this.#elements.value.value;
             })
+            this.#elements.value.addEventListener("click", () => {
+                spawnPopup(popups.keypad, this);
+                playSound("buttonClick");
+            })
             this.element.append(this.#elements.value);
         }
 
@@ -278,6 +282,7 @@ const formElements = {
         doInput(action) {
             if (action == "rotClockwise") {
                 spawnPopup(popups.keypad, this);
+                playSound("buttonClick");
                 return true;
             }
         }
@@ -397,8 +402,11 @@ const formElements = {
                 this.#elements.rightButton.click();
                 return true;
             } else if (action == "rotClockwise") {
-                spawnPopup(popups.keypad, this, "number");
-                return true;
+                if (primaryInputMethod != "keyboard") {
+                    spawnPopup(popups.keypad, this, "number");
+                    playSound("buttonClick");
+                    return true;
+                }
             }
         }
     },

@@ -17,7 +17,8 @@
     <img src="img/menuBar.png" style="display: none">
     <img src="img/menuBar2.png" style="display: none">
     <img src="img/overallGrades.png" style="display: none">
-    <img src="img/decorBlocks.png" style="display: none">
+    <img src="img/controllerButtons.png" style="display: none">
+    <img src="img/main/background1.png" style="display: none">
     <img src="img/main/background1.png" style="display: none">
     <img src="img/main/board.png" style="display: none">
     <img src="img/main/board2.png" style="display: none">
@@ -122,7 +123,7 @@
 
     <div id="blackCoverLeft" style="left: 0"></div>
     <div id="blackCoverRight" style="right: 0"></div>
-    <canvas id="inputPromptCanvas" width="320" height="12"></canvas>
+    <canvas id="inputPromptCanvas" width="320" height="12" style="z-index: 10"></canvas>
     <div id="introSoundForm"></div>
 
     
@@ -133,6 +134,7 @@
 
     <script src="js/popup.js"></script>
     <script src="js/popups/keypad.js"></script>
+    <script src="js/popups/prompt.js"></script>
 
     <script src="js/howler.js"></script>
 
@@ -154,10 +156,13 @@
     <script src="js/sound.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/menu.js"></script>
-    <script defer>
+    <script>
         initForms();
         selectMenuMode(1);
         setActiveForm(document.getElementById("introSoundForm"));
+        document.addEventListener("load", () => {
+            redrawCurrentInputPrompts();
+        })
     </script>
 </body>
 </html>

@@ -68,9 +68,11 @@ function initForms() {
         new formElements.button({
             label: "PLAY WITH SOUND",
             callback() {
+                soundEnabled = true; 
                 initializeGameMusic(); 
                 playSound('menuMusic');
-
+                
+                document.getElementById("inputPromptCanvas").style.zIndex = "";
                 hideBlackCover(); 
                 updateInputPrompts(1); 
                 document.getElementById("introSoundForm").style.display = "none";
@@ -83,6 +85,7 @@ function initForms() {
             callback() {
                 soundEnabled = false; 
 
+                document.getElementById("inputPromptCanvas").style.zIndex = "";
                 hideBlackCover();
                 updateInputPrompts(1); 
                 document.getElementById("introSoundForm").style.display = "none";
