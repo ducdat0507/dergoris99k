@@ -6,15 +6,15 @@ let gamepadState = {
     oldAxes: {},
 };
 
-function doActionDown(action) {
-    if (activeForm && handleFormInput(action)) {
-        return;
-    }
-    if (handlePopupInput(action)) {
-        return;
-    }
+let repeatKey = "";
+let repeatTimeout = 0;
 
-    switch (action) {
+function doActionDown(action, repeat=false) {
+    if (activeForm && handleFormInput(action, repeat)) {
+        //
+    } else if (handlePopupInput(action, repeat)) {
+        //
+    } else switch (action) {
         case "left":
             if (!waitingForNextPiece) setInitialDAS(0);
             keysHeld[0] = true;
@@ -33,7 +33,7 @@ function doActionDown(action) {
                 playSound('buttonHover'); 
             }
             else {
-                hardDrop();
+                if (!repeat) hardDrop();
                 keysHeld[2] = true;
             }
             break;
@@ -46,14 +46,14 @@ function doActionDown(action) {
                 playSound('buttonHover'); 
             }
             else {
-                softDrop();
+                if (!repeat) softDrop();
                 keysHeld[3] = true;
             }
             break;
 
         case "rotClockwise":
             if (!gamePlaying && onCampaignScreen && document.getElementsByClassName("container")[1].style.display != "none") {
-                if (!blackCoverShown) {
+                if (!blackCoverShown && !repeat) {
                     showBlackCover();
                     playSound('buttonClick'); 
                     fadeOutSound('menuMusic', 500); 
@@ -66,7 +66,7 @@ function doActionDown(action) {
 
         case "rotClockwiseAlt":
             if (!gamePlaying && currentTab == 3 && document.getElementsByClassName("container")[1].style.display != "none") {
-                if (!blackCoverShown) {
+                if (!blackCoverShown && !repeat) {
                     setActiveForm(null);
                     showBlackCover(); 
                     playSound('buttonClick'); 
@@ -135,6 +135,16 @@ function doActionDown(action) {
             console.warn(`Action ${action} triggered by key ${event.key} but it is missing a handler`);
             break;
     }
+
+    if (!repeat) {
+        clearTimeout(repeatTimeout);
+        let repeatCallback = () => {
+            doActionDown(action, true);
+            repeatTimeout = setTimeout(repeatCallback, 67);
+        };
+        repeatKey = action;
+        repeatTimeout = setTimeout(repeatCallback, 300)
+    }
 }
 
 function doActionUp(action) {
@@ -171,6 +181,11 @@ function doActionUp(action) {
             keysHeld[9] = false;
             break;
     }
+    
+    if (repeatKey == action) {
+        clearTimeout(repeatTimeout);
+    }
+
 }
 
 function setActiveInputMethod(method) {
@@ -178,7 +193,7 @@ function setActiveInputMethod(method) {
     document.body.classList.remove("input-" + primaryInputMethod);
     primaryInputMethod = method;
     document.body.classList.add("input-" + primaryInputMethod);
-    redrawCurrentInputPrompts();
+    updateInputPrompts();
 }
 
 function updateInputMethod() {
@@ -205,7 +220,10 @@ function testGamepadProvider(gamepad) {
 // Keyboard
 
 document.addEventListener("keydown", function(event) {
-    if (event.repeat) return;
+    if (event.repeat) {
+        event.preventDefault();
+        return;
+    }
 
     setActiveInputMethod("keyboard");
 

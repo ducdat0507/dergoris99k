@@ -98,8 +98,8 @@ const formElements = {
                 { "action": "rotClockwise", "label": "SELECT" },
             ];
         }
-        doInput(action) {
-            if (action == "rotClockwise") {
+        doInput(action, repeat) {
+            if (action == "rotClockwise" && !repeat) {
                 this.#elements.button.click();
                 return true;
             }

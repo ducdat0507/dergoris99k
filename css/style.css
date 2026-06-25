@@ -532,7 +532,7 @@ body.input-keyboard .keypad-label {
 
 .prompt-title {
     width: 600px;
-    font-family: "NES", monospace;
+    font-family: "GameBoy", monospace;
     font-size: 16px;
     font-weight: normal;
     color: white;

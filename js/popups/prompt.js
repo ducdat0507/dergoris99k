@@ -23,6 +23,13 @@ popups.prompt = {
 
         elm.$lastActiveForm = activeForm;
         setActiveForm(form);
+        setTimeout(() => setActiveForm(form), 0)
+    },
+    
+    handleAction(elm, action) {
+        if (action == "exit" || action == "rotAnticlockwise") {
+            return true;
+        }
     },
 
     getInputPrompts(elm) {
