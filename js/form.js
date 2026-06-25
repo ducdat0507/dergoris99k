@@ -28,10 +28,10 @@ function setActiveForm(form) {
     }
 }
 
-function handleFormInput(action) {
+function handleFormInput(action, repeat) {
     if (!activeForm) return;
     let item = activeForm.children[activeForm.$selectedItem].$form;
-    return item.doInput(action);
+    return item.doInput(action, repeat);
 }
 
 function navigateForm(direction) {

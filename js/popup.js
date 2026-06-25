@@ -31,9 +31,9 @@ function closePopup(elm) {
 	updateInputPrompts();
 }
 
-function handlePopupInput(action) {
+function handlePopupInput(action, repeat) {
     for (let popup of activePopups) {
-        if (popup.popup.handleAction(popup.elm, action)) {
+        if (popup.popup.handleAction(popup.elm, action, repeat)) {
             return true;
         }
     }
