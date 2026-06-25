@@ -116,7 +116,7 @@ let fragmentShaderSource = `
     }
 
     vec2 bubble(vec2 uv, float scale) {
-        float zpos = mod(scale + u_zOffset, 50.0);
+        float zpos = mod(scale + u_zOffset, 64.0);
         float t = u_time / 4.0;
         vec2 st = uv * zpos;
         if (st.y > 4.0) return vec2(0.0); 
@@ -146,7 +146,7 @@ let fragmentShaderSource = `
         uv = (-u_resolution.xy + 2.0 * uv) / u_resolution.y;
         uv.y *= 0.5;
         uv.x *= 0.45;
-        uv += bubble(uv, 10.0) + bubble(uv, 20.0) + bubble(uv, 30.0) + bubble(uv, 40.0) + bubble(uv, 50.0); // add bubbles
+        uv += bubble(uv, 8.0) + bubble(uv, 24.0) + bubble(uv, 40.0) + bubble(uv, 56.0); // add bubbles
 
         vec3 rd = normalize(vec3(uv, -1.0));
         vec3 hitPos;
@@ -256,21 +256,37 @@ let waveColor = [15, 120, 152];
 let sunColor = [225, 230, 200];
 let backgroundZOffset = 0;
 let backgroundZOffsetSpeed = 0;
+let backgroundZOffsetTargetSpeed = 0;
 let backgroundDisabled = false;
+let lastRenderTimestamp = 0;
+
 function render(timestamp) {
-    if (backgroundDisabled) { requestAnimationFrame(render); return; }
+    let delta = timestamp - lastRenderTimestamp;
+    lastRenderTimestamp = timestamp;
+
+    if (backgroundDisabled) { 
+        requestAnimationFrame(render);
+        return;
+    }
+
+    backgroundZOffsetSpeed += (backgroundZOffsetTargetSpeed - backgroundZOffsetSpeed) * (1 - 1e-6 ** (delta * 0.001));
+    backgroundZOffset += backgroundZOffsetSpeed * delta * 0.002;
+
     gameCanvas.width = window.innerWidth / 4;
     gameCanvas.height = window.innerHeight / 4;
+
     gl.uniform2f(resolutionUniformLocation, gameCanvas.width, gameCanvas.height);
     gl.uniform1f(timeUniformLocation, timestamp / 1000.0);
     gl.uniform1f(zOffsetUniformLocation, backgroundZOffset);
     gl.uniform3f(seaColorUniformLocation,  seaColor[0], seaColor[1], seaColor[2]);
     gl.uniform3f(waveColorUniformLocation, waveColor[0], waveColor[1], waveColor[2]);
     gl.uniform3f(sunColorUniformLocation, sunColor[0], sunColor[1], sunColor[2]);
+
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.viewport(0, 0, gameCanvas.width, gameCanvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
     requestAnimationFrame(render);
 }
 
