@@ -250,8 +250,12 @@ popups.keypad = {
             } else if (action == "rotClockwise") {
                 elm.$activeKey?.click();
                 playSound("buttonClick");
-            } else if (action == "rotAnticlockwise") {
+            } else if (action == "rotClockwiseAlt") {
                 this.clickKey(elm, { action: "backspace" });
+                playSound("buttonClick");
+            }  else if (action == "rotAnticlockwise") {
+                elm.$elements.input.dispatchEvent(new Event("change"))
+                closePopup(elm);
                 playSound("buttonClick");
             } 
         } else if (primaryInputMethod == "keyboard") {
@@ -268,8 +272,8 @@ popups.keypad = {
         if (primaryInputMethod == "gamepad") {
             return [
                 { actions: ["left", "right", "softDrop", "hardDrop"], label: "NAVIGATE" },
-                { action: "exit", label: "E/D" },
-                { action: "rotAnticlockwise", label: "B/K" },
+                { action: "rotAnticlockwise", label: "E/D" },
+                { action: "rotClockwiseAlt", label: "B/K" },
                 { action: "rotClockwise", label: "SELECT" },
             ]
         } else {
