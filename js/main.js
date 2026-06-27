@@ -1,5 +1,13 @@
 // Main game flow and loop moved from script.js
 
+function startGameFromUI() {
+    if (blackCoverShown) return;
+    showBlackCover();
+    playSound('buttonClick'); 
+    fadeOutSound('menuMusic', 500); 
+    setTimeout(startGame, 1000)
+}
+
 function startGame() {
     hideBlackCover();
     stopSound("menuMusic");
@@ -529,6 +537,18 @@ function endGame() {
 
         let leftSide = 160 - settings.boardWidth * 4;
 
+        // Record update
+        let recordIndex = {
+            classicStyle: 0,
+            masterStyle: 1,
+            dragonStyle: 2,
+        }[settings.gameMechanics] ?? -1;
+
+        let oldPower = game.bestPowers[recordIndex] ?? NaN
+        let oldScore = game.bestScores[recordIndex] ?? NaN
+        let oldLevel = game.bestLevels[recordIndex] ?? NaN
+        let oldAchTime = game.bestAchievementTimes[recordIndex] ?? NaN;
+
         // Average section time
         let averageSectionTime;
 
@@ -568,19 +588,8 @@ function endGame() {
                 }
             }
         }
-
-        // Record update
-        let recordIndex = {
-            classicStyle: 0,
-            masterStyle: 1,
-            dragonStyle: 2,
-        }[settings.gameMechanics] ?? -1;
-
-        let oldPower = game.bestPowers[recordIndex] ?? NaN
-        let oldScore = game.bestScores[recordIndex] ?? NaN
-        let oldLevel = game.bestLevels[recordIndex] ?? NaN
-        let oldAchTime = game.bestAchievementTimes[recordIndex] ?? NaN;
-
+        
+        // Update power
         if (settings.gameMechanics == "classicStyle") {
             // Level component
             runPower = Math.max((level - 24) * 20, 0); 
@@ -607,7 +616,6 @@ function endGame() {
             if (inCampaign && score > game.onTheBeatBests[0]) game.onTheBeatBests[0] = score;
             if (inCampaign && level > game.onTheBeatBests[1]) game.onTheBeatBests[1] = level;
         }
-
 
         if (inCampaign && recordIndex >= 0) {
             if (runPower > game.bestPowers[recordIndex]) game.bestPowers[recordIndex] = runPower;
@@ -762,6 +770,7 @@ function endGame() {
         { action: "exit", label: "EXIT" },
         { action: "restart", label: "RESTART" }
     ])
+    setMouseNavs("restart", "exit");
 }
 
 function restartGame() {

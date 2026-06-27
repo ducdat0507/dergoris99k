@@ -220,75 +220,93 @@ function initForms() {
     resetSaveButton.element.classList.add("dangerous")
     
     // Keybinds
+    let keybindItems = {}
+    function updateAllKeybindItems() {
+        for (let kb in keybindItems) {
+            keybindItems[kb].value = getActionKey(kb) ?? "(None)";
+        }
+        console.log(keybindItems);
+    }
     buildForm(document.getElementById("keybindsForm"), [
-        new formElements.keybind({
+        new formElements.heading("KEYBINDS"),
+        keybindItems.left = new formElements.keybind({
             label: "LEFT",
             value: getActionKey("left"),
             onSet(value) {
                 setActionKey("left", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.right = new formElements.keybind({
             label: "RIGHT",
             value: getActionKey("right"),
             onSet(value) {
                 setActionKey("right", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.hardDrop = new formElements.keybind({
             label: "HARD DROP or UI UP",
             value: getActionKey("hardDrop"),
             onSet(value) {
                 setActionKey("hardDrop", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.softDrop = new formElements.keybind({
             label: "SOFT DROP or UI DOWN",
             value: getActionKey("softDrop"),
             onSet(value) {
                 setActionKey("softDrop", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.rotClockwise = new formElements.keybind({
             label: "ROTATE CW or UI SELECT",
             value: getActionKey("rotClockwise"),
             onSet(value) {
                 setActionKey("rotClockwise", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.rotAnticlockwise = new formElements.keybind({
             label: "ROTATE CCW or UI BACK",
             value: getActionKey("rotAnticlockwise"),
             onSet(value) {
                 setActionKey("rotAnticlockwise", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.rotClockwiseAlt = new formElements.keybind({
             label: "ROTATE CW ALT",
             value: getActionKey("rotClockwiseAlt"),
             onSet(value) {
                 setActionKey("rotClockwiseAlt", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.rotAnticlockwiseAlt = new formElements.keybind({
             label: "ROTATE CCW ALT",
             value: getActionKey("rotAnticlockwiseAlt"),
             onSet(value) {
                 setActionKey("rotAnticlockwiseAlt", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.restart = new formElements.keybind({
             label: "RESTART",
             value: getActionKey("restart"),
             onSet(value) {
                 setActionKey("restart", value)
+                updateAllKeybindItems();
             }
         }),
-        new formElements.keybind({
+        keybindItems.exit = new formElements.keybind({
             label: "EXIT",
             value: getActionKey("exit"),
             onSet(value) {
                 setActionKey("exit", value)
+                updateAllKeybindItems();
             }
         }),
     ])

@@ -283,6 +283,10 @@ popups.keypad = {
         }
     },
 
+    getMouseNavs(elm) {
+        return ["textEd"]
+    },
+
     onClose(elm) {
         setActiveForm(elm.$lastActiveForm);
     }

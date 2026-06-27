@@ -1,4 +1,5 @@
 let primaryInputMethod = "";
+let prefersMouseNav = false;
 let gamepadState = {
     gamepad: null,
     type: "",
@@ -9,7 +10,7 @@ let gamepadState = {
 let repeatKey = "";
 let repeatTimeout = 0;
 
-function doActionDown(action, repeat=false) {
+function doActionDown(action, repeat=false, noRepeat=false) {
     if (activeForm && handleFormInput(action, repeat)) {
         //
     } else if (handlePopupInput(action, repeat)) {
@@ -54,10 +55,7 @@ function doActionDown(action, repeat=false) {
         case "rotClockwise":
             if (!gamePlaying && onCampaignScreen && document.getElementsByClassName("container")[1].style.display != "none") {
                 if (!blackCoverShown && !repeat) {
-                    showBlackCover();
-                    playSound('buttonClick'); 
-                    fadeOutSound('menuMusic', 500); 
-                    setTimeout(startGame, 1000)
+                    startGameFromUI();
                 }
             } else {
                 if (keysHeld[4] == 0) keysHeld[4] = 1;
@@ -68,10 +66,7 @@ function doActionDown(action, repeat=false) {
             if (!gamePlaying && currentTab == 3 && document.getElementsByClassName("container")[1].style.display != "none") {
                 if (!blackCoverShown && !repeat) {
                     setActiveForm(null);
-                    showBlackCover(); 
-                    playSound('buttonClick'); 
-                    fadeOutSound('menuMusic', 500); 
-                    setTimeout(startGame, 1000)
+                    startGameFromUI();
                 }
             } else {
                 if (keysHeld[6] == 0) keysHeld[6] = 1;
@@ -136,7 +131,7 @@ function doActionDown(action, repeat=false) {
             break;
     }
 
-    if (!repeat) {
+    if (!repeat && !noRepeat) {
         clearTimeout(repeatTimeout);
         let repeatCallback = () => {
             doActionDown(action, true);
@@ -196,6 +191,13 @@ function setActiveInputMethod(method) {
     updateInputPrompts();
 }
 
+function setPrefersMouseNav(value) {
+    if (value == prefersMouseNav) return;
+    prefersMouseNav = value;
+    document.body.classList.toggle("prefers-mouse-nav", prefersMouseNav);
+    updateInputPrompts();
+}
+
 function updateInputMethod() {
     let gamepad = navigator.getGamepads?.()[0];
     gamepadState.gamepad = gamepad;
@@ -208,6 +210,7 @@ function updateInputMethod() {
         setActiveInputMethod("keyboard");
     }
 
+    setPrefersMouseNav(false);
 }
 
 function testGamepadProvider(gamepad) {
@@ -242,6 +245,8 @@ document.addEventListener("keydown", function(event) {
         navigateForm(event.shiftKey ? -1 : 1)
         event.preventDefault();
     }
+    
+    if (!gamePlaying && !gameReadying) setPrefersMouseNav(false);
 })
 
 document.addEventListener("keyup", function(event) {
@@ -249,6 +254,10 @@ document.addEventListener("keyup", function(event) {
     const action = keyConfig[event.key];
     doActionUp(action);
 })
+
+document.addEventListener("pointermove", function(event) {
+    setPrefersMouseNav(true);
+}, { passive: true })
 
 function getKeybind(action) {
     for (const [key, value] of Object.entries(keyConfig)) {

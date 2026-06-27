@@ -12,6 +12,14 @@ const inputPromptCanvas = document.getElementById("inputPromptCanvas");
 /** @type {CanvasRenderingContext2D} */
 const inputPromptCtx = inputPromptCanvas && inputPromptCanvas.getContext("2d");
 
+const mouseNavButtons = {
+    startGame: document.getElementById("mouseNavButtonStartGame"),
+    back: document.getElementById("mouseNavButtonBack"),
+    restart: document.getElementById("mouseNavButtonRestart"),
+    exit: document.getElementById("mouseNavButtonExit"),
+    textEd: document.getElementById("mouseNavButtonTextEd"),
+}
+
 const modeDescriptions = {
     1: `
         <b>
@@ -425,15 +433,22 @@ function redrawCurrentInputPrompts() {
 
 function updateInputPrompts() {
     let inputPrompts = []
+    let mouseNavs = []
 
     if (activePopups[0]) {
-        inputPrompts.push(...activePopups[0].popup.getInputPrompts(activePopups[0].elm))
+        inputPrompts.push(
+            ...activePopups[0].popup.getInputPrompts?.(activePopups[0].elm) ?? []
+        )
+        mouseNavs.push(
+             ...activePopups[0].popup.getMouseNavs?.(activePopups[0].elm) ?? []
+        )
     } else if (document.getElementById("introSoundForm").style.display != "none") {
         inputPrompts.push() 
     } else if (document.getElementById("settingsContainer").style.display != "none" || document.getElementById("keybindsContainer").style.display != "none") {
         inputPrompts.push(
             { action: "rotAnticlockwise", label: "BACK" },
         )
+        mouseNavs.push("back");
     } else switch(currentTab) {
         case 1:
             break;
@@ -444,6 +459,7 @@ function updateInputPrompts() {
                 { action: "rotAnticlockwise", label: "BACK" },
                 { action: "rotClockwise", label: "START GAME" },
             )
+            mouseNavs.push("back", "startGame");
             break;
 
         case 3: 
@@ -451,12 +467,14 @@ function updateInputPrompts() {
                 { action: "rotAnticlockwise", label: "BACK" },
                 { action: "rotClockwiseAlt", label: "START GAME" },
             )
+            mouseNavs.push("back", "startGame");
             break;
 
         case 4: 
             inputPrompts.push(
                 { action: "rotAnticlockwise", label: "BACK" },
             )
+            mouseNavs.push("back");
             break;
     }
 
@@ -465,9 +483,22 @@ function updateInputPrompts() {
             { actions: ["softDrop", "hardDrop"], label: "NAVIGATE" },
         )
         inputPrompts.push(
-            ...activeForm.children[activeForm.$selectedItem]?.$form?.getActionPrompts() ?? []
+            ...activeForm.children[activeForm.$selectedItem]?.$form?.getActionPrompts?.() ?? []
+        )
+        mouseNavs.push(
+            ...activeForm.children[activeForm.$selectedItem]?.$form?.getMouseNavs?.() ?? []
         )
     }
 
     drawInputPrompts(inputPrompts);
+    setMouseNavs(mouseNavs);
+}
+
+function setMouseNavs(mouseNavs) {
+    for (let mnb in mouseNavButtons) {
+        mouseNavButtons[mnb].style.display = "none";
+    }
+    for (let mnb of mouseNavs) {
+        mouseNavButtons[mnb].style.display = "";
+    }
 }

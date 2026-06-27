@@ -603,6 +603,9 @@ const formElements = {
     keybind: class extends GamepadFormElement {
         #elements = {}
 
+        get value() { return this.#elements.button.innerText; }
+        set value(val) { this.#elements.button.innerText = val; this.onSet?.(val) }
+
         #disabled;
         get disabled() { return this.#disabled; }
         set disabled(val) { this.#disabled = val; this.updateDisabled() }

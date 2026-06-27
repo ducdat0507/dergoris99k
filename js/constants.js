@@ -62,19 +62,19 @@ const beatDASSpeeds = [10, 8, 7, 6]
 const beatARESpeeds = [12, 10, 8, 6]
 
 const decorGradeWeights = {
-    classicStyle: 15,
-    masterStyle: 20,
-    dragonStyle: 25,
+    classicStyle: 20,
+    masterStyle: 25,
+    dragonStyle: 30,
 }
 const decorSectionWeights = {
-    classicStyle: 12,
-    masterStyle: 15,
-    dragonStyle: 18,
+    classicStyle: 15,
+    masterStyle: 18,
+    dragonStyle: 21,
 }
 const decorSectionMedalWeights = {
-    classicStyle: 5,
+    classicStyle: 7,
     masterStyle: 6,
-    dragonStyle: 7,
+    dragonStyle: 5,
 }
 
 // [value, x, y]

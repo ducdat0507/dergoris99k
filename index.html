@@ -124,6 +124,14 @@
     <div id="blackCoverLeft" style="left: 0"></div>
     <div id="blackCoverRight" style="right: 0"></div>
     <canvas id="inputPromptCanvas" width="320" height="12" style="z-index: 10"></canvas>
+    <div id="mouseNavButtons">
+        <button id="mouseNavButtonBack" onclick="doActionDown('rotAnticlockwise', false, true)">BACK</button>
+        <button id="mouseNavButtonRestart" onclick="doActionDown('restart', false, true)">RESTART</button>
+        <button id="mouseNavButtonTextEd" onclick="doActionDown('exit', false, true)">E/D</button>
+        <span class="flex-1"></span>
+        <button id="mouseNavButtonStartGame" onclick="startGameFromUI()">START GAME</button>
+        <button id="mouseNavButtonExit" onclick="doActionDown('exit', false, true)">EXIT</button>
+    </div>
     <div id="introSoundForm"></div>
 
     
