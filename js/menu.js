@@ -300,7 +300,7 @@ function displayModeInfo(mode) {
 
             //Best highest section time
             x = 0, y += 20;
-            if (game.bestLevels[0] >= 999) {
+            if (game.bestLevels[mode - 1] >= 999) {
                 x += drawBMText(modeStatsCtx, x, y, "ALL SECTION TIMES UNDER", "text5-white")
 
                 let time = game.bestHighestSectionTimes[mode - 1];
@@ -315,7 +315,7 @@ function displayModeInfo(mode) {
 
             //Best average section time
             x = 0, y += 8;
-            if (game.bestLevels[0] >= 999) {
+            if (game.bestLevels[mode - 1] >= 999) {
                 x += drawBMText(modeStatsCtx, x, y, "AVG SECTION TIME AT 999: ", "text5-white")
 
                 let time = game.bestHighestSectionTimes[mode - 1];
