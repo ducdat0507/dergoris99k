@@ -21,6 +21,7 @@ function startGame() {
     document.getElementById("effectOverlay").style.display = "block";
     document.getElementById("textOverlay").style.display = "block";
     drawInputPrompts([])
+    setMouseNavs([])
 
     backgroundZOffset = backgroundZOffsetSpeed = backgroundZOffsetTargetSpeed = 0;
 
@@ -770,7 +771,7 @@ function endGame() {
         { action: "exit", label: "EXIT" },
         { action: "restart", label: "RESTART" }
     ])
-    setMouseNavs("restart", "exit");
+    setMouseNavs(["restart", "exit"]);
 }
 
 function restartGame() {

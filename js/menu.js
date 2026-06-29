@@ -435,7 +435,17 @@ function updateInputPrompts() {
     let inputPrompts = []
     let mouseNavs = []
 
-    if (activePopups[0]) {
+    if (document.getElementById("gameCanvas").style.display != "none") {
+        if (gameReadying || gamePlaying) {
+
+        } else {
+            inputPrompts.push(
+                { action: "exit", label: "EXIT" },
+                { action: "restart", label: "RESTART" },
+            )
+            mouseNavs.push("exit", "restart")
+        }
+    } else if (activePopups[0]) {
         inputPrompts.push(
             ...activePopups[0].popup.getInputPrompts?.(activePopups[0].elm) ?? []
         )
