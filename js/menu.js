@@ -306,7 +306,7 @@ function displayModeInfo(mode) {
                 let time = game.bestHighestSectionTimes[mode - 1];
                 let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
-                x += drawBMText(modeStatsCtx, x, y, timeString, "text5-" + timeColor)
+                x += drawBMText(modeStatsCtx, x, y, timeString, "text5" + timeColor)
             }
             else {
                 x += drawBMText(modeStatsCtx, x, y, "MORE STATS UNLOCK AT ", "text5-gray")
@@ -321,7 +321,7 @@ function displayModeInfo(mode) {
                 let time = game.bestHighestSectionTimes[mode - 1];
                 let timeString = formatTime(time);
                 let timeColor = getTimeColor(time);
-                x += drawBMText(modeStatsCtx, x, y, timeString, "text5-" + timeColor)
+                x += drawBMText(modeStatsCtx, x, y, timeString, "text5" + timeColor)
             }
 
             //Best individual section times
