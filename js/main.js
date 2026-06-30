@@ -20,6 +20,7 @@ function startGame() {
     document.getElementById("game").style.display = "block";
     document.getElementById("effectOverlay").style.display = "block";
     document.getElementById("textOverlay").style.display = "block";
+    setActiveForm(null);
     drawInputPrompts([])
     setMouseNavs([])
 
