@@ -305,6 +305,7 @@ function gamepadLoop() {
                 let state = gamepadState.gamepad.buttons[button].value;
                 if (gamepadState.oldButtons[button] != state) {
                     setActiveInputMethod("gamepad");
+                    setPrefersMouseNav(false);
                     let action = gamepadButtonConfig[button];
                     if (action) (state ? doActionDown : doActionUp)(action);
                     gamepadState.oldButtons[button] = state;
@@ -315,6 +316,7 @@ function gamepadLoop() {
                 state = Math.abs(state) < 0.33 ? "" : ["-", "", "+"][Math.sign(state) + 1] + axis
                 if (gamepadState.oldAxes[axis] != state) {
                     setActiveInputMethod("gamepad");
+                    setPrefersMouseNav(false);
                     if (gamepadState.oldAxes[axis]) {
                         action = gamepadAxisConfig[gamepadState.oldAxes[axis]];
                         if (action) doActionUp(action);
